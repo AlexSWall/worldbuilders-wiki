@@ -1,0 +1,41 @@
+#footerWrapper {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12pt;
+	color: black;
+	z-index: 1;
+
+	padding: 0;
+	margin: 0;
+	margin-top: -1.85em;
+	height: 1.85em;
+	width: 100vw;
+
+	text-align: center;
+	background-color: #333;
+	border: 0px solid #555;
+
+	display: table;
+}
+	
+footer {
+	display: table-cell;
+	vertical-align: middle;
+	margin: 0 auto;
+}
+
+footer > ul {
+	list-style-type: none;
+}
+
+footer > ul > li {
+	display: inline-block
+}
+
+footer > ul > li > a {
+	padding: 2px 10px;
+	margin: 0em 10px;
+	background-color: #273c69;
+	border: 1px solid #262626;
+	color: #eef;
+	text-decoration: none;
+}

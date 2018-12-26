@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-GB">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="/d/stylesheets/html5reset.css" />
+		<link rel="stylesheet" type="text/css" href="/d/stylesheets/header.css" />
+		<link rel="stylesheet" type="text/css" href="/d/stylesheets/main.css" />
+		<link rel="stylesheet" type="text/css" href="/d/stylesheets/tableofcontents.css" />
+		<link rel="stylesheet" type="text/css" href="/d/stylesheets/footer.css" />
+
+		<link rel="stylesheet" type="text/css" href="/d/stylesheets/input.css" />
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="/d/js/createTableOfContents.js"></script>
+
+		<title> <?php echo isset($page_name) ? $page_name.' - ' : ''?>D&amp;D Docs </title>
+		<base target="_self">
+	</head>
+	<body>
+		<div id="pageWrapper">
+			<div id="headerWrapper">
+				<header>
+					<ul>
+						<li><a <?php if ($title == "Home") { echo 'class="active" '; }?>href="Home">Home</a></li>
+						<li class="dropdown"><a <?php if ($title == "Locations") { echo 'class="active" '; }?>href="Locations" class="dropbtn">Locations</a>
+							<div class="dropdown-content">
+								<a href="Guthan">The Kingdom of Guthan</a>
+								<a href="The Valen Ministry" onclick="return false;">The Valen Ministry</a>
+								<a href="Dra'akna" onclick="return false;">Dra'akna</a>
+							</div>
+						</li>
+						<li><a <?php if ($title == "Add_Page") { echo 'class="active" '; }?>href="Add_Page">Add Page</a></li>
+						<li style="float:right"><a <?php if ($title == "About") { echo 'class="active" '; }?>href="About">About</a></li>
+					</ul>
+				</header>
+			</div> <!-- headerWrapper -->
+			<main>
+				<div id="contentWrapper">
+					<div id="content">
+						<div id="mainPanelWrapper">
+							<div id="mainPanel">
+								<!-- Begin Main Content -->
+								

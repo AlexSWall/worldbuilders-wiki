@@ -1,0 +1,15 @@
+#toc ul {
+	display: block;
+	list-style-type: square;
+	margin-top: 0.4em;
+	margin-bottom: 0.4em;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 30px;
+}
+
+#toc li {
+	display: list-item;
+	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
