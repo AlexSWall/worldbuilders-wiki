@@ -11,15 +11,15 @@ class WikiController extends Controller
 		return Webpage::where('page_name', $name)->first()['webpage'];
 	}
 
-	public function serveWebpage($request, $response)
+	public function serveWebpage($request, $response, $args)
 	{
-		if ( true )
-		{
+		$webpage_content = $this->getWebpage($args['name']);
 
-		}
-		$requestPath = $request->getUri()->getPath();
-
-		$response = new \Slim\Http\Response(404);
-		return $response->write("Page not found");
+		if ( !is_null($webpage_content) )
+			return $this->view->render($response, 'wikipage.twig', [
+				'webpage' => $webpage_content
+			]);
+		else
+			throw new \Slim\Exception\NotFoundException($request, $response);
 	}
 }

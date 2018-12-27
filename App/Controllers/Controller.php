@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class Controller
+abstract class Controller
 {
 	protected $container;
 

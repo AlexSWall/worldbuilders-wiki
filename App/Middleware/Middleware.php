@@ -2,7 +2,7 @@
 
 namespace App\Middleware;
 
-class Middleware
+abstract class Middleware
 {
 	protected $container;
 
@@ -10,4 +10,6 @@ class Middleware
 	{
 		$this->container = $container;
 	}
+
+	public abstract function __invoke($request, $response, $next);
 }

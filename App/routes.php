@@ -2,9 +2,13 @@
 
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
-use App\Controllers\WikiController;
 
-$app->get('/', 'HomeController:index')->setName('home'); /* Name of controller followed by the method. */
+/* Equivalent to
+ * $app->get('/', 'HomeController:index')->setName('home');
+ */
+$app->get('/', function ($request, $response, $args) {
+	return (new App\Controllers\HomeController($this))->index($request, $response, $args);
+})->setName('home');
 
 $app->group('', function()
 {
@@ -23,20 +27,7 @@ $app->group('', function()
 	$this->post('/auth/password/change', 'PasswordController:postChangePassword');
 })->add(new AuthMiddleware($container));
 
-$app->get('/{name}', function($request, $response, $args) {
-    //return $response->write("Going to search database, when added.");
-    $webpage = $this->WikiController->getWebpage($args['name']);
-    if (!is_null($webpage))
-    {
-    	return $this->view->render($response, 'wikipage.twig', [
-    		'webpage' => $webpage
-    	]);
-	}
-	else
-	{
-		throw new \Slim\Exception\NotFoundException($request, $response);
-	}
-});
+$app->get('/{name}', 'WikiController:serveWebpage');
 
 $app->getContainer()['notFoundHandler'] = function($container)
 {

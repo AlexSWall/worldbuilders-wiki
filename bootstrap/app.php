@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 spl_autoload_register(function( $class_name )
 {
 	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
@@ -9,26 +11,12 @@ spl_autoload_register(function( $class_name )
 	}
 });
 
-session_start();
-
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
-$app = new \Slim\App([
-	'settings' => [
-		'displayErrorDetails' => true,
-		'addContentLengthHeader' => false,
-		'db' => [
-			'driver' => 'mysql',
-			'host' => 'localhost',
-			'username' => 'root',
-			'password' => 'TheIncredibles',
-			'database' => 'website',
-			'charset' => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix' => ''
-		]
-	]
-]);
+$mode = file_get_contents(BASE_PATH . '/mode.php');
+$config = include (BASE_PATH . '/config/' . $mode . '.php');
+
+$app = new \Slim\App(['settings' => $config]);
 
 $container = $app->getContainer();
 
@@ -121,8 +109,7 @@ $app->add(new \App\Middleware\CsrfViewMiddleware($container));
 
 $app->add($container->csrf);
 
-use Respect\Validation\Validator as v;
-v::with('App\\Validation\\Rules\\');
+Respect\Validation\Validator::with('App\\Validation\\Rules\\');
 
 $container->logger->addInfo('Adding the routes.');
 

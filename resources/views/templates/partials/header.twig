@@ -2,16 +2,16 @@
 <html lang="en-GB">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<link rel="stylesheet" type="text/css" href="/d/stylesheets/html5reset.css" />
-		<link rel="stylesheet" type="text/css" href="/d/stylesheets/header.css" />
-		<link rel="stylesheet" type="text/css" href="/d/stylesheets/main.css" />
-		<link rel="stylesheet" type="text/css" href="/d/stylesheets/tableofcontents.css" />
-		<link rel="stylesheet" type="text/css" href="/d/stylesheets/footer.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/html5reset.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/header.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/main.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/tableofcontents.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/footer.css" />
 
-		<link rel="stylesheet" type="text/css" href="/d/stylesheets/input.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/input.css" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-		<script src="/d/js/createTableOfContents.js"></script>
+		<script src="{{ base_url() }}/js/createTableOfContents.js"></script>
 
 		<title> <?php echo isset($page_name) ? $page_name.' - ' : ''?>D&amp;D Docs </title>
 		<base target="_self">
@@ -21,7 +21,7 @@
 			<div id="headerWrapper">
 				<header>
 					<ul>
-						<li><a <?php if ($title == "Home") { echo 'class="active" '; }?>href="Home">Home</a></li>
+						<li><a {% if title == "Home" %}class="active" {% endif %}href="Home">Home</a></li>
 						<li class="dropdown"><a <?php if ($title == "Locations") { echo 'class="active" '; }?>href="Locations" class="dropbtn">Locations</a>
 							<div class="dropdown-content">
 								<a href="Guthan">The Kingdom of Guthan</a>
