@@ -13,7 +13,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="{{ base_url() }}/js/createTableOfContents.js"></script>
 
-		<title> <?php echo isset($page_name) ? $page_name.' - ' : ''?>D&amp;D Docs </title>
+		<title>{{ title }}</title>
 		<base target="_self">
 	</head>
 	<body>
@@ -21,16 +21,16 @@
 			<div id="headerWrapper">
 				<header>
 					<ul>
-						<li><a {% if title == "Home" %}class="active" {% endif %}href="Home">Home</a></li>
-						<li class="dropdown"><a <?php if ($title == "Locations") { echo 'class="active" '; }?>href="Locations" class="dropbtn">Locations</a>
+						<li><a {% if page_name == "Home" %}class="active" {% endif %}href="Home">Home</a></li>
+						<li class="dropdown"><a {% if page_name == "Locations" %}class="active" {% endif %}href="Locations" class="dropbtn">Locations</a>
 							<div class="dropdown-content">
 								<a href="Guthan">The Kingdom of Guthan</a>
-								<a href="The Valen Ministry" onclick="return false;">The Valen Ministry</a>
+								<a href="The_Valen_Ministry" onclick="return false;">The Valen Ministry</a>
 								<a href="Dra'akna" onclick="return false;">Dra'akna</a>
 							</div>
 						</li>
-						<li><a <?php if ($title == "Add_Page") { echo 'class="active" '; }?>href="Add_Page">Add Page</a></li>
-						<li style="float:right"><a <?php if ($title == "About") { echo 'class="active" '; }?>href="About">About</a></li>
+						<li><a {% if page_name == "Add_Page" %}class="active" {% endif %}href="Add_Page">Add Page</a></li>
+						<li style="float:right"><a {% if page_name == "About" %}class="active" {% endif %}href="About">About</a></li>
 					</ul>
 				</header>
 			</div> <!-- headerWrapper -->
@@ -40,4 +40,4 @@
 						<div id="mainPanelWrapper">
 							<div id="mainPanel">
 								<!-- Begin Main Content -->
-								
+

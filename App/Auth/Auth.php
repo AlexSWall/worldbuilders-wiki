@@ -34,6 +34,12 @@ class Auth
 		return User::find($_SESSION['user']);
 	}
 
+	public function userSafe()
+	{
+		if ( $this->check() )
+			return User::find($_SESSION['user']);
+	}
+
 	public function logout()
 	{
 		unset($_SESSION['user']);

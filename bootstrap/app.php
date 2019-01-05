@@ -2,14 +2,12 @@
 
 session_start();
 
-spl_autoload_register(function( $class_name )
+spl_autoload_register( function( $class_name )
 {
 	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
 	if ( file_exists($class_path) )
-	{
 	    include $class_path; /* No need for include_once; if it had been included, we wouldn't be here. */
-	}
-});
+} );
 
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
@@ -20,9 +18,14 @@ $app = new \Slim\App(['settings' => $config]);
 
 $container = $app->getContainer();
 
+
+/* == Container Items == */
+
 $container['logger'] = function($container) {
     $logger = new \Monolog\Logger('my_logger');
     $file_handler = new \Monolog\Handler\StreamHandler(BASE_PATH . '/logs/app.log');
+    $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+    $file_handler->setFormatter($formatter);
     $logger->pushHandler($file_handler);
     return $logger;
 };
@@ -30,20 +33,15 @@ $container['logger'] = function($container) {
 $container->logger->addInfo('Logging added.');
 $container->logger->addInfo('Populating the container.');
 
-$capsule = new \Illuminate\Database\Capsule\Manager; /* Use database component outside of Laravel. */
-$capsule->addConnection($container['settings']['db']);
-$capsule->setAsGlobal();
-$capsule->bootEloquent();
+$container['auth']               = function($container) { return new \App\Auth\Auth; };
+$container['validator']          = function($container) { return new \App\Validation\Validator; };
+$container['HomeController']     = function($container) { return new \App\Controllers\HomeController($container); };
+$container['AuthController']     = function($container) { return new \App\Controllers\Auth\AuthController($container); };
+$container['PasswordController'] = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
+$container['WikiController']     = function($container) { return new \App\Controllers\WikiController($container); };
+$container['csrf']               = function($container) { return new \Slim\Csrf\Guard; };
+$container['flash']              = function($container) { return new \Slim\Flash\Messages; };
 
-$container['db'] = function($container) use ($capsule)
-{
-	return $capsule;
-};
-
-$container['auth'] = function($container)
-{
-	return new \App\Auth\Auth;
-};
 
 $container['view'] = function($container)
 {
@@ -58,7 +56,7 @@ $container['view'] = function($container)
 
 	$view->getEnvironment()->addGlobal('auth', [
 		'check' => $container->auth->check(),
-		'user' => $container->auth->user()
+		'user' => $container->auth->userSafe() /* This runs automatically, even if left uncalled, so we must get the user 'safely'. */
 	]);
 
 	$view->getEnvironment()->addGlobal('flash', $container->flash);
@@ -66,40 +64,37 @@ $container['view'] = function($container)
 	return $view;
 };
 
-$container['validator'] = function($container)
+
+$capsule = new \Illuminate\Database\Capsule\Manager; /* Use database component outside of Laravel. */
+$capsule->addConnection($container['settings']['db']);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+$container['db'] = function($container) use ($capsule) { return $capsule; };
+
+
+$container['mailer'] = function($container)
 {
-	return new App\Validation\Validator;
+	$mailer = new PHPMailer\PHPMailer\PHPMailer;
+
+	$mailerSettings = $container->get('settings')['mail'];
+
+	$mailer->isSMTP();  
+	$mailer->Host = $mailerSettings['host'];
+	$mailer->SMTPAuth = $mailerSettings['smtp_auth'];
+	$mailer->SMTPSecure = $mailerSettings['smtp_secure'];
+	$mailer->Port = $mailerSettings['port'];
+	$mailer->Username = $mailerSettings['username'];
+	$mailer->Password = $mailerSettings['password'];
+
+	$mailer->setFrom($mailerSettings['from_email'], $mailerSettings['from_name']);
+
+	$mailer->isHTML($mailerSettings['html']);
+
+	return new \App\Mail\Mailer($container, $mailer);
 };
 
-$container['HomeController'] = function($container)
-{
-	return new \App\Controllers\HomeController($container);
-};
 
-$container['AuthController'] = function($container)
-{
-	return new \App\Controllers\Auth\AuthController($container);
-};
-
-$container['PasswordController'] = function($container)
-{
-	return new \App\Controllers\Auth\PasswordController($container);
-};
-
-$container['WikiController'] = function($container)
-{
-	return new \App\Controllers\WikiController($container);
-};
-
-$container['csrf'] = function($container)
-{
-	return new \Slim\Csrf\Guard;
-};
-
-$container['flash'] = function($container)
-{
-	return new \Slim\Flash\Messages;
-};
+/* == Middleware == */
 
 $container->logger->addInfo('Adding middleware.');
 
@@ -109,10 +104,17 @@ $app->add(new \App\Middleware\CsrfViewMiddleware($container));
 
 $app->add($container->csrf);
 
-Respect\Validation\Validator::with('App\\Validation\\Rules\\');
+
+/* == Routes == */
 
 $container->logger->addInfo('Adding the routes.');
 
 require BASE_PATH . '/App/routes.php';
+
+/* == Miscellaneous == */
+
+$container->logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
+
+Respect\Validation\Validator::with('App\\Validation\\Rules\\');
 
 $container->logger->addInfo('Finished running bootstrap/app.php');
