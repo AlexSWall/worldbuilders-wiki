@@ -1,6 +1,6 @@
 body {
 	background-image: url("https://image.ibb.co/mFtaQ0/background.jpg");
-	background-image: url("http://localhost:8080/d/res/background.jpg");
+	background-image: url("http://localhost:8080/res/background.jpg");
 	background-size: cover;
 	background-size: auto;
     background-repeat: repeat-y;

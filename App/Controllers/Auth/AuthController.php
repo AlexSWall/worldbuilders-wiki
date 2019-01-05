@@ -33,9 +33,15 @@ class AuthController extends Controller
 			'password' => password_hash($request->getParam('password'), PASSWORD_DEFAULT, ['cost' => 10])
 		]);
 
-		$this->flash->addMessage('info', 'You have signed up!');
-
 		$this->auth->attempt($user->email, $request->getParam('password'));
+
+		$this->mailer->send('email/auth/registered.php', ['user' => $user], function($message) use ($user)
+		{
+			$message->to($user->email, $user->name);
+			$message->subject('Thanks for registering.');
+		});
+
+		$this->flash->addMessage('info', 'You have signed up!');
 
 		return $response->withRedirect($this->router->pathFor('home'));
 	}

@@ -27,15 +27,12 @@ $app->group('', function()
 	$this->post('/auth/password/change', 'PasswordController:postChangePassword');
 })->add(new AuthMiddleware($container));
 
-$app->get('/{name}', 'WikiController:serveWebpage');
+$app->get('/{page_name}', 'WikiController:serveWebpage');
 
 $app->getContainer()['notFoundHandler'] = function($container)
 {
 	return function($request, $response) use ($container)
 	{
-		$response = new \Slim\Http\Response(404);
-		$requestPath = $request->getUri()->getPath();
-		return $response->write("Page not found: ". $requestPath);
+		return (new App\Controllers\NotFoundController($container))->dealWithRequest($request, $response);
 	};
 };
-
