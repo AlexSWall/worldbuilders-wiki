@@ -5,3 +5,4 @@ Slim 2
 mode.php
 logs
 TODO.txt
+*.config
