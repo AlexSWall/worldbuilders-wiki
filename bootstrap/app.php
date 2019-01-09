@@ -12,7 +12,7 @@ spl_autoload_register( function( $class_name )
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
 $mode = file_get_contents(BASE_PATH . '/mode.php');
-$config = include (BASE_PATH . '/config/' . $mode . '.php');
+$config = include (BASE_PATH . '/config/' . $mode . '.config');
 
 $app = new \Slim\App(['settings' => $config]);
 
@@ -33,14 +33,17 @@ $container['logger'] = function($container) {
 $container->logger->addInfo('Logging added.');
 $container->logger->addInfo('Populating the container.');
 
-$container['auth']               = function($container) { return new \App\Auth\Auth; };
-$container['validator']          = function($container) { return new \App\Validation\Validator; };
-$container['HomeController']     = function($container) { return new \App\Controllers\HomeController($container); };
-$container['AuthController']     = function($container) { return new \App\Controllers\Auth\AuthController($container); };
-$container['PasswordController'] = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
-$container['WikiController']     = function($container) { return new \App\Controllers\WikiController($container); };
-$container['csrf']               = function($container) { return new \Slim\Csrf\Guard; };
-$container['flash']              = function($container) { return new \Slim\Flash\Messages; };
+$container['HashUtil']           = function($container) { return new \App\Helpers\HashUtil($container->get('settings')['app']['hash']); };
+$container['auth']                 = function($container) { return new \App\Auth\Auth($container->HashUtil); };
+$container['randomlib']            = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
+$container['validator']            = function($container) { return new \App\Validation\Validator; };
+$container['HomeController']       = function($container) { return new \App\Controllers\HomeController($container); };
+$container['AuthController']       = function($container) { return new \App\Controllers\Auth\AuthController($container); };
+$container['PasswordController']   = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
+$container['ActivationController'] = function($container) { return new \App\Controllers\Auth\ActivationController($container); };
+$container['WikiController']       = function($container) { return new \App\Controllers\WikiController($container); };
+$container['csrf']                 = function($container) { return new \Slim\Csrf\Guard; };
+$container['flash']                = function($container) { return new \Slim\Flash\Messages; };
 
 
 $container['view'] = function($container)
@@ -61,12 +64,14 @@ $container['view'] = function($container)
 
 	$view->getEnvironment()->addGlobal('flash', $container->flash);
 
+	$view->getEnvironment()->addGlobal('baseUrl', $container->get('settings')['app']['url']);
+
 	return $view;
 };
 
 
 $capsule = new \Illuminate\Database\Capsule\Manager; /* Use database component outside of Laravel. */
-$capsule->addConnection($container['settings']['db']);
+$capsule->addConnection($container->get('settings')['db']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 $container['db'] = function($container) use ($capsule) { return $capsule; };
