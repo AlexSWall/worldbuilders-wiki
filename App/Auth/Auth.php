@@ -6,16 +6,25 @@ use App\Models\User;
 
 class Auth
 {
+	protected $hashUtil;
+
+	public function __construct($hashUtil)
+	{
+		$this->hashUtil = $hashUtil;
+	}
+
 	public function attempt($email, $password)
 	{
-		$user = User::where('email', $email)->first();
+		$user = User::where('email', $email)
+			->where('active', true)
+			->first();
 
 		if (!$user)
 		{
 			return false;
 		}
 
-		if ( password_verify($password, $user->password) )
+		if ( $this->hashUtil->checkPassword($password, $user->password) )
 		{
 			$_SESSION['user'] = $user->id;
 			return true;

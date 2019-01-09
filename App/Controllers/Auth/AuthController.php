@@ -27,21 +27,29 @@ class AuthController extends Controller
 			return $response->withRedirect($this->router->pathFor('auth.signup'));
 		}
 
+		$identifier = $this->container->randomlib->generateString(128);
+
 		$user = User::create([
 			'email' => $request->getParam('email'),
 			'name' => $request->getParam('name'),
-			'password' => password_hash($request->getParam('password'), PASSWORD_DEFAULT, ['cost' => 10])
+			'password' => $this->HashUtil->hashPassword($request->getParam('password')),
+			'active' => false,
+			'active_hash' => $this->HashUtil->hash($identifier)
 		]);
 
-		$this->auth->attempt($user->email, $request->getParam('password'));
+//		$this->auth->attempt($user->email, $request->getParam('password'));
 
-		$this->mailer->send('email/auth/registered.php', ['user' => $user], function($message) use ($user)
-		{
-			$message->to($user->email, $user->name);
-			$message->subject('Thanks for registering.');
-		});
+		$this->mailer->send(
+			'email/auth/registered.php', 
+			['user' => $user, 'identifier' => $identifier],
+			function($message) use ($user)
+			{
+				$message->to($user->email, $user->name);
+				$message->subject('Thanks for registering.');
+			}
+		);
 
-		$this->flash->addMessage('info', 'You have signed up!');
+		$this->flash->addMessage('info', 'You have signed up!  Please activate your account.');
 
 		return $response->withRedirect($this->router->pathFor('home'));
 	}

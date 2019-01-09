@@ -12,13 +12,24 @@ class User extends Model
 		'name',
 		'email',
 		'password',
-		'active'
+		'active',
+		'active_hash',
+		'remember_identifier',
+		'remember_token'
 	];
 
 	public function setPassword($password)
 	{
 		$this->update([
 			'password' => password_hash($password, PASSWORD_DEFAULT)
+		]);
+	}
+
+	public function activateAccount()
+	{
+		$this->update([
+			'active' => true,
+			'active_hash' => null
 		]);
 	}
 }

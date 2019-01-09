@@ -8,10 +8,11 @@ class NotFoundController extends Controller
 {
 	public function dealWithRequest($request, $response)
 	{
-		$this->flash->addMessage('error', 'Page not found!');
-
 		$response = new \Slim\Http\Response(404);
 		$requestPath = substr($request->getUri()->getPath(), 1);
+
+		$this->logger->addInfo('Page not found: ' . $requestPath);
+
 		if ( strpos($requestPath, '/') )
 			/* Has a / in the request path */
 			return $this->view->render($response, 'core/pagenotfound.twig', [ 'requestPath' => $requestPath . 'asd' ] );	

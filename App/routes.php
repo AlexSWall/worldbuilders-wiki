@@ -27,6 +27,8 @@ $app->group('', function()
 	$this->post('/auth/password/change', 'PasswordController:postChangePassword');
 })->add(new AuthMiddleware($container));
 
+$app->get('/activate', 'ActivationController:attemptActivation')->setName('activate');
+
 $app->get('/{page_name}', 'WikiController:serveWebpage');
 
 $app->getContainer()['notFoundHandler'] = function($container)
