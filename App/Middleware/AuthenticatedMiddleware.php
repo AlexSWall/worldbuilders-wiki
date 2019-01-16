@@ -2,7 +2,7 @@
 
 namespace App\Middleware;
 
-class AuthMiddleware extends Middleware
+class AuthenticatedMiddleware extends Middleware
 {
 	public function __invoke($request, $response, $next)
 	{

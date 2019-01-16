@@ -18,6 +18,13 @@ class User extends Model
 		'remember_token'
 	];
 
+	public static function getUser($email)
+	{
+		return User::where('email', $email)
+			->where('active', true)
+			->first();
+	}
+
 	public function setPassword($password)
 	{
 		$this->update([
@@ -31,5 +38,18 @@ class User extends Model
 			'active' => true,
 			'active_hash' => null
 		]);
+	}
+
+	public function updateRememberCredentials($identifier, $token)
+	{
+		$this->update([
+			'remember_identifier' => $identifier,
+			'remember_token' => $token
+		]);
+	}
+
+	public function removeRememberCredentials()
+	{
+		$this->updateRememberCredentials(null, null);
 	}
 }

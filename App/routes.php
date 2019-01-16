@@ -1,6 +1,6 @@
 <?php
 
-use App\Middleware\AuthMiddleware;
+use App\Middleware\AuthenticatedMiddleware;
 use App\Middleware\GuestMiddleware;
 
 /* Equivalent to
@@ -25,7 +25,7 @@ $app->group('', function()
 
 	$this->get('/auth/password/change', 'PasswordController:getChangePassword')->setName('auth.password.change');
 	$this->post('/auth/password/change', 'PasswordController:postChangePassword');
-})->add(new AuthMiddleware($container));
+})->add(new AuthenticatedMiddleware($container));
 
 $app->get('/activate', 'ActivationController:attemptActivation')->setName('activate');
 

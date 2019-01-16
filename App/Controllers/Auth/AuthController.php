@@ -66,18 +66,21 @@ class AuthController extends Controller
 			$request->getParam('password')
 		);
 
-		if ($auth)
-			return $response->withRedirect($this->router->pathFor('home'));
-		else
+		if (!$auth)
 		{
 			$this->flash->addMessage('error', 'Unable to sign in.');
 			return $response->withRedirect($this->router->pathFor('auth.signin'));
 		}
+
+		if ($request->getParam('remember') === 'on')
+			$response = $this->auth->setRememberCookie($response, $request->getParam('email'));
+
+		return $response->withRedirect($this->router->pathFor('home'));
 	}
 
 	public function getSignOut($request, $response)
 	{
-		$this->auth->logout();
+		$response = $this->auth->logout($request, $response);
 
 		return $response->withRedirect($this->router->pathFor('home'));
 	}

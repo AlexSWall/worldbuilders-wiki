@@ -33,9 +33,9 @@ $container['logger'] = function($container) {
 $container->logger->addInfo('Logging added.');
 $container->logger->addInfo('Populating the container.');
 
-$container['HashUtil']           = function($container) { return new \App\Helpers\HashUtil($container->get('settings')['app']['hash']); };
-$container['auth']                 = function($container) { return new \App\Auth\Auth($container->HashUtil); };
+$container['HashUtil']             = function($container) { return new \App\Helpers\HashUtil($container->get('settings')['app']['hash']); };
 $container['randomlib']            = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
+$container['auth']                 = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashUtil, $container->randomlib); };
 $container['validator']            = function($container) { return new \App\Validation\Validator; };
 $container['HomeController']       = function($container) { return new \App\Controllers\HomeController($container); };
 $container['AuthController']       = function($container) { return new \App\Controllers\Auth\AuthController($container); };
@@ -105,6 +105,7 @@ $container->logger->addInfo('Adding middleware.');
 
 $app->add(new \App\Middleware\ValidationErrorsMiddleware($container));
 $app->add(new \App\Middleware\OldInputMiddleware($container));
+$app->add(new \App\Middleware\RememberMeMiddleware($container));
 $app->add(new \App\Middleware\CsrfViewMiddleware($container));
 
 $app->add($container->csrf);
