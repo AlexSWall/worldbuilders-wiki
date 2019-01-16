@@ -4,53 +4,95 @@ namespace App\Auth;
 
 use App\Models\User;
 
+use Dflydev\FigCookies\SetCookie;
+use Dflydev\FigCookies\FigResponseCookies;
+use Dflydev\FigCookies\FigRequestCookies;
+use Carbon\Carbon;
+
 class Auth
 {
 	protected $hashUtil;
+	protected $authConfig;
+	protected $generator;
 
-	public function __construct($hashUtil)
+	public function __construct($authConfig, $hashUtil, $generator)
 	{
 		$this->hashUtil = $hashUtil;
+		$this->authConfig = $authConfig;
+		$this->generator = $generator;
 	}
 
 	public function attempt($email, $password)
 	{
-		$user = User::where('email', $email)
-			->where('active', true)
-			->first();
+		$user = User::getUser($email);
 
 		if (!$user)
-		{
 			return false;
-		}
 
-		if ( $this->hashUtil->checkPassword($password, $user->password) )
-		{
-			$_SESSION['user'] = $user->id;
-			return true;
-		}
-		else
+		if ( !$this->hashUtil->checkPassword($password, $user->password) )
 			return false;
+
+		$_SESSION[$this->authConfig['session']] = $user->id;
+		return true;
+	}
+
+	private function createRememberCookie($value, $expiry_str)
+	{
+		return SetCookie::create($this->authConfig['remember'])
+			->withValue($expiry_str)
+			->withExpires(Carbon::parse($value)->timestamp)
+			->withPath('/');
+	}
+
+	public function setRememberCookie($response, $email)
+	{
+		$user = User::getUser($email);
+
+		$rememberIdentifier = $this->generator->generateString(128);
+		$rememberToken      = $this->generator->generateString(128);
+
+		$user->updateRememberCredentials(
+			$rememberIdentifier,
+			$this->hashUtil->hash($rememberToken)
+		);
+
+		$response = FigResponseCookies::set(
+			$response, 
+			createRememberCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
+		);
+
+		return $response;
 	}
 
 	public function check()
 	{
-		return isset($_SESSION['user']);
+		return isset($_SESSION[$this->authConfig['session']]);
 	}
 
 	public function user()
 	{
-		return User::find($_SESSION['user']);
+		return User::find($_SESSION[$this->authConfig['session']]);
 	}
 
 	public function userSafe()
 	{
 		if ( $this->check() )
-			return User::find($_SESSION['user']);
+			return User::find($_SESSION[$this->authConfig['session']]);
 	}
 
-	public function logout()
+	public function logout($request, $response)
 	{
-		unset($_SESSION['user']);
+		$rememberMeCookie = FigRequestCookies::get($request, $this->authConfig['remember']);
+		$data = $rememberMeCookie->getValue();
+
+		if ( !is_null($data) )
+		{
+			$this->user()->removeRememberCredentials();
+			$response = FigResponseCookies::set($response, createRememberCookie('', '-1 week'));
+		}
+
+		unset($_SESSION[$this->authConfig['session']]);
+
+		return $response;
 	}
 }
