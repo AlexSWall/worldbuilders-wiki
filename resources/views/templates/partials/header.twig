@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/html5reset.css" />
-		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/header.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/navbar.css" />
 		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/main.css" />
 		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/tableofcontents.css" />
 		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/stylesheets/footer.css" />
@@ -18,22 +18,7 @@
 	</head>
 	<body>
 		<div id="pageWrapper">
-			<div id="headerWrapper">
-				<header>
-					<ul>
-						<li><a {% if page_name == "Home" %}class="active" {% endif %}href="Home">Home</a></li>
-						<li class="dropdown"><a {% if page_name == "Locations" %}class="active" {% endif %}href="Locations" class="dropbtn">Locations</a>
-							<div class="dropdown-content">
-								<a href="Guthan">The Kingdom of Guthan</a>
-								<a href="The_Valen_Ministry" onclick="return false;">The Valen Ministry</a>
-								<a href="Dra'akna" onclick="return false;">Dra'akna</a>
-							</div>
-						</li>
-						<li><a {% if page_name == "Add_Page" %}class="active" {% endif %}href="Add_Page">Add Page</a></li>
-						<li style="float:right"><a {% if page_name == "About" %}class="active" {% endif %}href="About">About</a></li>
-					</ul>
-				</header>
-			</div> <!-- headerWrapper -->
+{% include 'templates/partials/old_navigation.twig' %}
 			<main>
 				<div id="contentWrapper">
 					<div id="content">
