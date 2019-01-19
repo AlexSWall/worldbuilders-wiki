@@ -39,8 +39,8 @@ class Auth
 	private function createRememberCookie($value, $expiry_str)
 	{
 		return SetCookie::create($this->authConfig['remember'])
-			->withValue($expiry_str)
-			->withExpires(Carbon::parse($value)->timestamp)
+			->withValue($value)
+			->withExpires(Carbon::parse($expiry_str)->timestamp)
 			->withPath('/');
 	}
 
@@ -58,7 +58,7 @@ class Auth
 
 		$response = FigResponseCookies::set(
 			$response, 
-			createRememberCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
+			$this->createRememberCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
 		);
 
 		return $response;
@@ -88,7 +88,7 @@ class Auth
 		if ( !is_null($data) )
 		{
 			$this->user()->removeRememberCredentials();
-			$response = FigResponseCookies::set($response, createRememberCookie('', '-1 week'));
+			$response = FigResponseCookies::set($response, $this->createRememberCookie('', '-1 week'));
 		}
 
 		unset($_SESSION[$this->authConfig['session']]);

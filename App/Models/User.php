@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-	protected $table = 'users'; /* Not needed due to magic converting User to users. */
-
 	protected $fillable = [
 		'name',
 		'email',
 		'password',
 		'active',
 		'active_hash',
+		'recover_hash',
 		'remember_identifier',
 		'remember_token'
 	];
@@ -51,5 +50,34 @@ class User extends Model
 	public function removeRememberCredentials()
 	{
 		$this->updateRememberCredentials(null, null);
+	}
+ 
+	public function setPasswordRecoveryHash($hashedIdentifier)
+	{
+		$this->update([
+			'recover_hash' => $hashedIdentifier
+		]);
+	}
+
+	public function removePasswordRecoveryHash()
+	{
+		$this->update([
+			'recover_hash' => null
+		]);
+	}
+
+	public function hasPermission($permission)
+	{
+		return (bool) $this->permissions->{$permission};
+	}
+
+	public function isAdmin()
+	{
+		return $this->hasPermission('is_admin');
+	}
+
+	public function permissions()
+	{
+		return $this->hasOne('App\Models\UserPermission', 'user_id');
 	}
 }

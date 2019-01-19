@@ -29,8 +29,5 @@ class ActivationController extends Controller
 			$this->flash->addMessage('info', 'Your account has been activated and you can sign in.');
 			return $response->withRedirect($this->router->pathFor('home'));
 		}
-
-		//return $this->view->render($response, 'auth/password/change.twig');
-		//return $response->write(var_dump($user));
 	}
 }

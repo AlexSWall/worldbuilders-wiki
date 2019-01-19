@@ -2,9 +2,11 @@
 
 namespace App\Controllers\Auth;
 
+use Respect\Validation\Validator as v;
+
 use App\Models\User;
 use App\Controllers\Controller;
-use Respect\Validation\Validator as v;
+use App\Models\UserPermission;
 
 class AuthController extends Controller
 {
@@ -37,10 +39,12 @@ class AuthController extends Controller
 			'active_hash' => $this->HashUtil->hash($identifier)
 		]);
 
-//		$this->auth->attempt($user->email, $request->getParam('password'));
+		$user->permissions()->create(UserPermission::$defaults);
+
+		/* $this->auth->attempt($user->email, $request->getParam('password')); */
 
 		$this->mailer->send(
-			'email/auth/registered.php', 
+			'email/auth/registered.twig', 
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{

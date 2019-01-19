@@ -9,13 +9,15 @@
 				</div>
 				<div class="card-body">
 					<form action='{{ path_for("auth.signin") }}' method='post' autocomplete='off'>
+
 						<div class='form-group{{ errors.email ? " is-invalid" : "" }}'>
 							<label for='email'>Email</label>
-							<input type='email' name='email' id='email' placeholder='you@domain.com' class='form-control' value='{{ old.email }}'>
+							<input type='text' name='email' id='email' placeholder='you@domain.com' class='form-control' value='{{ old.email }}'>
 {% if errors.email %}
 								<span class='help-block'>{{ errors.email | first }}</span>
 {% endif %}
 						</div>
+
 						<div class='form-group{{ errors.password ? " is-invalid" : "" }}'>
 							<label for='password'>Password</label>
 							<input type='password' name='password' id='password' class='form-control'>
@@ -23,10 +25,14 @@
 								<span class='help-block'>{{ errors.password | first }}</span>
 {% endif %}
 						</div>
+
+						<a href="{{ path_for('auth.password.recovery') }}">Forgotten Password</a>
+
 						<div class='form-group form-check'>
 							<input type='checkbox' class="form-check-input" name='remember' id='remember'>
 							<label class="form-check-label" for='remember'>Remember Me</label>
 						</div>
+
 						<button type='submit' class='btn btn-default'>Sign In</button>
 
 {{ csrf.field | raw }}

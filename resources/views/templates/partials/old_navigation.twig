@@ -1,7 +1,7 @@
 			<div id="navbarWrapper">
 				<div id="navbar">
 					<div id="navbar-brand-wrapper">
-						<a id="navbar-brand" {% if page_name == "Home" %}class="active" {% endif %}href="Home">
+						<a id="navbar-brand" {% if page_name == "Home" %}class="active" {% endif %}href="{{ path_for('home') }}">
 							My Website
 						</a>
 					</div>
@@ -24,7 +24,12 @@
 								</li>
 							</ul>
 							<ul class="navbar-list navbar-list-right">
-		{% if auth.check %}
+{% if auth.check %}
+{% if auth.isAdmin %}
+								<li class="navbar-item">
+									<a href="{{ path_for('admin.example') }}">Administration</a>
+								</li>
+{% endif %}
 								<li class="navbar-item navbar-dropdown">
 									<a class="navbar-dropbtn" href="#" onclick="return false;">
 										{{ auth.user.name }}
@@ -34,14 +39,14 @@
 										<a href="{{ path_for('auth.signout') }}">Sign Out</a>
 									</div>
 								</li>
-		{% else %}
-								<li class="navbar-item dropdown">
+{% else %}
+								<li class="navbar-item">
 									<a href="{{ path_for('auth.signup') }}">Sign up</a>
 								</li>
-								<li class="navbar-item dropdown">
+								<li class="navbar-item">
 									<a href="{{ path_for('auth.signin') }}">Sign in</a>
 								</li>
-		{% endif %}
+{% endif %}
 							</ul>
 						</div>
 					</div>

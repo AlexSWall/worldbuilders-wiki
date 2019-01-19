@@ -39,6 +39,7 @@ $container['auth']                 = function($container) { return new \App\Auth
 $container['validator']            = function($container) { return new \App\Validation\Validator; };
 $container['HomeController']       = function($container) { return new \App\Controllers\HomeController($container); };
 $container['AuthController']       = function($container) { return new \App\Controllers\Auth\AuthController($container); };
+$container['AdminController']      = function($container) { return new \App\Controllers\Auth\AdminController($container); };
 $container['PasswordController']   = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
 $container['ActivationController'] = function($container) { return new \App\Controllers\Auth\ActivationController($container); };
 $container['WikiController']       = function($container) { return new \App\Controllers\WikiController($container); };
@@ -57,9 +58,20 @@ $container['view'] = function($container)
 		$container->request->getUri()
 	));
 
+	$check = $container->auth->check();
+	$user = null;
+	$isAdmin = null;
+
+	if ( $check )
+	{
+		$user = $container->auth->user();
+		$isAdmin = $user->isAdmin();
+	}
+
 	$view->getEnvironment()->addGlobal('auth', [
-		'check' => $container->auth->check(),
-		'user' => $container->auth->userSafe() /* This runs automatically, even if left uncalled, so we must get the user 'safely'. */
+		'check' => $check,
+		'user' => $user, /* This runs automatically, even if left uncalled, so we must get the user 'safely'. */
+		'isAdmin' => $isAdmin
 	]);
 
 	$view->getEnvironment()->addGlobal('flash', $container->flash);
