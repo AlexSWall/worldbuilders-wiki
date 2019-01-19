@@ -4,11 +4,11 @@ namespace App\Validation\Exceptions;
 
 use Respect\Validation\Exceptions\ValidationException;
 
-class EmailAvailableException extends ValidationException
+class ConfirmedPasswordMatchesException extends ValidationException
 {
 	public static $defaultTemplates = [
 		self::MODE_DEFAULT => [
-			self::STANDARD => 'Email address is already taken.',
+			self::STANDARD => 'The submitted passwords do not match.',
 		],
 	];
 }
