@@ -6,12 +6,14 @@ use App\Models\Webpage;
 
 class NotFoundController extends Controller
 {
+	static $logger;
+
 	public function dealWithRequest($request, $response)
 	{
 		$response = new \Slim\Http\Response(404);
 		$requestPath = substr($request->getUri()->getPath(), 1);
 
-		$this->logger->addInfo('Page not found: ' . $requestPath);
+		self::$logger->addInfo('Page not found: ' . $requestPath);
 
 		if ( strpos($requestPath, '/') )
 			/* Has a / in the request path */

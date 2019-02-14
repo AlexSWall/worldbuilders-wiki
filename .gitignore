@@ -7,3 +7,4 @@ mode.php
 logs
 TODO.txt
 *.config
+composer.lock

@@ -2,44 +2,61 @@
 
 namespace App\Controllers\Auth;
 
-use Respect\Validation\Validator as v;
-
 use App\Models\User;
+use App\Models\UserPermissions;
+use App\Models\UserDetails;
+
 use App\Controllers\Controller;
-use App\Models\UserPermission;
+
+use App\Validation\Rules as Rules;
 
 class AuthController extends Controller
 {
+	static $logger;
+
 	public function getSignup($request, $response)
 	{
 		return $this->view->render($response, 'auth/signup.twig');
 	}
 
+	/* Receives by reference */
+	public static function cleanSignupCredentials(& $params)
+	{
+		$params['preferred_name'] = trim(preg_replace('/\s+/', ' ', $params['preferred_name']));
+	}
+
 	public function postSignup($request, $response)
 	{
-		$validation = $this->validator->validate($request, [
-			'email' => v::noWhitespace()->notEmpty()->email()->emailAvailable(),
-			'name' => v::noWhitespace()->notEmpty()->alpha(),
-			'password' => v::noWhitespace()->notEmpty()
+		$signupParams = $request->getParams();
+
+		self::cleanSignupCredentials($signupParams); /* Passes by reference */
+
+		$validation = $this->validator->validate($signupParams, [
+			'preferred_name' => Rules::preferredNameRules(),
+			'username' => Rules::usernameAvailableRules(),
+			'email' => Rules::emailAvailableRules(),
+			'password' => Rules::passwordRules(),
+			'password_confirm' => Rules::passwordConfirmationRules($signupParams['password']),
 		]);
 
 		if ( $validation->hasFailed() )
-		{
-			/* Redirect back */
 			return $response->withRedirect($this->router->pathFor('auth.signup'));
-		}
 
 		$identifier = $this->container->randomlib->generateString(128);
 
 		$user = User::create([
-			'email' => $request->getParam('email'),
-			'name' => $request->getParam('name'),
-			'password' => $this->HashUtil->hashPassword($request->getParam('password')),
+			'username' => $signupParams['username'],
+			'email' => $signupParams['email'],
+			'password' => $this->HashUtil->hashPassword($signupParams['password']),
 			'active' => false,
 			'active_hash' => $this->HashUtil->hash($identifier)
 		]);
 
-		$user->permissions()->create(UserPermission::$defaults);
+		$user->permissions()->create(UserPermissions::$defaults);
+
+		$user->details()->create(UserDetails::createUserDetailsArray([
+			'preferred_name' => $signupParams['preferred_name']
+		]));
 
 		/* $this->auth->attempt($user->email, $request->getParam('password')); */
 
@@ -48,7 +65,7 @@ class AuthController extends Controller
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{
-				$message->to($user->email, $user->name);
+				$message->to($user->email, $user->details()->preferred_name);
 				$message->subject('Thanks for registering.');
 			}
 		);
@@ -65,8 +82,16 @@ class AuthController extends Controller
 
 	public function postSignIn($request, $response)
 	{
+		$activated = $this->auth->checkActivated($request->getParam('identity'));
+		
+		if (!$activated)
+		{
+			$this->flash->addMessage('error', 'Account not yet activated. Check your emails for the account activation link.');
+			return $response->withRedirect($this->router->pathFor('auth.signin'));
+		}
+
 		$auth = $this->auth->attempt(
-			$request->getParam('email'),
+			$request->getParam('identity'),
 			$request->getParam('password')
 		);
 
@@ -77,7 +102,7 @@ class AuthController extends Controller
 		}
 
 		if ($request->getParam('remember') === 'on')
-			$response = $this->auth->setRememberCookie($response, $request->getParam('email'));
+			$response = $this->auth->setRememberCookie($response, $request->getParam('identity'));
 
 		return $response->withRedirect($this->router->pathFor('home'));
 	}

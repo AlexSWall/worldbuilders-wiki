@@ -10,15 +10,15 @@ return [
 		]
 	],
 	'logger' => [
-		'name' => 'name',
+		'name' => 'channel name',
 		'level' => Monolog\Logger::DEBUG,
-		'path' => BASE_PATH . '/logs/app.log'
+		'path' => BASE_PATH . '/relative/path.log'
 	],
 	'db' => [
 		'driver' => 'mysql',
 		'host' => '127.0.0.1',
 		'database' => 'database',
-		'username' => 'root',
+		'username' => 'username',
 		'password' => 'password',
 		'charset' => 'utf8',
 		'collation' => 'utf8_unicode_ci',

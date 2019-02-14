@@ -8,10 +8,9 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
-		public function index($request, $response)
+	public function index($request, $response)
 	{
 		return $this->view->render($response, 'admin/base.twig', [
-			
 		]);
 	}
 }

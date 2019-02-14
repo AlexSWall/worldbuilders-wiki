@@ -11,6 +11,8 @@ use Carbon\Carbon;
 
 class Auth
 {
+	static $db_logger;
+
 	protected $hashUtil;
 	protected $authConfig;
 	protected $generator;
@@ -22,9 +24,15 @@ class Auth
 		$this->generator = $generator;
 	}
 
-	public function attempt($email, $password)
+	public function checkActivated($identity)
 	{
-		$user = User::getUser($email);
+		$user = User::getUser($identity);
+		return ( $user->active === 1 );
+	}
+
+	public function attempt($identity, $password)
+	{
+		$user = User::getUser($identity);
 
 		if (!$user)
 			return false;
@@ -44,9 +52,9 @@ class Auth
 			->withPath('/');
 	}
 
-	public function setRememberCookie($response, $email)
+	public function setRememberCookie($response, $identity)
 	{
-		$user = User::getUser($email);
+		$user = User::getUser($identity);
 
 		$rememberIdentifier = $this->generator->generateString(128);
 		$rememberToken      = $this->generator->generateString(128);
@@ -87,7 +95,9 @@ class Auth
 
 		if ( !is_null($data) )
 		{
-			$this->user()->removeRememberCredentials();
+			if ($this->user())
+				$this->user()->removeRememberCredentials();
+
 			$response = FigResponseCookies::set($response, $this->createRememberCookie('', '-1 week'));
 		}
 
