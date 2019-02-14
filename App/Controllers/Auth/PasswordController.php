@@ -3,8 +3,10 @@
 namespace App\Controllers\Auth;
 
 use App\Models\User;
+
 use App\Controllers\Controller;
-use Respect\Validation\Validator as v;
+
+use App\Validation\Rules as Rules;
 
 class PasswordController extends Controller
 {
@@ -18,15 +20,18 @@ class PasswordController extends Controller
 		if ( !$this->auth->check() )
 			return $response->withRedirect($this->router->pathFor('home'));
 
+		$new_password = $request->getParam('password_new');
+
 		$validation = $this->validator->validate($request, [
-			'password_old' => v::noWhitespace()->notEmpty()->matchesPassword($this->auth->user()->password),
-			'password' => v::noWhitespace()->notEmpty()
+			'password_old' => Rules::passwordCorrectRules($this->auth->user()->password),
+			'password_new' => Rules::passwordRules(),
+			'password_new_confirm' => Rules::passwordConfirmationRules($new_password)
 		]);
 
 		if ($validation->hasFailed())
 			return $response->withRedirect($this->router->pathFor('auth.password.change'));
 
-		$this->auth->user()->setPassword($request->getParam('password'));
+		$this->auth->user()->setPassword($new_password);
 
 		$this->flash->addMessage('info', 'Your password has been changed.');
 		
@@ -43,7 +48,7 @@ class PasswordController extends Controller
 		$email = $request->getParam('email');
 
 		$validation = $this->validator->validate($request, [
-			'email' => v::noWhitespace()->notEmpty()->email()->emailInUse()
+			'email' => Rules::emailInUseRules()
 		]);
 
 		if ($validation->hasFailed())
@@ -61,7 +66,7 @@ class PasswordController extends Controller
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{
-				$message->to($user->email, $user->name);
+				$message->to($user->email, $user->details()->preferred_name);
 				$message->subject('Password Recovery');
 			}
 		);
@@ -99,7 +104,7 @@ class PasswordController extends Controller
 		$email = $request->getParam('email');
 		$identifier = $request->getParam('identifier');
 
-		$password = $request->getParam('password');
+		$password = $request->getParam('password_new');
 
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
 
@@ -109,8 +114,8 @@ class PasswordController extends Controller
 			return $response->withRedirect($this->router->pathFor('home'));
 
 		$validation = $this->validator->validate($request, [
-			'password' => v::noWhitespace()->notEmpty(),
-			'password_confirm' => v::confirmedPasswordMatches($password)
+			'password_new' => Rules::passwordRules(),
+			'password_new_confirm' => Rules::passwordConfirmationRules($password)
 		]);
 
 		if ($validation->hasFailed())

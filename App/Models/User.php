@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
 	protected $fillable = [
-		'name',
+		'username',
 		'email',
 		'password',
 		'active',
@@ -17,10 +17,13 @@ class User extends Model
 		'remember_token'
 	];
 
-	public static function getUser($email)
+	public static function getUser($identity)
 	{
-		return User::where('email', $email)
-			->where('active', true)
+		return User::where(function($query) use ($identity)
+				{
+					return $query->where('email', $identity)
+						->orwhere('username', $identity);
+				})
 			->first();
 	}
 
@@ -66,18 +69,33 @@ class User extends Model
 		]);
 	}
 
-	public function hasPermission($permission)
+	public function hasPermissions($permissions)
 	{
-		return (bool) $this->permissions->{$permission};
+		return (bool) $this->permissions->{$permissions};
 	}
 
 	public function isAdmin()
 	{
-		return $this->hasPermission('is_admin');
+		return $this->hasPermissions('is_admin');
 	}
 
 	public function permissions()
 	{
-		return $this->hasOne('App\Models\UserPermission', 'user_id');
+		return $this->hasOne('App\Models\UserPermissions', 'user_id', 'id');
+	}
+
+	public function getPermissions()
+	{
+		return $this->permissions;
+	}
+
+	public function details()
+	{
+		return $this->hasOne('App\Models\UserDetails', 'user_id', 'id');
+	}
+
+	public function getDetails()
+	{
+		return $this->details;
 	}
 }

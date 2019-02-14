@@ -10,11 +10,11 @@
 				<div class="card-body">
 					<form action='{{ path_for("auth.signin") }}' method='post' autocomplete='off'>
 
-						<div class='form-group{{ errors.email ? " is-invalid" : "" }}'>
-							<label for='email'>Email</label>
-							<input type='text' name='email' id='email' placeholder='you@domain.com' class='form-control' value='{{ old.email }}'>
-{% if errors.email %}
-								<span class='help-block'>{{ errors.email | first }}</span>
+						<div class='form-group{{ errors.identity ? " is-invalid" : "" }}'>
+							<label for='identity'>Username or Email</label>
+							<input type='text' name='identity' id='identity' placeholder='you@domain.com' class='form-control' value='{{ old.identity }}'>
+{% if errors.identity %}
+								<span class='help-block'>{{ errors.identity | first }}</span>
 {% endif %}
 						</div>
 

@@ -25,14 +25,18 @@
 							</ul>
 							<ul class="navbar-list navbar-list-right">
 {% if auth.check %}
-{% if auth.isAdmin %}
+{% if auth.user.permissions.is_admin %}
 								<li class="navbar-item">
 									<a href="{{ path_for('admin.example') }}">Administration</a>
 								</li>
 {% endif %}
 								<li class="navbar-item navbar-dropdown">
 									<a class="navbar-dropbtn" href="#" onclick="return false;">
-										{{ auth.user.name }}
+{% if auth.user.details.preferred_name %}
+										{{auth.user.details.preferred_name}}
+{% else %}
+										Account
+{% endif %}
 									</a>
 									<div class="dropdown-content">
 										<a href="{{ path_for('auth.password.change') }}">Change Password</a>

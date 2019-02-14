@@ -10,11 +10,11 @@ class ActivationController extends Controller
 {
 	public function attemptActivation($request, $response)
 	{
-		$identifier = $request->getQueryParam('identifier');
+		$identifier = $request->getParam('identifier');
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
 
 		$user = User::where([
-			'email' => $request->getQueryParam('email'),
+			'email' => $request->getParam('email'),
 			'active' => false
 		])->first();
 

@@ -1,37 +1,55 @@
 <?php
 
-session_start();
-
-spl_autoload_register( function( $class_name )
-{
-	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
-	if ( file_exists($class_path) )
-	    include $class_path; /* No need for include_once; if it had been included, we wouldn't be here. */
-} );
+/* == Load dependencies and get config == */
 
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
-$mode = file_get_contents(BASE_PATH . '/mode.php');
-$config = include (BASE_PATH . '/config/' . $mode . '.config');
+require BASE_PATH . '/App/Logging/LoggerRegistry.php';
+require BASE_PATH . '/App/Logging/Logger.php';
+
+$config = require BASE_PATH . '/config/' . file_get_contents(BASE_PATH . '/mode.php') . '.config';
+
+/* == Set up logging == */
+
+$logger_names = ['logger' => \App\Logging\LoggerRegistry::GENERAL_LOGGER];
+
+foreach ($config['loggers'] as $logger_ref => $logger_config)
+{
+	\App\Logging\LoggerRegistry::addLoggerFromConfig($logger_ref, $logger_config);
+	$logger_names[$logger_config['logger_name']] = $logger_ref;
+}
+
+$logger = \App\Logging\LoggerRegistry::get(\App\Logging\LoggerRegistry::SETUP_LOGGER);
+
+spl_autoload_register( function( $class_name ) use ($logger, $logger_names)
+{
+	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
+	if ( file_exists($class_path) )
+	{
+		$logger->addInfo('Including ' . $class_name);
+		include $class_path; /* No need for include_once; if it had been included, we wouldn't be here. */
+
+		/* Logging black magic: initialising the static loggers after autoloading classes. */
+		foreach ( $logger_names as $logger_name => $logger_ref )
+			if ( property_exists($class_name, $logger_name) )
+				$class_name::$$logger_name = \App\Logging\LoggerRegistry::get($logger_ref);
+	}
+} );
+
+$logger->addInfo('');
+$logger->addInfo('Setup starting.');
+
+/* == Begin setup == */
+
+session_start();
 
 $app = new \Slim\App(['settings' => $config]);
 
 $container = $app->getContainer();
 
-
 /* == Container Items == */
 
-$container['logger'] = function($container) {
-    $logger = new \Monolog\Logger('my_logger');
-    $file_handler = new \Monolog\Handler\StreamHandler(BASE_PATH . '/logs/app.log');
-    $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
-    $file_handler->setFormatter($formatter);
-    $logger->pushHandler($file_handler);
-    return $logger;
-};
-
-$container->logger->addInfo('Logging added.');
-$container->logger->addInfo('Populating the container.');
+$logger->addInfo('Populating the container.');
 
 $container['HashUtil']             = function($container) { return new \App\Helpers\HashUtil($container->get('settings')['app']['hash']); };
 $container['randomlib']            = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
@@ -59,19 +77,11 @@ $container['view'] = function($container)
 	));
 
 	$check = $container->auth->check();
-	$user = null;
-	$isAdmin = null;
-
-	if ( $check )
-	{
-		$user = $container->auth->user();
-		$isAdmin = $user->isAdmin();
-	}
+	$user = $container->auth->userSafe();
 
 	$view->getEnvironment()->addGlobal('auth', [
 		'check' => $check,
-		'user' => $user, /* This runs automatically, even if left uncalled, so we must get the user 'safely'. */
-		'isAdmin' => $isAdmin
+		'user' => $user
 	]);
 
 	$view->getEnvironment()->addGlobal('flash', $container->flash);
@@ -113,8 +123,9 @@ $container['mailer'] = function($container)
 
 /* == Middleware == */
 
-$container->logger->addInfo('Adding middleware.');
+$logger->addInfo('Adding middleware.');
 
+$app->add(new \App\Middleware\LogRequestMiddleware($container));
 $app->add(new \App\Middleware\ValidationErrorsMiddleware($container));
 $app->add(new \App\Middleware\OldInputMiddleware($container));
 $app->add(new \App\Middleware\RememberMeMiddleware($container));
@@ -125,14 +136,14 @@ $app->add($container->csrf);
 
 /* == Routes == */
 
-$container->logger->addInfo('Adding the routes.');
+$logger->addInfo('Adding the routes.');
 
 require BASE_PATH . '/App/routes.php';
 
 /* == Miscellaneous == */
 
-$container->logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
+$logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
 
 Respect\Validation\Validator::with('App\\Validation\\Rules\\');
 
-$container->logger->addInfo('Finished running bootstrap/app.php');
+$logger->addInfo('Finished running bootstrap/app.php');
