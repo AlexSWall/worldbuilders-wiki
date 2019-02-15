@@ -1,6 +1,6 @@
 body {
-	/*background-image: url("https://www.pixelstalk.net/wp-content/uploads/2016/04/Fantasy-wallpapers-HD.jpg");*/
-	background: #bbb url("http://localhost:8080/res/background.jpg") fixed;
+	/* background-image: url("https://www.pixelstalk.net/wp-content/uploads/2016/04/Fantasy-wallpapers-HD.jpg"); */
+	background: #bbb url("http://localhost:8080/resources/wiki/res/background.jpg") fixed;
 	background-size: cover;
 }
 
