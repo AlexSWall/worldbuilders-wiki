@@ -12,7 +12,7 @@ class PasswordController extends Controller
 {
 	public function getChangePassword($request, $response)
 	{
-		return $this->view->render($response, 'auth/password/changepassword.twig');
+		return $this->view->render($response, 'auth/password/changepassword.twig', ['title' => "Change Your Password"]);
 	}
 
 	public function postChangePassword($request, $response)
@@ -40,7 +40,7 @@ class PasswordController extends Controller
 
 	public function getPasswordRecovery($request, $response)
 	{
-		return $this->view->render($response, 'auth/password/passwordrecovery.twig');
+		return $this->view->render($response, 'auth/password/passwordrecovery.twig', ['title' => "Password Recovery"]);
 	}
 
 	public function postPasswordRecovery($request, $response)
@@ -94,6 +94,7 @@ class PasswordController extends Controller
 			return $response->withRedirect($this->router->pathFor('home'));
 
 		return $this->view->render($response, 'auth/password/resetpassword.twig', [
+			'title' => "Reset Your Password",
 			'email' => $email,
 			'identifier' => $identifier
 		]);
