@@ -13,11 +13,11 @@ $app->get('/', function ($request, $response, $args) {
 
 $app->group('', function()
 {
-	$this->get('/Sign_up', 'AuthController:getSignup')->setName('auth.signup');
-	$this->post('/Sign_up', 'AuthController:postSignup');
+	$this->get('/Sign_Up', 'AuthController:getSignup')->setName('auth.signup');
+	$this->post('/Sign_Up', 'AuthController:postSignup');
 
-	$this->get('/Sign_in', 'AuthController:getSignIn')->setName('auth.signin');
-	$this->post('/Sign_in', 'AuthController:postSignIn');
+	$this->get('/Sign_In', 'AuthController:getSignIn')->setName('auth.signin');
+	$this->post('/Sign_In', 'AuthController:postSignIn');
 
 	$this->get('/Password_Recovery', 'PasswordController:getPasswordRecovery')->setName('auth.password.recovery');
 	$this->post('/Password_Recovery', 'PasswordController:postPasswordRecovery');
