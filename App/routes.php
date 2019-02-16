@@ -13,33 +13,33 @@ $app->get('/', function ($request, $response, $args) {
 
 $app->group('', function()
 {
-	$this->get('/auth/signup', 'AuthController:getSignup')->setName('auth.signup');
-	$this->post('/auth/signup', 'AuthController:postSignup');
+	$this->get('/Sign_up', 'AuthController:getSignup')->setName('auth.signup');
+	$this->post('/Sign_up', 'AuthController:postSignup');
 
-	$this->get('/auth/signin', 'AuthController:getSignIn')->setName('auth.signin');
-	$this->post('/auth/signin', 'AuthController:postSignIn');
+	$this->get('/Sign_in', 'AuthController:getSignIn')->setName('auth.signin');
+	$this->post('/Sign_in', 'AuthController:postSignIn');
 
-	$this->get('/auth/password-recovery', 'PasswordController:getPasswordRecovery')->setName('auth.password.recovery');
-	$this->post('/auth/password-recovery', 'PasswordController:postPasswordRecovery');
+	$this->get('/Password_Recovery', 'PasswordController:getPasswordRecovery')->setName('auth.password.recovery');
+	$this->post('/Password_Recovery', 'PasswordController:postPasswordRecovery');
 
-	$this->get('/auth/reset-password', 'PasswordController:getResetPassword')->setName('auth.password.reset');
-	$this->post('/auth/reset-password', 'PasswordController:postResetPassword');
+	$this->get('/Reset_Password', 'PasswordController:getResetPassword')->setName('auth.password.reset');
+	$this->post('/Reset_Password', 'PasswordController:postResetPassword');
 })->add(new GuestMiddleware($container));
 
 $app->group('', function()
 {
-	$this->get('/auth/signout', 'AuthController:getSignOut')->setName('auth.signout');
+	$this->get('/Sign_out', 'AuthController:getSignOut')->setName('auth.signout');
 
-	$this->get('/auth/password/change', 'PasswordController:getChangePassword')->setName('auth.password.change');
-	$this->post('/auth/password/change', 'PasswordController:postChangePassword');
+	$this->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
+	$this->post('/Change_Password', 'PasswordController:postChangePassword');
 })->add(new AuthenticatedMiddleware($container));
 
 $app->group('', function()
 {
-	$this->get('/admin/example', 'AdminController:index')->setName('admin.example');
+	$this->get('/admin/home', 'AdminController:index')->setName('admin.home');
 })->add(new AdministratorMiddleware($container));
 
-$app->get('/auth/activate', 'ActivationController:attemptActivation')->setName('activate');
+$app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
 
 $app->get('/{page_name}', 'WikiController:serveWebpage');
 

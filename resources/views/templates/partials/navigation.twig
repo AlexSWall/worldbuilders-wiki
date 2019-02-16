@@ -27,7 +27,7 @@
 {% if auth.check %}
 {% if auth.user.permissions.is_admin %}
 								<li class="navbar-item">
-									<a href="{{ path_for('admin.example') }}">Administration</a>
+									<a href="{{ path_for('admin.home') }}">Administration</a>
 								</li>
 {% endif %}
 								<li class="navbar-item navbar-dropdown">
