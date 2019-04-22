@@ -1,0 +1,28 @@
+
+
+/* Add more, e.g. body */
+
+
+#mainPanel a:link {
+	color: #0000b3;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+#mainPanel a:visited {
+	color: #0000b3;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+#mainPanel a:hover {
+	color: #0000b3;
+	background-color: transparent;
+	text-decoration: underline;
+}
+
+#mainPanel a:active {
+	color: #0000b3;
+	background-color: transparent;
+	text-decoration: underline;
+}
