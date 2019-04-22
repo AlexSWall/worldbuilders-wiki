@@ -20,7 +20,7 @@ main {
 }
 
 #content {
-	padding-top: 46px; /* 45 = 14 + 17 + 14 + 1. */;
+	padding-top: 42px; /* 42 = 14 + 14 + 14 (navbar a links) */;
 	padding-bottom: 50px;
 }
 
@@ -42,36 +42,14 @@ main {
 	background: #fff3e6;
 }
 
-#mainPanel a:link {
-	color: #0000b3;
-	background-color: transparent;
-	text-decoration: none;
-}
-
-#mainPanel a:visited {
-	color: #0000b3;
-	background-color: transparent;
-	text-decoration: none;
-}
-
-#mainPanel a:hover {
-	color: #0000b3;
-	background-color: transparent;
-	text-decoration: underline;
-}
-
-#mainPanel a:active {
-	color: #0000b3;
-	background-color: transparent;
-	text-decoration: underline;
-}
-
+/* For ToC */
 #mainPanel a.anchor {
 	color: black;
 	background-color: transparent;
 	text-decoration: none;
 }
 
+/* For ToC */
 #mainPanel a.anchor:before {
 	content: '';
 	display: block;

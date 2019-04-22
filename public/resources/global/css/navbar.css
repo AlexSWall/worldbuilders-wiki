@@ -17,9 +17,10 @@
 	margin-left: auto;
 	margin-right: auto;
 	width: 90%;
-	height: 20px;
-	max-height: : 20px;
+	height: 42px; /* 14 + 14 + 14 (navbar a) */
 	position: relative;
+	
+	line-height: 1;
 }
 
 #navbar-brand-wrapper {

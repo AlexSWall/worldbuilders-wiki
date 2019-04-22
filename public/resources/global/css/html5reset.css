@@ -102,3 +102,10 @@ hr {
 input, select {
 	vertical-align:middle;
 }
+
+/* Change from content-box to border-box, to include padding and border within width. */
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
