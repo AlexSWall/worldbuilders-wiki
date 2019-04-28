@@ -9,3 +9,5 @@ TODO.txt
 *.config
 composer.lock
 other
+view/node_modules
+view/build
