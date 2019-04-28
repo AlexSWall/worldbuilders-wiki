@@ -25,6 +25,6 @@ class WikiController extends Controller
 		foreach( $arg_names as $arg )
 			$arg_map[$arg] = ${$arg};
 
-		return $this->view->render($response, 'wiki/wikipage.twig', $arg_map);
+		return $this->view->render($response, 'wiki/index.twig', ['wiki' => $arg_map]);
 	}
 }
