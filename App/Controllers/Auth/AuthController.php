@@ -44,13 +44,12 @@ class AuthController extends Controller
 
 		$identifier = $this->container->randomlib->generateString(128);
 
-		$user = User::create([
-			'username' => $signupParams['username'],
-			'email' => $signupParams['email'],
-			'password' => $this->HashUtil->hashPassword($signupParams['password']),
-			'active' => false,
-			'active_hash' => $this->HashUtil->hash($identifier)
-		]);
+		$user = User::createInactiveUser(
+			$signupParams['username'],
+			$signupParams['email'],
+			$this->HashUtil->hashPassword($signupParams['password']),
+			$this->HashUtil->hash($identifier)
+		);
 
 		$user->permissions()->create(UserPermissions::$defaults);
 
@@ -65,7 +64,7 @@ class AuthController extends Controller
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{
-				$message->to($user->email, $user->details()->preferred_name);
+				$message->to($user->getEmail(), $user->details()->getPreferredName());
 				$message->subject('Thanks for registering.');
 			}
 		);
@@ -83,7 +82,7 @@ class AuthController extends Controller
 	public function postSignIn($request, $response)
 	{
 		$activated = $this->auth->checkActivated($request->getParam('identity'));
-		
+
 		if (!$activated)
 		{
 			$this->flash->addMessage('error', 'Account not yet activated. Check your emails for the account activation link.');

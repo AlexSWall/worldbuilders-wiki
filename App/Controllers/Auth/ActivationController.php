@@ -13,12 +13,9 @@ class ActivationController extends Controller
 		$identifier = $request->getParam('identifier');
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
 
-		$user = User::where([
-			'email' => $request->getParam('email'),
-			'active' => false
-		])->first();
+		$user = User::getInactiveUserByEmail($request->getParam('email'));
 
-		if ( !$user || !$this->HashUtil->checkHash($user->active_hash, $hashedIdentifier))
+		if ( !$user || !$this->HashUtil->checkHash($user->getActiveHash(), $hashedIdentifier))
 		{
 			$this->flash->addMessage('info', 'There was a problem activating your account');
 			return $response->withRedirect($this->router->pathFor('home'));

@@ -47,15 +47,14 @@ class RememberMeMiddleware extends Middleware
 		$identifier = $credentials[0];
 		$token = $this->HashUtil->hash($credentials[1]);
 
-		$user = User::where('remember_identifier', $identifier)
-			->first();
+		$user = User::getUserByRememberMeIdentifier($identifier);
 
 		if (!$user)
 			return false;
 
-		if (!$this->HashUtil->checkHash($token, $user->remember_token))
+		if (!$this->HashUtil->checkHash($token, $user->getRememberMeToken()))
 		{
-			$user->removeRememberCredentials();
+			$user->removeRememberMeCredentials();
 			return false;
 		}
 
