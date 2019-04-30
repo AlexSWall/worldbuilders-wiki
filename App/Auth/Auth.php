@@ -26,21 +26,20 @@ class Auth
 
 	public function checkActivated($identity)
 	{
-		$user = User::getUser($identity);
-		return ( $user->active === 1 );
+		return User::getUserByIdentity($identity)->isActive();
 	}
 
 	public function attempt($identity, $password)
 	{
-		$user = User::getUser($identity);
+		$user = User::getUserByIdentity($identity);
 
 		if (!$user)
 			return false;
 
-		if ( !$this->hashUtil->checkPassword($password, $user->password) )
+		if ( !$this->hashUtil->checkPassword($password, $user->getPasswordHash()) )
 			return false;
 
-		$_SESSION[$this->authConfig['session']] = $user->id;
+		$_SESSION[$this->authConfig['session']] = $user->getId();
 		return true;
 	}
 
@@ -54,7 +53,7 @@ class Auth
 
 	public function setRememberCookie($response, $identity)
 	{
-		$user = User::getUser($identity);
+		$user = User::getUserByIdentity($identity);
 
 		$rememberIdentifier = $this->generator->generateString(128);
 		$rememberToken      = $this->generator->generateString(128);
@@ -79,13 +78,13 @@ class Auth
 
 	public function user()
 	{
-		return User::find($_SESSION[$this->authConfig['session']]);
+		return User::getUserByDatabaseId($_SESSION[$this->authConfig['session']]);
 	}
 
 	public function userSafe()
 	{
 		if ( $this->check() )
-			return User::find($_SESSION[$this->authConfig['session']]);
+			return User::getUserByDatabaseId($_SESSION[$this->authConfig['session']]);
 	}
 
 	public function logout($request, $response)

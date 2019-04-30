@@ -20,18 +20,18 @@ class PasswordController extends Controller
 		if ( !$this->auth->check() )
 			return $response->withRedirect($this->router->pathFor('home'));
 
-		$new_password = $request->getParam('password_new');
+		$newPassword = $request->getParam('password_new');
 
 		$validation = $this->validator->validate($request, [
-			'password_old' => Rules::passwordCorrectRules($this->auth->user()->password),
+			'password_old' => Rules::passwordCorrectRules($this->auth->user()->getPasswordHash()),
 			'password_new' => Rules::passwordRules(),
-			'password_new_confirm' => Rules::passwordConfirmationRules($new_password)
+			'password_new_confirm' => Rules::passwordConfirmationRules($newPassword)
 		]);
 
 		if ($validation->hasFailed())
 			return $response->withRedirect($this->router->pathFor('auth.password.change'));
 
-		$this->auth->user()->setPassword($new_password);
+		$this->auth->user()->setUnhashedPassword($newPassword);
 
 		$this->flash->addMessage('info', 'Your password has been changed.');
 		
@@ -54,7 +54,7 @@ class PasswordController extends Controller
 		if ($validation->hasFailed())
 			return $response->withRedirect($this->router->pathFor('auth.password.recovery'));
 
-		$user = User::getUser($email);
+		$user = User::getUserByIdentity($email);
 
 		$identifier = $this->container->randomlib->generateString(128);
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
@@ -66,7 +66,7 @@ class PasswordController extends Controller
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{
-				$message->to($user->email, $user->details()->preferred_name);
+				$message->to($user->getEmail(), $user->details()->getPreferredName());
 				$message->subject('Password Recovery');
 			}
 		);
