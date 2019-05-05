@@ -25,19 +25,19 @@ class NavBarContent extends Component
 					<NavBarList position="right">
 						{auth.check ? (
 							auth.user.permissions.is_admin ? (
-								<NavBarButton href="{{ path_for('admin.home') }}" text="Administration" active={false} />
+								<NavBarButton href="admin/home" text="Administration" active={false} />
 							) : (
 								<NavBarDropdown href="#" 
 									text={auth.user.details.preferred_name ? auth.user.details.preferred_name : Account} 
 									active={false}>
-									<NavBarDropdownItem href="{{ path_for('auth.password.change') }}" text="Change Password" />
-									<NavBarDropdownItem href="{{ path_for('auth.signout') }}" text="Sign Out" />
+									<NavBarDropdownItem href="Change_Password" text="Change Password" />
+									<NavBarDropdownItem href="Sign_Out" text="Sign Out" />
 								</NavBarDropdown>
 							)
 						) : (
 							<React.Fragment>
-								<NavBarButton href="{{ path_for('auth.signup') }}" text="Sign up" active={false} />
-								<NavBarButton href="{{ path_for('auth.signin') }}" text="Sign in" active={false} />
+								<NavBarButton href="Sign_Up" text="Sign up" active={false} />
+								<NavBarButton href="Sign_In" text="Sign in" active={false} />
 							</React.Fragment>
 						) }
 					</NavBarList>
