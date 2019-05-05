@@ -7,7 +7,7 @@ require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer *
 require BASE_PATH . '/App/Logging/LoggerRegistry.php';
 require BASE_PATH . '/App/Logging/Logger.php';
 
-$config = require BASE_PATH . '/config/' . file_get_contents(BASE_PATH . '/mode.php') . '.config';
+$config = require BASE_PATH . '/config/' . file_get_contents(BASE_PATH . '/mode.php') . '.config.php';
 
 /* == Set up logging == */
 

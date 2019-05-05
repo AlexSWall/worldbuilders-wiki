@@ -13,7 +13,7 @@ class ActivationController extends Controller
 		$identifier = $request->getParam('identifier');
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
 
-		$user = User::getInactiveUserByEmail($request->getParam('email'));
+		$user = User::retrieveInactiveUserByEmail($request->getParam('email'));
 
 		if ( !$user || !$this->HashUtil->checkHash($user->getActiveHash(), $hashedIdentifier))
 		{

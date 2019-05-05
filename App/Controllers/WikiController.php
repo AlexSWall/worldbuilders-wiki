@@ -8,7 +8,7 @@ class WikiController extends Controller
 {
 	public function getWebpage($name)
 	{
-		return Webpage::where('page_name', $name)->first()['webpage'];
+		return Webpage::retrieveWebpageByName($name)->getWebpageRaw();
 	}
 
 	public function serveWebpage($request, $response, $args)

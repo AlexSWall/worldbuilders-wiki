@@ -2,40 +2,48 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Webpage extends Model
+class Webpage extends DatabaseEncapsulator
 {
-	protected $fillable = [
-		'page_name',
-		'webpage_raw',
-		'webpage_html',
-		'is_admin_only',
-		'is_global'
-	];
-
-	public static function getWebpage($pageName)
+	protected static function getDefaults()
 	{
-		return Webpage::where('page_name', $pageName)->first();
+		return [
+		];
 	}
 
-	public function getWebpageRaw($pageName)
+	protected static function getTableName()
 	{
-		return $this->webpage_raw;
+		return 'webpages';
+	}
+	
+
+	/* == Creators & Retrievers == */
+
+	public static function retrieveWebpageByName($pageName)
+	{
+		return self::retrieveModelWithEntries(['page_name' => $pageName]);
 	}
 
-	public function getWebpageHTML($pageName)
+	
+	/* == Getters & Setters == */
+	
+	public function getWebpageRaw()
 	{
-		return $this->webpage_html;
+		return $this->get('webpage_raw');
+	}
+
+	public function getWebpageHTML()
+	{
+		return $this->get('webpage_html');
 	}
 
 	public function isAdminOnly()
 	{
-		return $this->is_admin_only;
+		return $this->get('is_admin_only');
 	}
 
 	public function isGloballyAccessible()
 	{
-		return $this->is_global;
+		return $this->get('is_global');
 	}
+
 }
