@@ -14,3 +14,4 @@ view/build
 .buildpath
 .project
 .settings
+*.bundle*
