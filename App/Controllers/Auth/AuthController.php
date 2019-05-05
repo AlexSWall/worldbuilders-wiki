@@ -51,20 +51,17 @@ class AuthController extends Controller
 			$this->HashUtil->hash($identifier)
 		);
 
-		$user->permissions()->create(UserPermissions::$defaults);
+		$user->createUserPermissions();
+		$user->createUserDetails($signupParams['preferred_name']);
 
-		$user->details()->create(UserDetails::createUserDetailsArray([
-			'preferred_name' => $signupParams['preferred_name']
-		]));
-
-		/* $this->auth->attempt($user->email, $request->getParam('password')); */
+		/* $this->auth->attempt($user->getEmail(), $request->getParam('password')); */
 
 		$this->mailer->send(
 			'email/auth/registered.twig', 
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{
-				$message->to($user->getEmail(), $user->details()->getPreferredName());
+				$message->to($user->getEmail(), $user->getDetails()->getPreferredName());
 				$message->subject('Thanks for registering.');
 			}
 		);

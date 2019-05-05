@@ -10,7 +10,7 @@ class HomeController extends Controller
 		return $this->view->render($response, 'wiki/index.twig', [ 'wiki' => [
 			'page_name' => 'Home',
 			'title' => 'Home',
-			'webpage_content' => \App\Models\Webpage::where('page_name', 'Home')->first()['webpage']
+			'webpage_content' => \App\Models\Webpage::retrieveWebpageByName('Home')->getWebpageRaw()
 		]]);
 	}
 }

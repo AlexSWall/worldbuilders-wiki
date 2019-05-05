@@ -36,29 +36,29 @@ class RememberMeMiddleware extends Middleware
 		$rememberMeCookie = FigRequestCookies::get($request, $this->container->get('settings')['auth']['remember']);
 		$data = $rememberMeCookie->getValue();
 
-		if (is_null($data))
+		if ( is_null($data) || empty(trip($data)) )
 			return false;
 
 		$credentials = explode('___', $data);
 
-		if (empty(trim($data)) || count($credentials) !== 2)
+		if ( count($credentials) !== 2 )
 			return false;
 
 		$identifier = $credentials[0];
 		$token = $this->HashUtil->hash($credentials[1]);
 
-		$user = User::getUserByRememberMeIdentifier($identifier);
+		$user = User::retrieveUserByRememberMeIdentifier($identifier);
 
-		if (!$user)
+		if ( !$user )
 			return false;
 
-		if (!$this->HashUtil->checkHash($token, $user->getRememberMeToken()))
+		if ( !$this->HashUtil->checkHash($token, $user->getRememberMeToken()) )
 		{
 			$user->removeRememberMeCredentials();
 			return false;
 		}
 
-		$_SESSION[$this->container->get('settings')['auth']['session']] = $user->id;
+		$_SESSION[$this->container->get('settings')['auth']['session']] = $user->getUserId();
 		return true;
 	}
 }

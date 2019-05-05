@@ -2,95 +2,80 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
-
-class User
+class User extends DatabaseEncapsulator
 {
-	private static final UsersTable = DB::table('users');
-
-	private $user;
-
-	private function __construct($user)
+	protected static function getDefaults()
 	{
-		$this->user = $user;
+		return [
+			'preferred_name' => null,
+			'description' => null
+		];
+	}
+	
+	protected static function getTableName()
+	{
+		return 'users';
 	}
 
-
-	/* == Retriever Helper == */
-
-	private static function createIfNotNull($user)
-	{
-		return $user != null ? new User($user) : null;
-	}
-
-	private static function getUserSatisfying($args)
-	{
-		User::createIfNotNull(User::UsersTable->where(args)->first());
-	}
+	private $userPermissions;
+	private $userDetails;
 
 
-	/* == User Retrievers & Creators == */
-
-	public static function getUserByDatabaseId($id)
-	{
-		return $this->getUserSatifying([
-			'id' => $id
-		]);
-	}
-
-	public static function getUserByIdentity($identity)
-	{
-		return User::createIfNotNull(
-			User::UsersTable->where('email', $identity)
-			->orwhere('username', $identity)
-			->first());
-	}
-
-	public static function getUserByRememberMeIdentifier($identifier)
-	{
-		return $this->getUserSatifying([
-			'remember_identifier' => $identifier
-		]);
-	}
-
-	public static function getInactiveUserByEmail($email)
-	{
-		return $this->getUserSatifying([
-			'email' => $email,
-			'active' => false
-		]);
-	}
+	/* == Creators & Retrievers == */
 
 	public static function createInactiveUser($username, $email, $passwordHash, $identifier)
 	{
-		$user = UsersTable->insert([
+		return $self->createModelWithEntries([
 			'username' => $username,
 			'email' => $email,
 			'password' => $passwordHash,
 			'active' => false,
 			'active_hash' => $identifier
 		]);
-		return User::newOrNull($user);
+	}
+
+	public static function retrieveUserByUserId($userId)
+	{
+		self::retrieveModelWithEntries(['user_id' => $userId]);
+	}
+
+	public static function retrieveUserByUsername($username)
+	{
+		self::retrieveModelWithEntries(['username' => $username]);
+	}
+
+	public static function retrieveUserByEmail($email)
+	{
+		self::retrieveModelWithEntries(['email' => $email]);
+	}
+
+	public static function retrieveUserByIdentity($identity)
+	{
+		$user = self::getUserByUsername($identity);
+		if ( !$user )
+			$user = self::getUserByEmail($identity);
+		return $user;
+	}
+
+	public static function retrieveUserByRememberMeIdentifier($identifier)
+	{
+		return self::retrieveModelWithEntries(['remember_identifier' => $identifier]);
+	}
+
+	public static function retrieveInactiveUserByEmail($email)
+	{
+		return self::retrieveModelWithEntries([
+			'email' => $email,
+			'active' => false
+		]);
 	}
 
 
 	/* == Getters & Setters == */
 
-	private function get($key)
+	public function getUserId()
 	{
-		return $user->username;
-	}
-
-	private function set($key, $value)
-	{
-		$this->user->update([
-			$key => $value
-		]);
-	}
-
-	public function getId()
-	{
-		return $this->get('id');
+		return $this->get('user_id');
 	}
 
 	public function getUsername()
@@ -181,39 +166,44 @@ class User
 
 	/* == User Permissions == */
 
-	public function permissions()
+	public function createUserPermissions()
 	{
-		return $this->user->hasOne('App\Models\UserPermissions', 'user_id', 'id');
+		UserPermissions::createDefaultUserPermissions($this->getUserId());
 	}
 
-	public function getPermissions()
+	public function getUserPermissions()
 	{
-		return $this->get('permissions');
-	}
-
-	public function hasPermissions($permission)
-	{
-		return (bool) $this->getPermissions()->{$permission};
+		/* Lazy instantiation. */
+		if ( !$this->userPermissions )
+			$this->userPermissions = UserPermissions::retrieveUserPermissionsByUserId($this->getUserId());
+		return $this->userPermissions;
 	}
 
 	public function isAdmin()
 	{
-		return $this->hasPermissions('is_admin');
+		return $this->getUserPermissions()->isAdmin();
 	}
 
 
 	/* == User Details == */
 
-	public function details()
+	public function createUserDetails($preferredName)
 	{
-		return $this->user->hasOne('App\Models\UserDetails', 'user_id', 'id');
+		UserDetails::createUserDetails($this->getUserId(), $preferredName);
 	}
 
-	public function getDetails()
+	public function getUserDetails()
 	{
-		return $this->get('details');
+	    /* Lazy instantiation. */
+		if ( !$this->userDetails )
+		    $this->userDetails = UserDetails::retrieveUserDetailsById($this->getUserId());
+		return $this->userDetails;
 	}
 
+	public function getPreferredName()
+	{
+		return $this->getUserDetails()->getPreferredName();
+	}
 
 	/* == Miscellaneous == */
 
@@ -227,13 +217,13 @@ class User
 
 	public function setRememberMeCredentials($identifier, $token)
 	{
-		$this->user->update([
+		$this->update([
 			'remember_identifier' => $identifier,
 			'remember_token' => $token
 		]);
 	}
 
-	public function removeRememberMeCredentials()
+	public function setRememberMeCredentials()
 	{
 		$this->updateRememberMeCredentials(null, null);
 	}
@@ -242,5 +232,4 @@ class User
 	{
 		$this->setPasswordRecoveryHash(null);
 	}
-
 }

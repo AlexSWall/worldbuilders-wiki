@@ -6,8 +6,11 @@ Slim 2
 mode.php
 logs
 TODO.txt
-*.config
+*.config.php
 composer.lock
 other
 view/node_modules
 view/build
+.buildpath
+.project
+.settings

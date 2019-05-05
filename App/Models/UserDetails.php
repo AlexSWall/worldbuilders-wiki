@@ -2,29 +2,51 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class UserDetails extends Model
+class UserDetails extends DatabaseEncapsulator
 {
-	protected $table = 'users_details';
-
-	protected $fillable = [
-		'preferred_name',
-		'description'
-	];
-
-	public static function createUserDetailsArray($details)
+	protected static function getDefaults()
 	{
-		foreach ($details as &$value)
-    		if ( empty($value) )
-    			$value = null;
-		unset($value);
-
-		return array_replace( UserDetails::$defaults, $details );
+		return [
+			'preferred_name' => null,
+			'description' => null
+		];
+	}
+	
+	protected static function getTableName()
+	{
+		return 'user_details';
 	}
 
-	public static $defaults = [
-		'preferred_name' => null,
-		'description' => null
-	];
+	/* == Creators & Retrievers == */
+
+	public static function createUserDetails($userId, $preferredName)
+	{
+		return $self->createModelWithEntries([
+			'user_id' => $userId,
+			'preferred_name' => $preferredName
+		]);
+	}
+
+	public static function retrieveUserDetailsByUserId($userId)
+	{
+		self::retrieveModelWithEntries(['user_id' => $userId]);
+	}
+
+
+	/* == Getters & Setters == */
+
+	public function getUserId()
+	{
+		return $this->get('user_id');
+	}
+
+	public function getPreferredName()
+	{
+		return $this->get('preferred_name');
+	}
+
+	public function getDescription()
+	{
+		return $this->get('description');
+	}
 }

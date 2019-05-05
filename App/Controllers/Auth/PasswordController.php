@@ -54,7 +54,7 @@ class PasswordController extends Controller
 		if ($validation->hasFailed())
 			return $response->withRedirect($this->router->pathFor('auth.password.recovery'));
 
-		$user = User::getUserByIdentity($email);
+		$user = User::retrieveUserByIdentity($email);
 
 		$identifier = $this->container->randomlib->generateString(128);
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
@@ -66,7 +66,7 @@ class PasswordController extends Controller
 			['user' => $user, 'identifier' => $identifier],
 			function($message) use ($user)
 			{
-				$message->to($user->getEmail(), $user->details()->getPreferredName());
+				$message->to($user->getEmail(), $user->getDetails()->getPreferredName());
 				$message->subject('Password Recovery');
 			}
 		);
@@ -76,9 +76,11 @@ class PasswordController extends Controller
 		return $response->withRedirect($this->router->pathFor('home'));
 	}
 
-	private function invalidResetPasswordAttempt($user, $hashedIdentifier)
+	private function validResetPasswordAttempt($user, $hashedIdentifier)
 	{
-		return !$user || !$user->recover_hash || !$this->HashUtil->checkHash($user->recover_hash, $hashedIdentifier);
+		if ( !$user || !$user->getPasswordRecoveryHash() )
+			return False;
+		return $this->HashUtil->checkHash($user->getPasswordRecoveryHash(), $hashedIdentifier);
 	}
 
 	public function getResetPassword($request, $response)
@@ -88,9 +90,9 @@ class PasswordController extends Controller
 
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
 
-		$user = User::getUser($email);
+		$user = User::retrieveUserByIdentity($email);
 
-		if ( $this->invalidResetPasswordAttempt($user, $hashedIdentifier))
+		if ( !$this->validResetPasswordAttempt($user, $hashedIdentifier))
 			return $response->withRedirect($this->router->pathFor('home'));
 
 		return $this->view->render($response, 'auth/password/resetpassword.twig', [
@@ -109,9 +111,9 @@ class PasswordController extends Controller
 
 		$hashedIdentifier = $this->HashUtil->hash($identifier);
 
-		$user = User::getUser($email);
+		$user = User::retrieveUserByIdentity($email);
 
-		if ( $this->invalidResetPasswordAttempt($user, $hashedIdentifier))
+		if ( !$this->validResetPasswordAttempt($user, $hashedIdentifier))
 			return $response->withRedirect($this->router->pathFor('home'));
 
 		$validation = $this->validator->validate($request, [
@@ -125,7 +127,7 @@ class PasswordController extends Controller
 				'identifier' => $identifier
 			]));
 
-		$user->setPassword($password);
+		$user->setUnhashedPassword($password);
 		$user->removePasswordRecoveryHash();
 
 		$this->flash->addMessage('info', 'Password successfully set. You can now sign in.');

@@ -11,8 +11,6 @@ use Carbon\Carbon;
 
 class Auth
 {
-	static $db_logger;
-
 	protected $hashUtil;
 	protected $authConfig;
 	protected $generator;
@@ -26,12 +24,12 @@ class Auth
 
 	public function checkActivated($identity)
 	{
-		return User::getUserByIdentity($identity)->isActive();
+		return User::retrieveUserByIdentity($identity)->isActive();
 	}
 
 	public function attempt($identity, $password)
 	{
-		$user = User::getUserByIdentity($identity);
+		$user = User::retrieveUserByIdentity($identity);
 
 		if (!$user)
 			return false;
@@ -39,7 +37,7 @@ class Auth
 		if ( !$this->hashUtil->checkPassword($password, $user->getPasswordHash()) )
 			return false;
 
-		$_SESSION[$this->authConfig['session']] = $user->getId();
+		$_SESSION[$this->authConfig['session']] = $user->getUserId();
 		return true;
 	}
 
@@ -53,7 +51,7 @@ class Auth
 
 	public function setRememberCookie($response, $identity)
 	{
-		$user = User::getUserByIdentity($identity);
+		$user = User::retrieveUserByIdentity($identity);
 
 		$rememberIdentifier = $this->generator->generateString(128);
 		$rememberToken      = $this->generator->generateString(128);
@@ -78,13 +76,13 @@ class Auth
 
 	public function user()
 	{
-		return User::getUserByDatabaseId($_SESSION[$this->authConfig['session']]);
+		return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
 	}
 
 	public function userSafe()
 	{
 		if ( $this->check() )
-			return User::getUserByDatabaseId($_SESSION[$this->authConfig['session']]);
+			return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
 	}
 
 	public function logout($request, $response)
