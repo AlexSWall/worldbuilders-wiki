@@ -27,6 +27,9 @@ class LogRequestMiddleware extends Middleware
 	/* Redact any information which is keyed with a key which contains the phrase 'password'. */
 	private function getCleanedPOSTParameters($restParams)
 	{
+		if (is_null($restParams))
+			return [];
+
 		foreach ($restParams as $key => $value)
 			if ( stristr($value, 'password') )
 				$restParams[$key] = '<REDACTED>';
