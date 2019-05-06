@@ -67,7 +67,7 @@ $container['flash']                = function($container) { return new \Slim\Fla
 
 $container['view'] = function($container)
 {
-	$view = new \Slim\Views\Twig( BASE_PATH . '/view', [
+	$view = new \Slim\Views\Twig( BASE_PATH . '/view/webpages', [
 		'cache' => false,
 	]);
 

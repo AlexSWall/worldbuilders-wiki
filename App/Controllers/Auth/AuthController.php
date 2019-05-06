@@ -14,7 +14,7 @@ class AuthController extends Controller
 
 	public function getSignup($request, $response)
 	{
-		return $this->view->render($response, 'auth/signup.twig', ['title' => "Sign Up"]);
+		return $this->view->render($response, 'authentication/authentication.twig', ['title' => "Sign Up"]);
 	}
 
 	/* Receives by reference */
@@ -71,7 +71,13 @@ class AuthController extends Controller
 
 	public function getSignIn($request, $response)
 	{
-		return $this->view->render($response, 'auth/signin.twig', ['title' => "Sign In"]);
+		return $this->view->render($response, 'authentication/authentication.twig', [ 
+			'formProperties' => [
+				'formType' => 'Sign In',
+				'oldValues' => ['' => ''],
+				'errors' => ['' => '']
+			]
+		]);
 	}
 
 	public function postSignIn($request, $response)
