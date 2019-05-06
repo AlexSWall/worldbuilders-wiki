@@ -36,7 +36,7 @@ spl_autoload_register( function( $class_name ) use ($logger, $logger_names)
 	}
 } );
 
-$logger->addInfo('');
+$logger->addInfo('———————————————');
 $logger->addInfo('Setup starting.');
 
 /* == Begin setup == */
@@ -125,13 +125,13 @@ $container['mailer'] = function($container)
 
 $logger->addInfo('Adding middleware.');
 
-$app->add(new \App\Middleware\LogRequestMiddleware($container));
 $app->add(new \App\Middleware\ValidationErrorsMiddleware($container));
 $app->add(new \App\Middleware\OldInputMiddleware($container));
 $app->add(new \App\Middleware\RememberMeMiddleware($container));
 $app->add(new \App\Middleware\CsrfViewMiddleware($container));
 
 $app->add($container->csrf);
+$app->add(new \App\Middleware\LogRequestMiddleware($container));
 
 
 /* == Routes == */
