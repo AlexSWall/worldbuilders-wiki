@@ -21,7 +21,7 @@ class UserDetails extends DatabaseEncapsulator
 
 	public static function createUserDetails($userId, $preferredName)
 	{
-		return $self->createModelWithEntries([
+	    return self::createModelWithEntries([
 			'user_id' => $userId,
 			'preferred_name' => $preferredName
 		]);

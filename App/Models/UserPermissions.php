@@ -20,7 +20,7 @@ class UserPermissions extends DatabaseEncapsulator
 
 	public static function createDefaultUserPermissions($userId)
 	{
-		return $self->createModelWithEntries(['user_id' => $userId]);
+	    return self::createModelWithEntries(['user_id' => $userId]);
 	}
 
 	public static function retrieveUserPermissionsByUserId($userId)
