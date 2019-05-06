@@ -36,24 +36,24 @@ class User extends DatabaseEncapsulator
 
 	public static function retrieveUserByUserId($userId)
 	{
-		self::retrieveModelWithEntries(['user_id' => $userId]);
+		return self::retrieveModelWithEntries(['user_id' => $userId]);
 	}
 
 	public static function retrieveUserByUsername($username)
 	{
-		self::retrieveModelWithEntries(['username' => $username]);
+		return self::retrieveModelWithEntries(['username' => $username]);
 	}
 
 	public static function retrieveUserByEmail($email)
 	{
-		self::retrieveModelWithEntries(['email' => $email]);
+		return self::retrieveModelWithEntries(['email' => $email]);
 	}
 
 	public static function retrieveUserByIdentity($identity)
 	{
-		$user = self::getUserByUsername($identity);
+		$user = self::retrieveUserByUsername($identity);
 		if ( !$user )
-			$user = self::getUserByEmail($identity);
+			$user = self::retrieveUserByEmail($identity);
 		return $user;
 	}
 
@@ -221,11 +221,6 @@ class User extends DatabaseEncapsulator
 			'remember_identifier' => $identifier,
 			'remember_token' => $token
 		]);
-	}
-
-	public function setRememberMeCredentials()
-	{
-		$this->updateRememberMeCredentials(null, null);
 	}
 
 	public function removePasswordRecoveryHash()

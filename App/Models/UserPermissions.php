@@ -25,7 +25,7 @@ class UserPermissions extends DatabaseEncapsulator
 
 	public static function retrieveUserPermissionsByUserId($userId)
 	{
-		self::retrieveModelWithEntries(['user_id' => $userId]);
+		return self::retrieveModelWithEntries(['user_id' => $userId]);
 	}
 
 
