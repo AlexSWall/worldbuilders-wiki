@@ -24,16 +24,12 @@ class NavBarContent extends Component
 					</NavBarList>
 					<NavBarList position="right">
 						{auth.check ? (
-							auth.user.permissions.is_admin ? (
-								<NavBarButton href="admin/home" text="Administration" active={false} />
-							) : (
-								<NavBarDropdown href="#" 
-									text={auth.user.details.preferred_name ? auth.user.details.preferred_name : Account} 
-									active={false}>
-									<NavBarDropdownItem href="Change_Password" text="Change Password" />
-									<NavBarDropdownItem href="Sign_Out" text="Sign Out" />
-								</NavBarDropdown>
-							)
+							<NavBarDropdown href="#" 
+								text={(auth.user.details && auth.user.details.preferred_name) ? auth.user.details.preferred_name : 'Account'} 
+								active={false}>
+								<NavBarDropdownItem href="Change_Password" text="Change Password" />
+								<NavBarDropdownItem href="Sign_Out" text="Sign Out" />
+							</NavBarDropdown>
 						) : (
 							<React.Fragment>
 								<NavBarButton href="Sign_Up" text="Sign up" active={false} />
