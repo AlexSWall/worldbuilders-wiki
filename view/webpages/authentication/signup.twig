@@ -1,0 +1,111 @@
+{% extends 'templates/form_page.twig' %}
+
+{% block mainPanel %}
+								<div class="card">
+									<div class="card-header">
+										Sign Up
+									</div>
+									<div class="card-body">
+										<form action='{{ path_for("auth.signup") }}' method='post' autocomplete='off'>
+
+											<!-- == Preferred Name == -->
+											<div class='form-group{{ errors.preferred_name ? " has-error" : "" }}'>
+												<label class='form-label' for='preferred_name'>Preferred name</label>
+												<input type='text' name='preferred_name' id='preferred_name' class='form-control' value='{{ old.preferred_name }}'>
+{% if errors.preferred_name %}
+												<span class='help-block'>
+{% if errors.preferred_name == "CharsetException" %}
+													Please use only ASCII-compatible characters.
+{% elseif errors.preferred_name == "AlphaException" %}
+													Your preferred name must use only letters and spaces
+{% elseif errors.preferred_name == "LengthException" %}
+													Your preferred name cannot be longer than 30 characters.
+{% endif %}
+												</span>
+{% endif %}
+											</div>
+
+											<!-- == Username == -->
+											<div class='form-group{{ errors.username ? " has-error" : "" }}'>
+												<label class='form-label' for='username'>Username*</label>
+												<input type='text' name='username' id='username' class='form-control' value='{{ old.username }}'>
+{% if errors.username %}
+												<span class='help-block'>
+{% if errors.username == "CharsetException" %}
+													Please use only ASCII-compatible characters.
+{% elseif errors.username == "NotEmptyException" %}
+													Enter your username
+{% elseif errors.username == "NoWhitespaceException" %}
+													Your username cannot include whitespace
+{% elseif errors.username == "AlnumException" %}
+													Your username must include only letters and numbers
+{% elseif errors.username == "LengthException" %}
+													Your username must be between 4 and 20 characters long
+{% elseif errors.username == "UsernameAvailableException" %}
+													This username has already been taken
+{% endif %}
+												</span>
+{% endif %}
+											</div>
+
+											<!-- == Email == -->
+											<div class='form-group{{ errors.email ? " has-error" : "" }}'>
+												<label class='form-label' for='email'>Email*</label>
+												<input type='text' name='email' id='email' placeholder='you@domain.com' class='form-control' value='{{ old.email }}'>
+{% if errors.email %}
+												<span class='help-block'>
+{% if errors.email == "CharsetException" %}
+													Please use only ASCII-compatible characters.
+{% elseif errors.email == "NotEmptyException" %}
+													Enter your email address
+{% elseif errors.email == "EmailException" %}
+													Please enter a valid email address
+{% elseif errors.email == "EmailAvailableException" %}
+													This email account already has an account
+{% endif %}
+												</span>
+{% endif %}
+											</div>
+
+											<!-- == Password == -->
+											<div class='form-group{{ errors.password or errors.password_confirm == "ConfirmedPasswordMatchesException" ? " has-error" : "" }}'>
+												<label class='form-label' for='password'>Password*</label>
+												<input type='password' name='password' id='password' class='form-control'>
+{% if errors.password or errors.password_confirm == "ConfirmedPasswordMatchesException" %}
+												<span class='help-block'>
+{% if errors.password == "CharsetException" %}
+													Please use only ASCII-compatible characters.
+{% elseif errors.password == "NotEmptyException" %}
+													Set a password
+{% elseif errors.password == "LengthException" %}
+													Your password must be at least 8 characters long
+{% elseif errors.password_confirm == "ConfirmedPasswordMatchesException" %}
+													Your passwords did not match
+{% endif %}
+												</span>
+{% endif %}
+											</div>
+
+											<!-- == Password Confirmation == -->
+											<div class='form-group{{ errors.password or errors.password_confirm ? " has-error" : "" }}'>
+												<label class='form-label' for='password_confirm'>Confirm New Password*</label>
+												<input type='password' name='password_confirm' id='password_confirm' class='form-control'>
+{% if errors.password_confirm %}
+												<span class='help-block'>
+{% if errors.password_confirm == "CharsetException" %}
+													Please use only ASCII-compatible characters.
+{% elseif errors.password_confirm == "NotEmptyException" %}
+													Re-enter your password
+{% endif %}
+												</span>
+{% endif %}
+											</div>
+
+											<p>* required field</p>
+											<button type='submit' class='btn btn-default'>Sign Up</button>
+
+											{{ csrf.field | raw }}
+										</form>
+									</div>
+								</div>
+{% endblock %}

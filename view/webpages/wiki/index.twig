@@ -13,7 +13,7 @@
 				auth: {{ (auth|json_encode|raw) }},
 				flash: {{ (flash|json_encode|raw) }},
 				baseUrl: '{{ (baseUrl|raw) }}'
-			};
+			}
 		</script>
 
 		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/global/css/html5reset.css" />
@@ -29,6 +29,6 @@
 	<body>
 		<noscript>You need to enable JavaScript to run this app.</noscript>
 		<div id="root"></div>
-		<script type="text/javascript" src="/resources/wiki/js/wiki.bundle.js" ></script>
+		<script type="text/javascript" src="/js/wiki.bundle.js" ></script>
 	</body>
 </html>

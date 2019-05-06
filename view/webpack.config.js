@@ -5,12 +5,13 @@ new webpack.HotModuleReplacementPlugin();
 
 module.exports = {
 	entry: {
-		app: ['@babel/polyfill', 
-			'./src/index.js']
+		'wiki': ['@babel/polyfill', './src/wiki.index.js'],
+		'authentication': ['@babel/polyfill', './src/authentication.index.js'],
+		'admin': ['@babel/polyfill', './src/admin.index.js']
 	},
 	output: {
-		path: path.resolve(__dirname, '..', 'public', 'resources', 'wiki', 'js'),
-		filename: 'wiki.bundle.js'
+		filename: '[name].bundle.js',
+		path: path.resolve(__dirname, '..', 'public', 'js')
 	},
 	module: {
 		rules: [
@@ -27,9 +28,10 @@ module.exports = {
 				exclude: /node_modules/,
 				use: {
 					loader: 'babel-loader',
-					options: {
-						presets: ['@babel/preset-env', '@babel/preset-react'],
-						plugins: ['react-hot-loader/babel']
+					options:
+					{
+						"presets": ["@babel/preset-env", "@babel/preset-react"],
+						"plugins": ["react-hot-loader/babel", "@babel/plugin-proposal-object-rest-spread"]
 					}
 				}
 			}
