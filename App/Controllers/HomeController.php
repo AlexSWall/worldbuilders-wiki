@@ -8,9 +8,9 @@ class HomeController extends Controller
 	{
 		//return $this->view->render($response, 'core/home.twig');
 		return $this->view->render($response, 'wiki/index.twig', [ 'wiki' => [
-			'page_name' => 'Home',
+			'pageName' => 'Home',
 			'title' => 'Home',
-			'webpage_content' => \App\Models\Webpage::retrieveWebpageByName('Home')->getWebpageRaw()
+			'webpageContent' => \App\Models\Webpage::retrieveWebpageByName('Home')->getWebpageHTML()
 		]]);
 	}
 }

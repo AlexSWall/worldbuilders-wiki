@@ -9,6 +9,9 @@ function renderTableOfContents(htmlString)
 
 function extractTableOfContents(content)
 {
+	if ( content == null )
+		return ["", ""];
+
 	var toc = "<h2>Table of Contents</h2>";
 	var level = 1;
 	var isEmpty = true;

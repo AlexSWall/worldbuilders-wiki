@@ -2,8 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\Webpage;
-
 class NotFoundController extends Controller
 {
 	static $logger;
@@ -15,10 +13,12 @@ class NotFoundController extends Controller
 
 		self::$logger->addInfo('Page not found: ' . $requestPath);
 
+		$args = [ 'page_name' => 'Page_Not_Found', 'requestPath' => $requestPath ];
+
 		if ( strpos($requestPath, '/') )
 			/* Has a / in the request path */
 			return $this->view->render($response, 'core/pagenotfound.twig', [ 'requestPath' => $requestPath . 'asd' ] );	
 		else
-			return $this->view->render($response, 'wiki/wikipagenotfound.twig', [ 'requestPath' => $requestPath ] );
+			return (new WikiController($this->container))->serveWebpage($request, $response, $args);
 	}
 }

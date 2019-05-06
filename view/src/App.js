@@ -19,7 +19,7 @@ class App extends Component
 						<div id="content">
 							<div id="mainPanelWrapper">
 								<div id="mainPanel">
-									<WikiPanel rawWebpageContent={this.props.wiki.webpage_content}/>
+									<WikiPanel rawWebpageContent={this.props.wiki.webpageContent}/>
 								</div> {/* mainPanelWrapper */}
 							</div> {/* mainPanel */}
 						</div> {/* content */}
