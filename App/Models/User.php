@@ -25,7 +25,7 @@ class User extends DatabaseEncapsulator
 
 	public static function createInactiveUser($username, $email, $passwordHash, $identifier)
 	{
-		return $self->createModelWithEntries([
+		return self::createModelWithEntries([
 			'username' => $username,
 			'email' => $email,
 			'password' => $passwordHash,
