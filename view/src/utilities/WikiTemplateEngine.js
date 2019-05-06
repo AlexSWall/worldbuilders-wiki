@@ -4,7 +4,7 @@ class WikiTemplateEngine
 {
 	static parseWebpage(rawWebpageContent)
 	{
-		return renderTableOfContents(rawWebpageContent)
+		return renderTableOfContents(rawWebpageContent);
 	}
 }
 
