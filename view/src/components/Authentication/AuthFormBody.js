@@ -11,8 +11,8 @@ class AuthFormBody extends Component
 				{
 					/* Switch on the type of form required. */
 					{
-						'Sign In': <SignInForm formProperties={this.props.formProperties} />,
-						'Sign Up': <SignUpForm formProperties={this.props.formProperties} />
+						'Sign In': <SignInForm formProperties={this.props.formProperties} csrfField={this.props.csrfField}/>,
+						'Sign Up': <SignUpForm formProperties={this.props.formProperties} csrfField={this.props.csrfField}/>
 					}['Sign In']
 				}
 			</div>
