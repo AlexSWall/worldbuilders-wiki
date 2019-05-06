@@ -29,7 +29,7 @@ class UserDetails extends DatabaseEncapsulator
 
 	public static function retrieveUserDetailsByUserId($userId)
 	{
-		self::retrieveModelWithEntries(['user_id' => $userId]);
+		return self::retrieveModelWithEntries(['user_id' => $userId]);
 	}
 
 
