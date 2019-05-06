@@ -3,8 +3,6 @@
 namespace App\Controllers\Auth;
 
 use App\Models\User;
-use App\Models\UserPermissions;
-use App\Models\UserDetails;
 
 use App\Controllers\Controller;
 
