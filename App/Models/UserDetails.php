@@ -16,6 +16,11 @@ class UserDetails extends DatabaseEncapsulator
 	{
 		return 'user_details';
 	}
+	
+	protected static function getPrimaryKey()
+	{
+		return 'id';
+	}
 
 	/* == Creators & Retrievers == */
 

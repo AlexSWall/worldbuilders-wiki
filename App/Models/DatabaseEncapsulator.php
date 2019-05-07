@@ -12,6 +12,7 @@ abstract class DatabaseEncapsulator
 	
 	protected static abstract function getTableName();
 	protected static abstract function getDefaults();
+	protected static abstract function getPrimaryKey();
 
 	private function __construct($model)
 	{
@@ -57,13 +58,14 @@ abstract class DatabaseEncapsulator
 
 	protected function set($key, $value)
 	{
-		$this->model->update([
+		$this->update([
 			$key => $value
 		]);
 	}
 
 	protected function update($arr)
 	{
-		$this->model->update($arr);
+		$keyArr = [static::getPrimaryKey() => $this->model->{static::getPrimaryKey()}];
+		static::getTable()->where($keyArr)->update($arr);
 	}
 }

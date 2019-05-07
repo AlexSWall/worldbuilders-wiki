@@ -6,10 +6,10 @@ class OldInputMiddleware extends Middleware
 {
 	public function __invoke($request, $response, $next)
 	{
-		if ( isset($_SESSION['old']) )
-			$this->container->view->getEnvironment()->addGlobal('old', $_SESSION['old']); /* For use in old form data, e.g. signin's old.email field */
+		if ( isset($_SESSION['params']) )
+			$GLOBALS['previous_params'] = $_SESSION['params'];
 
-		$_SESSION['old'] = $request->getParams();
+		$_SESSION['params'] = $request->getParams();
 
 		$response = $next($request, $response);
 		return $response;

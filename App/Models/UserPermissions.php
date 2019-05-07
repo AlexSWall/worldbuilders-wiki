@@ -15,6 +15,11 @@ class UserPermissions extends DatabaseEncapsulator
 	{
 		return 'user_permissions';
 	}
+	
+	protected static function getPrimaryKey()
+	{
+		return 'id';
+	}
 
 	/* == Creators & Retrievers == */
 

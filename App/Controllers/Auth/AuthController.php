@@ -14,13 +14,7 @@ class AuthController extends Controller
 
 	public function getSignup($request, $response)
 	{
-		return $this->view->render($response, 'authentication/authentication.twig', ['title' => "Sign Up"]);
-	}
-
-	/* Receives by reference */
-	public static function cleanSignupCredentials(& $params)
-	{
-		$params['preferred_name'] = trim(preg_replace('/\s+/', ' ', $params['preferred_name']));
+		return $this->getForm($response, 'Sign Up');
 	}
 
 	public function postSignup($request, $response)
@@ -38,7 +32,7 @@ class AuthController extends Controller
 		]);
 
 		if ( $validation->hasFailed() )
-			return $response->withRedirect($this->router->pathFor('auth.signup'));
+			return $response->withRedirect('/Sign_Up');
 
 		$identifier = $this->container->randomlib->generateString(128);
 
@@ -66,51 +60,85 @@ class AuthController extends Controller
 
 		$this->flash->addMessage('info', 'You have signed up!  Please activate your account.');
 
-		return $response->withRedirect($this->router->pathFor('home'));
+		return $response->withRedirect('/Home');
 	}
 
 	public function getSignIn($request, $response)
 	{
-		return $this->view->render($response, 'authentication/authentication.twig', [ 
-			'formProperties' => [
-				'formType' => 'Sign In',
-				'oldValues' => ['' => ''],
-				'errors' => ['' => '']
-			]
-		]);
+		return $this->getForm($response, 'Sign In');
 	}
 
 	public function postSignIn($request, $response)
 	{
-		$activated = $this->auth->checkActivated($request->getParam('identity'));
+		$userIdentity = $request->getParam('identity');
+
+		$userExists = $this->auth->checkUserExists($userIdentity);
+
+		if (!$userExists)
+		{
+			$this->flash->addMessage('error', 'Unabled to sign in.');
+			return $response->withRedirect('/Sign_In');
+		}
+
+		$activated = $this->auth->checkActivated($userIdentity);
 
 		if (!$activated)
 		{
 			$this->flash->addMessage('error', 'Account not yet activated. Check your emails for the account activation link.');
-			return $response->withRedirect($this->router->pathFor('auth.signin'));
+			return $response->withRedirect('/Sign_In');
 		}
 
-		$auth = $this->auth->attempt(
-			$request->getParam('identity'),
-			$request->getParam('password')
-		);
+		$auth = $this->auth->attempt($userIdentity, $request->getParam('password'));
 
 		if (!$auth)
 		{
 			$this->flash->addMessage('error', 'Unable to sign in.');
-			return $response->withRedirect($this->router->pathFor('auth.signin'));
+			return $response->withRedirect('/Sign_In');
 		}
 
 		if ($request->getParam('remember') === 'on')
-			$response = $this->auth->setRememberCookie($response, $request->getParam('identity'));
+			$response = $this->auth->setRememberMeCookie($response, $request->getParam('identity'));
 
-		return $response->withRedirect($this->router->pathFor('home'));
+		return $response->withRedirect('/Home');
 	}
 
 	public function getSignOut($request, $response)
 	{
 		$response = $this->auth->logout($request, $response);
+		return $response->withRedirect('/Home');
+	}
 
-		return $response->withRedirect($this->router->pathFor('home'));
+	/* == Helpers == */
+
+	private function getForm($response, $formType)
+	{
+		return $this->view->render($response, 'authentication/authentication.twig', 
+			self::constructFrontendParametersArray($formType));
+	}
+
+	private static function constructFrontendParametersArray($formType)
+	{
+		return array_merge([
+			'auth' => $GLOBALS['auth'],
+			'flash' => $GLOBALS['flash'],
+			'baseUrl' => $GLOBALS['baseUrl']
+		], self::getFormProperties($formType));
+	}
+
+	private static function getFormProperties($formType)
+	{
+		return [
+			'formProperties' => [
+				'formType' => $formType,
+				'oldValues' => $GLOBALS['previous_params'],
+				'errors' => $GLOBALS['errors']
+			]
+		];
+	}
+
+	/* Receives by reference */
+	public static function cleanSignupCredentials(& $params)
+	{
+		$params['preferred_name'] = trim(preg_replace('/\s+/', ' ', $params['preferred_name']));
 	}
 }

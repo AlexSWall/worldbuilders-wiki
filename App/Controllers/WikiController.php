@@ -9,19 +9,30 @@ class WikiController extends Controller
 	public function serveWebpage($request, $response, $args)
 	{
 		$pageName = $args['page_name'];
+		$title = str_replace('_', ' ', $pageName);
+
 		$webpage = Webpage::retrieveWebpageByName($pageName);
 
 		if ( is_null($webpage) )
 			throw new \Slim\Exception\NotFoundException($request, $response);
 
-		$title = str_replace('_', ' ', $pageName);
-		$webpageContent = $webpage->getWebpageHTML($pageName);
+		$webpageHTML = $webpage->getWebpageHTML($pageName);
 
-		$argNames = array( 'pageName', 'title', 'webpageContent' );
-		$argMap = array();
-		foreach( $argNames as $arg )
-			$argMap[$arg] = ${$arg};
+		$params = self::constructFrontendParametersArray($title, $webpageHTML);
 
-		return $this->view->render($response, 'wiki/index.twig', ['wiki' => $argMap]);
+		return $this->view->render($response, 'wiki/index.twig', $params);
+	}
+
+	private static function constructFrontendParametersArray($title, $webpageHTML)
+	{
+		return [
+			'wiki' => [
+				'title' => $title,
+				'webpageContent' => $webpageHTML
+			],
+			'auth' => $GLOBALS['auth'],
+			'flash' => $GLOBALS['flash'],
+			'baseUrl' => $GLOBALS['baseUrl']
+		];
 	}
 }

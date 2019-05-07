@@ -15,6 +15,11 @@ class Webpage extends DatabaseEncapsulator
 		return 'webpages';
 	}
 	
+	protected static function getPrimaryKey()
+	{
+		return 'page_name';
+	}
+	
 
 	/* == Creators & Retrievers == */
 

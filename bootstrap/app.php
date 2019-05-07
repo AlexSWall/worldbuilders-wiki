@@ -76,18 +76,6 @@ $container['view'] = function($container)
 		$container->request->getUri()
 	));
 
-	$check = $container->auth->check();
-	$user = $container->auth->userSafe();
-
-	$view->getEnvironment()->addGlobal('auth', [
-		'check' => $check,
-		'user' => $user
-	]);
-
-	$view->getEnvironment()->addGlobal('flash', $container->flash);
-
-	$view->getEnvironment()->addGlobal('baseUrl', $container->get('settings')['app']['url']);
-
 	return $view;
 };
 
@@ -139,6 +127,18 @@ $app->add(new \App\Middleware\LogRequestMiddleware($container));
 $logger->addInfo('Adding the routes.');
 
 require BASE_PATH . '/App/routes.php';
+
+/* == Set up Globals == */
+
+$check = $container->auth->check();
+$user = $container->auth->userSafe();
+
+$GLOBALS['auth'] = [
+	'check' => $check,
+	'user' => $user
+];
+$GLOBALS['flash'] = $container->flash;
+$GLOBALS['baseUrl'] = $container->get('settings')['app']['url'];
 
 /* == Miscellaneous == */
 
