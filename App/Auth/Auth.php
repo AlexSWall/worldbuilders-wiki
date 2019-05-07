@@ -22,6 +22,11 @@ class Auth
 		$this->generator = $generator;
 	}
 
+	public function checkUserExists($identity)
+	{
+		return !is_null(User::retrieveUserByIdentity($identity));
+	}
+
 	public function checkActivated($identity)
 	{
 		return User::retrieveUserByIdentity($identity)->isActive();
@@ -41,7 +46,7 @@ class Auth
 		return true;
 	}
 
-	private function createRememberCookie($value, $expiry_str)
+	private function createRememberMeCookie($value, $expiry_str)
 	{
 		return SetCookie::create($this->authConfig['remember'])
 			->withValue($value)
@@ -49,21 +54,21 @@ class Auth
 			->withPath('/');
 	}
 
-	public function setRememberCookie($response, $identity)
+	public function setRememberMeCookie($response, $identity)
 	{
 		$user = User::retrieveUserByIdentity($identity);
 
 		$rememberIdentifier = $this->generator->generateString(128);
 		$rememberToken      = $this->generator->generateString(128);
 
-		$user->updateRememberCredentials(
+		$user->setRememberMeCredentials(
 			$rememberIdentifier,
 			$this->hashUtil->hash($rememberToken)
 		);
 
 		$response = FigResponseCookies::set(
 			$response, 
-			$this->createRememberCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
+			$this->createRememberMeCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
 		);
 
 		return $response;
@@ -92,10 +97,11 @@ class Auth
 
 		if ( !is_null($data) )
 		{
-			if ($this->user())
-				$this->user()->removeRememberCredentials();
+			$user = $this->user();
+			if ($user)
+				$user->removeRememberMeCredentials();
 
-			$response = FigResponseCookies::set($response, $this->createRememberCookie('', '-1 week'));
+			$response = FigResponseCookies::set($response, $this->createRememberMeCookie('', '-1 week'));
 		}
 
 		unset($_SESSION[$this->authConfig['session']]);

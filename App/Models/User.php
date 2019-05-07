@@ -16,6 +16,11 @@ class User extends DatabaseEncapsulator
 	{
 		return 'users';
 	}
+	
+	protected static function getPrimaryKey()
+	{
+		return 'user_id';
+	}
 
 	private $userPermissions;
 	private $userDetails;
@@ -209,7 +214,7 @@ class User extends DatabaseEncapsulator
 
 	public function activateAccount()
 	{
-		$this->user->update([
+		$this->update([
 			'active' => true,
 			'active_hash' => null
 		]);
@@ -221,6 +226,11 @@ class User extends DatabaseEncapsulator
 			'remember_identifier' => $identifier,
 			'remember_token' => $token
 		]);
+	}
+
+	public function removeRememberMeCredentials()
+	{
+		$this->setRememberMeCredentials(null, null);
 	}
 
 	public function removePasswordRecoveryHash()

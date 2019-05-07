@@ -28,7 +28,7 @@ $app->group('', function()
 
 $app->group('', function()
 {
-	$this->get('/Sign_out', 'AuthController:getSignOut')->setName('auth.signout');
+	$this->get('/Sign_Out', 'AuthController:getSignOut')->setName('auth.signout');
 
 	$this->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
 	$this->post('/Change_Password', 'PasswordController:postChangePassword');
