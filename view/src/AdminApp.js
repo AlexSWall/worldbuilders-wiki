@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import NavigationBar from './components/NavigationBar';
+import NavigationBar from './Components/NavigationBar';
 
-import AdminPanel from './components/AdminPanel';
+import AdminPanel from './Components/AdminPanel';
 
 class AdminApp extends Component
 {

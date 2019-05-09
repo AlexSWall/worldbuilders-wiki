@@ -8,7 +8,8 @@ class LogRequestMiddleware extends Middleware
 
 	public function __invoke($request, $response, $next)
 	{
-		self::$logger->addInfo('Request\'s Requested URI Path: '
+		self::$logger->addInfo('Request\'s Method Requested URI Path: '
+			. $request->getMethod() . ': '
 			. $request->getURI()->getPath());
 
 		self::$logger->addInfo('Request\'s Query Parameters: ' .

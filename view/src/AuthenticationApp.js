@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import NavigationBar from './components/NavigationBar';
-import Flash from './components/Flash';
-import Footer from './components/Footer';
-import Sidebar from './components/Sidebar';
+import NavigationBar from './Components/NavigationBar';
+import Flash from './Components/Flash';
+import Footer from './Components/Footer';
+import Sidebar from './Components/Sidebar';
 
-import AuthenticationPanel from './components/AuthenticationPanel';
-import AuthForm from './components/Authentication/AuthForm';
+import AuthenticationPanel from './Components/AuthenticationPanel';
+import AuthForm from './Components/Authentication/AuthForm';
 
 class AuthenticationApp extends Component
 {

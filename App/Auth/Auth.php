@@ -11,13 +11,13 @@ use Carbon\Carbon;
 
 class Auth
 {
-	protected $hashUtil;
+	protected $hashUtils;
 	protected $authConfig;
 	protected $generator;
 
-	public function __construct($authConfig, $hashUtil, $generator)
+	public function __construct($authConfig, $hashUtils, $generator)
 	{
-		$this->hashUtil = $hashUtil;
+		$this->hashUtils = $hashUtils;
 		$this->authConfig = $authConfig;
 		$this->generator = $generator;
 	}
@@ -39,7 +39,7 @@ class Auth
 		if (!$user)
 			return false;
 
-		if ( !$this->hashUtil->checkPassword($password, $user->getPasswordHash()) )
+		if ( !$this->hashUtils->checkPassword($password, $user->getPasswordHash()) )
 			return false;
 
 		$_SESSION[$this->authConfig['session']] = $user->getUserId();
@@ -63,7 +63,7 @@ class Auth
 
 		$user->setRememberMeCredentials(
 			$rememberIdentifier,
-			$this->hashUtil->hash($rememberToken)
+			$this->hashUtils->hash($rememberToken)
 		);
 
 		$response = FigResponseCookies::set(

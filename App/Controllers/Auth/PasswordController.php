@@ -2,9 +2,10 @@
 
 namespace App\Controllers\Auth;
 
-use App\Models\User;
-
 use App\Controllers\Controller;
+
+use App\Models\User;
+use App\Helpers\FormUtils;
 
 use App\Validation\Rules as Rules;
 
@@ -12,7 +13,10 @@ class PasswordController extends Controller
 {
 	public function getChangePassword($request, $response)
 	{
-		return $this->view->render($response, 'auth/password/changepassword.twig', ['title' => "Change Your Password"]);
+		return FormUtils::getForm($this->view, $response, [
+			'title' => 'Change Your Password',
+			'formType' => 'Change Password'
+		]);
 	}
 
 	public function postChangePassword($request, $response)
@@ -40,7 +44,10 @@ class PasswordController extends Controller
 
 	public function getPasswordRecovery($request, $response)
 	{
-		return $this->view->render($response, 'auth/password/passwordrecovery.twig', ['title' => "Password Recovery"]);
+		return FormUtils::getForm($this->view, $response, [
+			'title' => 'Password Recovery',
+			'formType' => 'Password Recovery'
+		]);
 	}
 
 	public function postPasswordRecovery($request, $response)
@@ -57,21 +64,16 @@ class PasswordController extends Controller
 		$user = User::retrieveUserByIdentity($email);
 
 		$identifier = $this->container->randomlib->generateString(128);
-		$hashedIdentifier = $this->HashUtil->hash($identifier);
+		$hashedIdentifier = $this->HashUtils->hash($identifier);
 		
 		$user->setPasswordRecoveryHash($hashedIdentifier);
 
 		$this->mailer->send(
-			'email/auth/recoverpassword.twig', 
-			['user' => $user, 'identifier' => $identifier],
-			function($message) use ($user)
-			{
-				$message->to($user->getEmail(), $user->getDetails()->getPreferredName());
-				$message->subject('Password Recovery');
-			}
+			$user,
+			'Password Recovery',
+			'recoverPassword.twig',
+			['email' => $user->getEmail(), 'identifier' => $identifier]
 		);
-
-		$this->flash->addMessage('info', 'A password recovery email has been sent.');
 
 		return $response->withRedirect($this->router->pathFor('home'));
 	}
@@ -80,7 +82,7 @@ class PasswordController extends Controller
 	{
 		if ( !$user || !$user->getPasswordRecoveryHash() )
 			return False;
-		return $this->HashUtil->checkHash($user->getPasswordRecoveryHash(), $hashedIdentifier);
+		return $this->HashUtils->checkHash($user->getPasswordRecoveryHash(), $hashedIdentifier);
 	}
 
 	public function getResetPassword($request, $response)
@@ -88,17 +90,19 @@ class PasswordController extends Controller
 		$email = $request->getParam('email');
 		$identifier = $request->getParam('identifier');
 
-		$hashedIdentifier = $this->HashUtil->hash($identifier);
+		$hashedIdentifier = $this->HashUtils->hash($identifier);
 
 		$user = User::retrieveUserByIdentity($email);
 
 		if ( !$this->validResetPasswordAttempt($user, $hashedIdentifier))
 			return $response->withRedirect($this->router->pathFor('home'));
 
-		return $this->view->render($response, 'auth/password/resetpassword.twig', [
-			'title' => "Reset Your Password",
+		return FormUtils::getForm($this->view, $response, [
+			'title' => 'Reset Your Password',
+			'formType' => 'Reset Password',
 			'email' => $email,
-			'identifier' => $identifier
+			'identifier' => urlencode($identifier),
+			'oldValues' => ['' => '']
 		]);
 	}
 
@@ -109,7 +113,7 @@ class PasswordController extends Controller
 
 		$password = $request->getParam('password_new');
 
-		$hashedIdentifier = $this->HashUtil->hash($identifier);
+		$hashedIdentifier = $this->HashUtils->hash($identifier);
 
 		$user = User::retrieveUserByIdentity($email);
 
