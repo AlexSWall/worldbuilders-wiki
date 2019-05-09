@@ -9,6 +9,6 @@ class UsernameAvailable extends AbstractRule
 {
 	public function validate($input)
 	{
-		return ( User::where('username', $input)->count() === 0 );
+		return is_null(User::retrieveUserByUsername($input));
 	}
 }

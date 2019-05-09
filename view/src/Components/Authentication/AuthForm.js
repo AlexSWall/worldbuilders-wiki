@@ -8,7 +8,7 @@ class AuthForm extends Component
 	render() {
 		return (
 			<div className="card">
-				<AuthFormHeader text='Sign In' />
+				<AuthFormHeader text={this.props.formProperties.title} />
 				<AuthFormBody
 					formProperties={this.props.formProperties}
 					csrfField={this.props.csrfField}

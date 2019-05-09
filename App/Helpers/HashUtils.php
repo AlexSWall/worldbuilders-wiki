@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-class HashUtil
+class HashUtils
 {
 	protected $config;
 

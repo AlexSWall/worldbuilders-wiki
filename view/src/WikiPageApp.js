@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
-import NavigationBar from './components/NavigationBar';
-import Flash from './components/Flash';
-import WikiPanel from './components/WikiPanel';
-import Footer from './components/Footer';
-import Sidebar from './components/Sidebar';
+import NavigationBar from './Components/NavigationBar';
+import Flash from './Components/Flash';
+import WikiPanel from './Components/WikiPanel';
+import Footer from './Components/Footer';
+import Sidebar from './Components/Sidebar';
 
 class WikiPageApp extends Component
 {

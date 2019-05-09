@@ -7,8 +7,6 @@ class User extends DatabaseEncapsulator
 	protected static function getDefaults()
 	{
 		return [
-			'preferred_name' => null,
-			'description' => null
 		];
 	}
 	
@@ -201,7 +199,7 @@ class User extends DatabaseEncapsulator
 	{
 	    /* Lazy instantiation. */
 		if ( !$this->userDetails )
-		    $this->userDetails = UserDetails::retrieveUserDetailsById($this->getUserId());
+		    $this->userDetails = UserDetails::retrieveUserDetailsByUserId($this->getUserId());
 		return $this->userDetails;
 	}
 

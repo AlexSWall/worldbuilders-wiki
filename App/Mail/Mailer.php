@@ -6,25 +6,28 @@ class Mailer
 {
 	static $logger;
 
-	protected $container;
-
 	protected $mailer;
+	protected $mailerView;
 
-	public function __construct($container, $mailer)
+	public function __construct($mailer, $mailerView)
 	{
-		$this->container = $container;
+		$this->mailerView = $mailerView;
 		$this->mailer = $mailer;
 	}
 
 	/* The $callback parameter is a function that takes a \App\Mail\Message instance as a parameter and adds information. */
-	public function send($template, $data, $callback)
+	public function send($user, $subject, $templateName, $data)
 	{
-		self::$logger->addInfo('Creating email message.');
+		$data['preferredName'] = $user->getPreferredName();
+		$data['baseUrl'] = $GLOBALS['baseUrl'];
+
+		self::$logger->addInfo('Creating an email to ' . $user->getUsername() . ' at ' . $user->getEmail() . '.');
+		self::$logger->addInfo('Email being sent: ' . $templateName . '.');
 		$message = new Message($this->mailer);
 
-		$message->body($this->container->view->fetch($template, $data));
-
-		call_user_func($callback, $message);
+		$message->to($user->getEmail(), $user->getPreferredName());
+		$message->subject($subject);
+		$message->body($this->mailerView->fetch($templateName, $data));
 
 		self::$logger->addInfo('Sending email.');
 		$this->mailer->send();

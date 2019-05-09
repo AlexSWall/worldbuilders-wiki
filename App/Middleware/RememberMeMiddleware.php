@@ -45,14 +45,14 @@ class RememberMeMiddleware extends Middleware
 			return false;
 
 		$identifier = $credentials[0];
-		$token = $this->HashUtil->hash($credentials[1]);
+		$token = $this->HashUtils->hash($credentials[1]);
 
 		$user = User::retrieveUserByRememberMeIdentifier($identifier);
 
 		if ( !$user )
 			return false;
 
-		if ( !$this->HashUtil->checkHash($token, $user->getRememberMeToken()) )
+		if ( !$this->HashUtils->checkHash($token, $user->getRememberMeToken()) )
 		{
 			$user->removeRememberMeCredentials();
 			return false;

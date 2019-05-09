@@ -2,9 +2,10 @@
 
 namespace App\Controllers\Auth;
 
-use App\Models\User;
-
 use App\Controllers\Controller;
+
+use App\Models\User;
+use App\Helpers\FormUtils;
 
 use App\Validation\Rules as Rules;
 
@@ -14,7 +15,10 @@ class AuthController extends Controller
 
 	public function getSignup($request, $response)
 	{
-		return $this->getForm($response, 'Sign Up');
+		return FormUtils::getForm($this->view, $response, [
+			'title' => 'Sign Up',
+			'formType' => 'Sign Up'
+		]);
 	}
 
 	public function postSignup($request, $response)
@@ -39,8 +43,8 @@ class AuthController extends Controller
 		$user = User::createInactiveUser(
 			$signupParams['username'],
 			$signupParams['email'],
-			$this->HashUtil->hashPassword($signupParams['password']),
-			$this->HashUtil->hash($identifier)
+			$this->HashUtils->hashPassword($signupParams['password']),
+			$this->HashUtils->hash($identifier)
 		);
 
 		$user->createUserPermissions();
@@ -49,13 +53,10 @@ class AuthController extends Controller
 		/* $this->auth->attempt($user->getEmail(), $request->getParam('password')); */
 
 		$this->mailer->send(
-			'email/auth/registered.twig', 
-			['user' => $user, 'identifier' => $identifier],
-			function($message) use ($user)
-			{
-				$message->to($user->getEmail(), $user->getDetails()->getPreferredName());
-				$message->subject('Thanks for registering.');
-			}
+			$user,
+			'Thanks for registering!',
+			'registered.twig',
+			['email' => $user->getEmail(), 'identifier' => $identifier]
 		);
 
 		$this->flash->addMessage('info', 'You have signed up!  Please activate your account.');
@@ -65,7 +66,10 @@ class AuthController extends Controller
 
 	public function getSignIn($request, $response)
 	{
-		return $this->getForm($response, 'Sign In');
+		return FormUtils::getForm($this->view, $response, [
+			'title' => 'Sign In',
+			'formType' => 'Sign In'
+		]);
 	}
 
 	public function postSignIn($request, $response)
@@ -109,32 +113,6 @@ class AuthController extends Controller
 	}
 
 	/* == Helpers == */
-
-	private function getForm($response, $formType)
-	{
-		return $this->view->render($response, 'authentication/authentication.twig', 
-			self::constructFrontendParametersArray($formType));
-	}
-
-	private static function constructFrontendParametersArray($formType)
-	{
-		return array_merge([
-			'auth' => $GLOBALS['auth'],
-			'flash' => $GLOBALS['flash'],
-			'baseUrl' => $GLOBALS['baseUrl']
-		], self::getFormProperties($formType));
-	}
-
-	private static function getFormProperties($formType)
-	{
-		return [
-			'formProperties' => [
-				'formType' => $formType,
-				'oldValues' => $GLOBALS['previous_params'],
-				'errors' => $GLOBALS['errors']
-			]
-		];
-	}
 
 	/* Receives by reference */
 	public static function cleanSignupCredentials(& $params)

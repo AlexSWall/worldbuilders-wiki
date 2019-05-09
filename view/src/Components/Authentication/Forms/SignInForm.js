@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
-import AuthFormTextEntry from './AuthFormTextEntry';
-import AuthFormLink from './AuthFormLink';
-import AuthFormCheckBox from './AuthFormCheckBox';
-import AuthFormSubmitButton from './AuthFormSubmitButton';
-import CSRFField from './CSRFField';
+import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
+import AuthFormLink from './../Form Components/AuthFormLink';
+import AuthFormCheckBox from './../Form Components/AuthFormCheckBox';
+import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
+import CSRFField from './../Form Components/CSRFField';
 
 class SignInForm extends Component 
 {

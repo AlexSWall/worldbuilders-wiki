@@ -1,5 +1,7 @@
 <?php
 
+$setupFinished = false;
+
 /* == Load dependencies and get config == */
 
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
@@ -21,12 +23,14 @@ foreach ($config['loggers'] as $logger_ref => $logger_config)
 
 $logger = \App\Logging\LoggerRegistry::get(\App\Logging\LoggerRegistry::SETUP_LOGGER);
 
-spl_autoload_register( function( $class_name ) use ($logger, $logger_names)
+spl_autoload_register( function( $class_name ) use ($logger, $logger_names, &$setupFinished)
 {
 	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
 	if ( file_exists($class_path) )
 	{
-		$logger->addInfo('Including ' . $class_name);
+		if ( $setupFinished )
+			$logger->addInfo('Including ' . $class_name);
+
 		include $class_path; /* No need for include_once; if it had been included, we wouldn't be here. */
 
 		/* Logging black magic: initialising the static loggers after autoloading classes. */
@@ -51,9 +55,9 @@ $container = $app->getContainer();
 
 $logger->addInfo('Populating the container.');
 
-$container['HashUtil']             = function($container) { return new \App\Helpers\HashUtil($container->get('settings')['app']['hash']); };
+$container['HashUtils']            = function($container) { return new \App\Helpers\HashUtils($container->get('settings')['app']['hash']); };
 $container['randomlib']            = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
-$container['auth']                 = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashUtil, $container->randomlib); };
+$container['auth']                 = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashUtils, $container->randomlib); };
 $container['validator']            = function($container) { return new \App\Validation\Validator; };
 $container['HomeController']       = function($container) { return new \App\Controllers\HomeController($container); };
 $container['AuthController']       = function($container) { return new \App\Controllers\Auth\AuthController($container); };
@@ -87,6 +91,8 @@ $capsule->bootEloquent();
 $container['db'] = function($container) use ($capsule) { return $capsule; };
 
 
+
+
 $container['mailer'] = function($container)
 {
 	$mailer = new PHPMailer\PHPMailer\PHPMailer;
@@ -105,9 +111,23 @@ $container['mailer'] = function($container)
 
 	$mailer->isHTML($mailerSettings['html']);
 
-	return new \App\Mail\Mailer($container, $mailer);
-};
 
+	$container['mailerView'] = function($container)
+	{
+		$mailerView = new \Slim\Views\Twig( BASE_PATH . '/view/email', [
+			'cache' => false,
+		]);
+
+		$mailerView->addExtension(new \Slim\Views\TwigExtension(
+			$container->router,
+			$container->request->getUri()
+		));
+
+		return $mailerView;
+	};
+
+	return new \App\Mail\Mailer($mailer, $container->mailerView);
+};
 
 /* == Middleware == */
 
@@ -147,3 +167,6 @@ $logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
 Respect\Validation\Validator::with('App\\Validation\\Rules\\');
 
 $logger->addInfo('Finished running bootstrap/app.php');
+$logger->addInfo('——');
+
+$setupFinished = true;

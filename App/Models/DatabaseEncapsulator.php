@@ -33,7 +33,7 @@ abstract class DatabaseEncapsulator
 	private static function createEntryWithDefaults($values)
 	{
 		foreach ($values as &$value)
-			if ( empty($value) )
+			if ( !isset($value) )
 				$value = null;
 		unset($value);
 
@@ -42,8 +42,11 @@ abstract class DatabaseEncapsulator
 	
 	protected static function createModelWithEntries($entries)
 	{
-		$model = self::getTable()->insert(self::createEntryWithDefaults($entries));
-		return self::createIfNotNull($model);
+		$success = self::getTable()->insert(self::createEntryWithDefaults($entries));
+		if ( !$success )
+			return null;
+
+		return self::retrieveModelWithEntries($entries);
 	}
 
 	protected static function retrieveModelWithEntries($args)
