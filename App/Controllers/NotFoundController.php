@@ -17,7 +17,7 @@ class NotFoundController extends Controller
 
 		if ( strpos($requestPath, '/') )
 			/* Has a / in the request path */
-			return $this->view->render($response, 'core/pagenotfound.twig', [ 'requestPath' => $requestPath . 'asd' ] );	
+			return (new WikiController($this->container))->serveWebpage($request, $response, $args);
 		else
 			return (new WikiController($this->container))->serveWebpage($request, $response, $args);
 	}
