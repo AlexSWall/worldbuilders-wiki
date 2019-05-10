@@ -9,9 +9,9 @@ class Footer extends Component
 			<div id="footerWrapper">
 				<footer>
 					<ul>
-						<FooterItem href="About" text="About" />
-						<FooterItem href="Contact" text="Contact" />
-						<FooterItem href="Bugs" text="Known Bugs" />
+						<FooterItem href="/About" text="About" />
+						<FooterItem href="/Contact" text="Contact" />
+						<FooterItem href="/Bugs" text="Known Bugs" />
 					</ul>
 				</footer>
 			</div>
