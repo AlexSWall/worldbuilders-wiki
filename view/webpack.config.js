@@ -19,9 +19,8 @@ module.exports = {
 				test: /\.(js|jsx|tsx|ts)$/,
 				resolve: { 
 					alias: {
-						Components: path.resolve(__dirname, 'src/components/'),
-						Scripts: path.resolve(__dirname, 'src/scripts/'),
-						Utilities: path.resolve(__dirname, 'src/utilities/')
+						Components: path.resolve(__dirname, 'src/Components/'),
+						Utilities: path.resolve(__dirname, 'src/Utilities/')
 					},
 					extensions: [".js", ".jsx"]
 				}, 

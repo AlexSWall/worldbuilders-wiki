@@ -1,22 +1,22 @@
-function renderTableOfContents(htmlString)
+function renderTableOfContents(pageName, htmlString)
 {
-	var [generatedContent, toc] = extractTableOfContents(htmlString);
+	const [generatedContent, toc] = extractTableOfContents(`#${pageName}`, htmlString);
 	return generatedContent.replace(
 		'[[Table of Contents]]',
 		`<div id="toc">${toc}</div>`
 	);
 }
 
-function extractTableOfContents(content)
+function extractTableOfContents(url, content)
 {
 	if ( content == null )
 		return ["", ""];
 
-	var toc = "<h2>Table of Contents</h2>";
-	var level = 1;
-	var isEmpty = true;
+	let toc = "<h2>Table of Contents</h2>";
+	let level = 1;
+	let isEmpty = true;
 
-	var generatedContent = content.replace(
+	const generatedContent = content.replace(
 		/<h([2-6])>([^<]+)<\/h([2-6])>/gi,
 		function (str, openLevel, titleText, closeLevel) 
 		{
@@ -32,11 +32,10 @@ function extractTableOfContents(content)
 
 			level = parseInt(openLevel);
 
-			var anchor = titleText.replace(/ /g, "_");
-			toc += "<li><a href=\"#" + anchor + "\">" + titleText + "</a></li>";
+			const anchor = titleText.replace(/ /g, "_");
+			toc += `<li><a href="${url}#${anchor}">${titleText}</a></li>`;
 
-			return "<h" + openLevel + "><a class=\"anchor\" id=\"" + anchor + "\">"
-				+ titleText + "</a></h" + closeLevel + ">";
+			return `<h${openLevel}><a class="anchor" id="${anchor}">${titleText}</a></h${closeLevel}>`;
 		}
 	);
 

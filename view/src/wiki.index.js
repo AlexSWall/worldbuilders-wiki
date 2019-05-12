@@ -4,4 +4,4 @@ import WikiPageApp from './WikiPageApp';
 
 import myApp from 'myApp'; /* Imports myApp variable from index.php. */
 
-ReactDOM.render(<WikiPageApp auth={myApp.auth} wiki={myApp.wiki} flash={myApp.flash}/>, document.getElementById('root'));
+ReactDOM.render(<WikiPageApp auth={myApp.auth} flash={myApp.flash}/>, document.getElementById('root'));

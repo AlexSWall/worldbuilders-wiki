@@ -4,12 +4,17 @@ use App\Middleware\GuestMiddleware;
 use App\Middleware\AuthenticatedMiddleware;
 use App\Middleware\AdministratorMiddleware;
 
-/* Equivalent to
- * $app->get('/', 'HomeController:index')->setName('home');
+
+/* Note that 
+ *
+ * 	$app->get('/', 'HomeController:index')->setName('home');
+ *
+ * is equivalent to
+ *
+ * 	$app->get('/', function ($request, $response, $args) {
+ * 		return (new App\Controllers\HomeController($this))->index($request, $response, $args);
+ * 	})->setName('home');
  */
-$app->get('/', function ($request, $response, $args) {
-	return (new App\Controllers\HomeController($this))->index($request, $response, $args);
-})->setName('home');
 
 $app->group('', function()
 {
@@ -41,7 +46,13 @@ $app->group('', function()
 
 $app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
 
-$app->get('/{page_name}', 'WikiController:serveWebpage');
+$app->get('/', 'WikiController:serveWikiApp')->setName('home');
+$app->get('/w/{pageName}', 'WikiController:serveWikiContent');
+
+
+$app->get('/{pageName}', function ($request, $response, $args) {
+	return $response->withStatus(302)->withHeader('Location', '/#' . $args['pageName']);
+});
 
 $app->getContainer()['notFoundHandler'] = function($container)
 {
