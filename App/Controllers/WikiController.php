@@ -21,9 +21,7 @@ class WikiController extends Controller
 
 		$body = $response->getBody();
 		if ( is_null($webpage) )
-		{
 			$webpage = Webpage::retrieveWebpageByName('Page_Not_Found');
-		}
 
 		$body->write($webpage->getWebpageHTML());
 
