@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Utilities\TemplateRenderer;
+
 class Webpage extends DatabaseEncapsulator
 {
 	protected static function getDefaults()
@@ -30,15 +32,27 @@ class Webpage extends DatabaseEncapsulator
 
 	
 	/* == Getters & Setters == */
-	
-	public function getWebpageRaw()
+
+	public function getWebpageName()
 	{
-		return $this->get('webpage_raw');
+		return $this->get('page_name');
+	}
+
+	public function getWebpageTemplate()
+	{
+		return $this->get('webpage_template');
 	}
 
 	public function getWebpageHTML()
 	{
 		return $this->get('webpage_html');
+	}
+
+	public function renderWebpageTemplateToHTML()
+	{
+		return $this->set('webpage_html', TemplateRenderer::renderTemplate(
+			$this->getWebpageName(), $this->getWebpageTemplate()
+		));
 	}
 
 	public function isAdminOnly()
