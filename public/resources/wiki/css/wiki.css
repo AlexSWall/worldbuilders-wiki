@@ -55,8 +55,8 @@ main {
 	display: block;
 	position: relative;
 	width: 0;
-	height: 45px;
-	margin-top: -45px;
+	height: 30px;
+	margin-top: -30px;
 }
 
 #mainPanel h1, #mainPanel h2, #mainPanel h3, #mainPanel h4, #mainPanel h5, #mainPanel h6

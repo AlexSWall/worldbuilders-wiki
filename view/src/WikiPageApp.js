@@ -19,7 +19,7 @@ class WikiPageApp extends Component
 						<div id="content">
 							<div id="mainPanelWrapper">
 								<div id="mainPanel">
-									<WikiPanel rawWebpageContent={this.props.wiki.webpageContent}/>
+									<WikiPanel />
 								</div> {/* mainPanelWrapper */}
 							</div> {/* mainPanel */}
 						</div> {/* content */}

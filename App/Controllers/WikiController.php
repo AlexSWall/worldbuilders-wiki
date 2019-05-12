@@ -6,30 +6,35 @@ use App\Models\Webpage;
 
 class WikiController extends Controller
 {
-	public function serveWebpage($request, $response, $args)
+	/* Request of form <URL>/#{pageName} */
+	public function serveWikiApp($request, $response)
 	{
-		$pageName = $args['page_name'];
-		$title = str_replace('_', ' ', $pageName);
-
-		$webpage = Webpage::retrieveWebpageByName($pageName);
-
-		if ( is_null($webpage) )
-			throw new \Slim\Exception\NotFoundException($request, $response);
-
-		$webpageHTML = $webpage->getWebpageHTML($pageName);
-
-		$params = self::constructFrontendParametersArray($title, $webpageHTML);
-
+		$params = self::getFrontendParametersArray();
 		return $this->view->render($response, 'wiki/index.twig', $params);
 	}
 
-	private static function constructFrontendParametersArray($title, $webpageHTML)
+	/* Request of <URL>/w/{pageName} */
+	public function serveWikiContent($request, $response, $args)
+	{
+		$pageName = $args['pageName'];
+		$webpage = Webpage::retrieveWebpageByName($pageName);
+
+		$body = $response->getBody();
+		if ( is_null($webpage) )
+		{
+			$webpage = Webpage::retrieveWebpageByName('Page_Not_Found');
+		}
+
+		$body->write($webpage->getWebpageHTML());
+
+		return $response;
+	}
+
+	/* == Helpers == */
+
+	private static function getFrontendParametersArray()
 	{
 		return [
-			'wiki' => [
-				'title' => $title,
-				'webpageContent' => $webpageHTML
-			],
 			'auth' => $GLOBALS['auth'],
 			'flash' => $GLOBALS['flash'],
 			'baseUrl' => $GLOBALS['baseUrl']

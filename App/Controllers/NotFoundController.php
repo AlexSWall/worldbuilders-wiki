@@ -13,12 +13,8 @@ class NotFoundController extends Controller
 
 		self::$logger->addInfo('Page not found: ' . $requestPath);
 
-		$args = [ 'page_name' => 'Page_Not_Found', 'requestPath' => $requestPath ];
+		$args = [ 'pageName' => 'Page_Not_Found', 'requestPath' => $requestPath ];
 
-		if ( strpos($requestPath, '/') )
-			/* Has a / in the request path */
-			return (new WikiController($this->container))->serveWebpage($request, $response, $args);
-		else
-			return (new WikiController($this->container))->serveWebpage($request, $response, $args);
+		return (new WikiController($this->container))->serveWikiContent($request, $response, $args);
 	}
 }
