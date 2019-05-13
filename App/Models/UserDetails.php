@@ -7,8 +7,8 @@ class UserDetails extends DatabaseEncapsulator
 	protected static function getDefaults()
 	{
 		return [
-			'preferred_name' => null,
-			'description' => null
+			'PreferredName' => null,
+			'Description' => null
 		];
 	}
 	
@@ -19,7 +19,7 @@ class UserDetails extends DatabaseEncapsulator
 	
 	protected static function getPrimaryKey()
 	{
-		return 'id';
+		return 'Id';
 	}
 
 	/* == Creators & Retrievers == */
@@ -27,14 +27,14 @@ class UserDetails extends DatabaseEncapsulator
 	public static function createUserDetails($userId, $preferredName)
 	{
 	    return self::createModelWithEntries([
-			'user_id' => $userId,
-			'preferred_name' => $preferredName
+			'UserId' => $userId,
+			'PreferredName' => $preferredName
 		]);
 	}
 
 	public static function retrieveUserDetailsByUserId($userId)
 	{
-		return self::retrieveModelWithEntries(['user_id' => $userId]);
+		return self::retrieveModelWithEntries(['UserId' => $userId]);
 	}
 
 
@@ -42,16 +42,16 @@ class UserDetails extends DatabaseEncapsulator
 
 	public function getUserId()
 	{
-		return $this->get('user_id');
+		return $this->get('UserId');
 	}
 
 	public function getPreferredName()
 	{
-		return $this->get('preferred_name');
+		return $this->get('PreferredName');
 	}
 
 	public function getDescription()
 	{
-		return $this->get('description');
+		return $this->get('Description');
 	}
 }
