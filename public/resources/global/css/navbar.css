@@ -11,6 +11,7 @@
 	text-align: center;
 	text-decoration: none;
 	background-color: #222;
+	opacity: 0.95;
 }
 
 #navbar {
@@ -19,6 +20,7 @@
 	width: 90%;
 	height: 42px; /* 14 + 14 + 14 (navbar a) */
 	position: relative;
+	opacity: 1.0;
 	
 	line-height: 1;
 }

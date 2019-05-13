@@ -2,6 +2,7 @@
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 12pt;
 	color: black;
+	opacity: 0.9;
 	z-index: 1;
 
 	padding: 0;
@@ -21,6 +22,7 @@ footer {
 	display: table-cell;
 	vertical-align: middle;
 	margin: 0 auto;
+	opacity: 1.0;
 }
 
 footer > ul {
