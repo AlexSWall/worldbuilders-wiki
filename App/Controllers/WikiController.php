@@ -14,16 +14,23 @@ class WikiController extends Controller
 	}
 
 	/* Request of <URL>/w/{pageName} */
-	public function serveWikiContent($request, $response, $args)
+	public function serveWikiContentJSONResponse($request, $response, $args)
 	{
 		$pageName = $args['pageName'];
 		$webpage = Webpage::retrieveWebpageByName($pageName);
 
-		$body = $response->getBody();
 		if ( is_null($webpage) )
 			$webpage = Webpage::retrieveWebpageByName('Page_Not_Found');
 
-		$body->write($webpage->getWebpageHTML());
+		$webpage->renderWebpageTemplateToHTML();
+
+		$data = [
+			'webpageName' => $webpage->getWebpageName(),
+			'webpageTitle' => $webpage->getWebpageTitle(),
+			'webpageHTML' => $webpage->getWebpageHTML()
+		];
+
+		$response = $response->withJSON($data, 200, JSON_UNESCAPED_UNICODE);
 
 		return $response;
 	}

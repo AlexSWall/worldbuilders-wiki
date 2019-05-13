@@ -47,7 +47,7 @@ $app->group('', function()
 $app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
 
 $app->get('/', 'WikiController:serveWikiApp')->setName('home');
-$app->get('/w/{pageName}', 'WikiController:serveWikiContent');
+$app->get('/w/{pageName}', 'WikiController:serveWikiContentJSONResponse');
 
 
 $app->get('/{pageName}', function ($request, $response, $args) {
