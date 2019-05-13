@@ -7,7 +7,7 @@ class UserPermissions extends DatabaseEncapsulator
 	protected static function getDefaults()
 	{
 		return [
-			'is_admin' => false
+			'IsAdmin' => false
 		];
 	}
 	
@@ -18,19 +18,19 @@ class UserPermissions extends DatabaseEncapsulator
 	
 	protected static function getPrimaryKey()
 	{
-		return 'id';
+		return 'Id';
 	}
 
 	/* == Creators & Retrievers == */
 
 	public static function createDefaultUserPermissions($userId)
 	{
-	    return self::createModelWithEntries(['user_id' => $userId]);
+	    return self::createModelWithEntries(['UserId' => $userId]);
 	}
 
 	public static function retrieveUserPermissionsByUserId($userId)
 	{
-		return self::retrieveModelWithEntries(['user_id' => $userId]);
+		return self::retrieveModelWithEntries(['UserId' => $userId]);
 	}
 
 
@@ -43,11 +43,11 @@ class UserPermissions extends DatabaseEncapsulator
 
 	public function getUserId()
 	{
-		return $this->get('user_id');
+		return $this->get('UserId');
 	}
 
 	public function isAdmin()
 	{
-		return $this->hasPermission('is_admin');
+		return $this->hasPermission('IsAdmin');
 	}
 }

@@ -17,7 +17,7 @@ class User extends DatabaseEncapsulator
 	
 	protected static function getPrimaryKey()
 	{
-		return 'user_id';
+		return 'UserId';
 	}
 
 	private $userPermissions;
@@ -29,27 +29,27 @@ class User extends DatabaseEncapsulator
 	public static function createInactiveUser($username, $email, $passwordHash, $identifier)
 	{
 		return self::createModelWithEntries([
-			'username' => $username,
-			'email' => $email,
-			'password' => $passwordHash,
-			'active' => false,
-			'active_hash' => $identifier
+			'Username' => $username,
+			'Email' => $email,
+			'Password' => $passwordHash,
+			'Active' => false,
+			'ActiveHash' => $identifier
 		]);
 	}
 
 	public static function retrieveUserByUserId($userId)
 	{
-		return self::retrieveModelWithEntries(['user_id' => $userId]);
+		return self::retrieveModelWithEntries(['UserId' => $userId]);
 	}
 
 	public static function retrieveUserByUsername($username)
 	{
-		return self::retrieveModelWithEntries(['username' => $username]);
+		return self::retrieveModelWithEntries(['Username' => $username]);
 	}
 
 	public static function retrieveUserByEmail($email)
 	{
-		return self::retrieveModelWithEntries(['email' => $email]);
+		return self::retrieveModelWithEntries(['Email' => $email]);
 	}
 
 	public static function retrieveUserByIdentity($identity)
@@ -62,14 +62,14 @@ class User extends DatabaseEncapsulator
 
 	public static function retrieveUserByRememberMeIdentifier($identifier)
 	{
-		return self::retrieveModelWithEntries(['remember_identifier' => $identifier]);
+		return self::retrieveModelWithEntries(['RememberIdentifier' => $identifier]);
 	}
 
 	public static function retrieveInactiveUserByEmail($email)
 	{
 		return self::retrieveModelWithEntries([
-			'email' => $email,
-			'active' => false
+			'Email' => $email,
+			'Active' => false
 		]);
 	}
 
@@ -78,37 +78,37 @@ class User extends DatabaseEncapsulator
 
 	public function getUserId()
 	{
-		return $this->get('user_id');
+		return $this->get('UserId');
 	}
 
 	public function getUsername()
 	{
-		return $this->get('username');
+		return $this->get('Username');
 	}
 
 	public function setUsername($username)
 	{
-		$this->set('username', $username);
+		$this->set('Username', $username);
 	}
 
 	public function getEmail()
 	{
-		return $this->get('email');
+		return $this->get('Email');
 	}
 
 	public function setEmail($email)
 	{
-		$this->set('email', $email);
+		$this->set('Email', $email);
 	}
 
 	public function getPasswordHash()
 	{
-		return $this->get('password');
+		return $this->get('Password');
 	}
 
 	public function setHashedPassword($password)
 	{
-		$this->set('password', $password);
+		$this->set('Password', $password);
 	}
 
 	public function setUnhashedPassword($password)
@@ -118,54 +118,49 @@ class User extends DatabaseEncapsulator
 
 	public function isActive()
 	{
-		return (bool) $this->get('active');
-	}
-
-	public function setActive($active)
-	{
-		$this->set('active', $active);
+		return (bool) $this->get('Active');
 	}
 
 	public function getActiveHash()
 	{
-		return $this->get('active_hash');
+		return $this->get('ActiveHash');
 	}
 
-	public function setActiveHash($activeHash)
+	public function activateAccount()
 	{
-		$this->set('active_hash', $activeHash);
+		$this->update([
+			'Active' => true,
+			'ActiveHash' => null
+		]);
 	}
 
 	public function getPasswordRecoveryHash()
 	{
-		return $this->get('recovery_hash');
+		return $this->get('RecoveryHash');
 	}
 
 	public function setPasswordRecoveryHash($recoveryHash)
 	{
-		$this->set('recovery_hash', $recoveryHash);
+		$this->set('RecoveryHash', $recoveryHash);
 	}
 
 	public function getRememberMeIdentifier()
 	{
-		return $this->get('remember_identifier');
-	}
-
-	public function setRememberMeIdentifier($rememberMeIdentifier)
-	{
-		$this->set('remember_identifier', $rememberMeIdentifier);
+		return $this->get('RememberMeIdentifier');
 	}
 
 	public function getRememberMeToken()
 	{
-		return $this->get('remember_token');
+		return $this->get('RememberMeToken');
 	}
 
-	public function setRememberMeToken($rememberMeToken)
+	public function setRememberMeCredentials($identifier, $token)
 	{
-		$this->set('remember_token', $rememberMeToken);
+		$this->update([
+			'RememberMeIdentifier' => $identifier,
+			'RememberMeToken' => $token
+		]);
 	}
-
 
 	/* == User Permissions == */
 
@@ -209,22 +204,6 @@ class User extends DatabaseEncapsulator
 	}
 
 	/* == Miscellaneous == */
-
-	public function activateAccount()
-	{
-		$this->update([
-			'active' => true,
-			'active_hash' => null
-		]);
-	}
-
-	public function setRememberMeCredentials($identifier, $token)
-	{
-		$this->update([
-			'remember_identifier' => $identifier,
-			'remember_token' => $token
-		]);
-	}
 
 	public function removeRememberMeCredentials()
 	{
