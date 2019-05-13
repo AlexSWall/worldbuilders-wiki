@@ -15,23 +15,12 @@ class TemplateRenderer
 
 	public static function renderTemplate($pageName, $templateContent)
 	{
-		$workingContent = $templateContent;
-
-		if ( stripos($workingContent, '[[Table of Contents]]' ) !== false )
-		{
-			[$workingContent, $tableOfContents] 
-					= TemplateRenderer::addTableOfContents('/#' . $pageName, $workingContent);
-
-			$workingContent = preg_replace(
-				'/\[\[Table of Contents\]\]/i',
-				"<div id=\"toc\">{$tableOfContents}</div>",
-				$workingContent
-			);
-		}
+		$workingContent = htmlspecialchars($templateContent, ENT_QUOTES, 'UTF-8');
 
 		$patternAndReplacementPairs = [
 
-			/* [[text]] -> <a href="/#text_with_underscores\">text</a> */
+			/* == Links == */
+			/* [[text]]  ->  <a href="/#text_with_underscores\">text</a> */
 			'/\[\[([^\]\[\|]+)\]\]/' => function($matches)
 				{
 					$targetURL = preg_replace('/\s+/', '_', $matches[1]);
@@ -39,20 +28,50 @@ class TemplateRenderer
 					return "<a href=\"/#{$targetURL}\">{$targetText}</a>";
 				},
 
-			/* [[target|text]] -> <a href="/#target_with_underscores\">text</a> */
+			/* [[target|text]]  ->  <a href="/#target_with_underscores\">text</a> */
 			'/\[\[([^\]\[\|]+)\|([^\]\[\|]+)\]\]/' => function($matches)
 				{
 					$targetURL = preg_replace('/\s+/', '_', $matches[1]);
 					$targetText = $matches[2];
 					return "<a href=\"/#{$targetURL}\">{$targetText}</a>";
-				}
+				},
 
+			/* == Sections == */
+			/* == Section title ==  ->  <h2>Section title</h2>*/
+			'/(==+) *([^=]+?) *(==+)/' => function($matches)
+				{
+					if ( strlen($matches[1]) !== strlen($matches[3]) )
+						return $matches[0];
+
+					$secNum = strlen($matches[1]);
+					if ($secNum > 6)
+						return $matches[0];
+					$heading = $matches[2];
+
+					return "<h{$secNum}>{$heading}</h{$secNum}>";
+				}
 		];
 
 		$workingContent = preg_replace_callback_array(
 			$patternAndReplacementPairs,
 			$workingContent
 		);
+
+		if ( false )
+		{
+			/* Add only if four headings exist. */
+			if ( stripos($workingContent, '[[Table of Contents]]' ) !== false )
+			{
+				[$workingContent, $tableOfContents] 
+						= TemplateRenderer::addTableOfContents('/#' . $pageName, $workingContent);
+
+				$workingContent = preg_replace(
+					'/\[\[Table of Contents\]\]/i',
+					"<div id=\"toc\">{$tableOfContents}</div>",
+					$workingContent
+				);
+			}
+		}
 
 		return $workingContent;
 	}
