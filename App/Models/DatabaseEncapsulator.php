@@ -61,6 +61,7 @@ abstract class DatabaseEncapsulator
 
 	protected function set($key, $value)
 	{
+		$this->model->$key = $value;
 		$this->update([
 			$key => $value
 		]);
