@@ -130,7 +130,7 @@ class TemplateRenderer
 			'/(^\n*|\n\n+)([^<>\[\]=][\S\s]+?[^<>\[\]=])(?=(\n*$|\n\n))/' => function($matches)
 				{
 					[$str, $start, $middle, $end] = $matches;
-					return "{$start}<p>{$middle}</p>{$end}";
+					return "{$start}<p>{$middle}</p>";
 				},
 
 			/* == Bold & Italics == */
