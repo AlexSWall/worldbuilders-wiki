@@ -7,9 +7,9 @@ import Sidebar from './Components/Sidebar';
 import WebpageLoader from './Components/WebpageLoader';
 
 import WikiPanel from './Components/WikiPanel';
-import AddWebpage from './Components/Special/AddWebpage'
-import EditWebpage from './Components/Special/EditWebpage'
-import DeleteWebpage from './Components/Special/DeleteWebpage'
+import AddWebpage from './Components/Special/Forms/AddWebpage'
+import EditWebpage from './Components/Special/Forms/EditWebpage'
+import DeleteWebpage from './Components/Special/Forms/DeleteWebpage'
 
 class WikiPageApp extends Component
 {
