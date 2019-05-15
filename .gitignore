@@ -9,8 +9,8 @@ TODO.txt
 *.config.php
 composer.lock
 other
-view/node_modules
-view/build
+View/node_modules
+View/build
 .buildpath
 .project
 .settings

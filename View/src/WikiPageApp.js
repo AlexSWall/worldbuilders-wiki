@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 
 import NavigationBar from './Components/NavigationBar';
 import Flash from './Components/Flash';
-import WikiPanel from './Components/WikiPanel';
 import Footer from './Components/Footer';
 import Sidebar from './Components/Sidebar';
+import WebpageLoader from './Components/WebpageLoader';
+
+import WikiPanel from './Components/WikiPanel';
+import AddWebpage from './Components/Special/AddWebpage'
+import EditWebpage from './Components/Special/EditWebpage'
+import DeleteWebpage from './Components/Special/DeleteWebpage'
 
 class WikiPageApp extends Component
 {
@@ -19,7 +24,20 @@ class WikiPageApp extends Component
 						<div id="content">
 							<div id="mainPanelWrapper">
 								<div id="mainPanel">
-									<WikiPanel />
+									<WebpageLoader 
+										urlBase='http://localhost:8080/w/'
+										componentMapper={(webpageName) =>
+											{
+												const map = {
+													'Special:Add_Wiki_Page': AddWebpage,
+													'Special:Edit_Wiki_Page': EditWebpage,
+													'Special:Delete_Wiki_Page': DeleteWebpage
+												};
+												if (webpageName in map)
+													return map[webpageName];
+												return WikiPanel;
+											}}
+									/>
 								</div> {/* mainPanelWrapper */}
 							</div> {/* mainPanel */}
 						</div> {/* content */}

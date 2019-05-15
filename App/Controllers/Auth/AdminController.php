@@ -8,7 +8,7 @@ class AdminController extends Controller
 {
 	public function index($request, $response)
 	{
-		return $this->view->render($response, 'admin/base.twig', [
+		return $this->view->render($response, 'Indexes/admin.index.twig', [
 		]);
 	}
 }

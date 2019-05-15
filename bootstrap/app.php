@@ -65,13 +65,14 @@ $container['AdminController']      = function($container) { return new \App\Cont
 $container['PasswordController']   = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
 $container['ActivationController'] = function($container) { return new \App\Controllers\Auth\ActivationController($container); };
 $container['WikiController']       = function($container) { return new \App\Controllers\WikiController($container); };
+$container['WikiPageController']   = function($container) { return new \App\Controllers\WikiPageController($container); };
 $container['csrf']                 = function($container) { return new \Slim\Csrf\Guard; };
 $container['flash']                = function($container) { return new \Slim\Flash\Messages; };
 
 
 $container['view'] = function($container)
 {
-	$view = new \Slim\Views\Twig( BASE_PATH . '/view/webpages', [
+	$view = new \Slim\Views\Twig( BASE_PATH . '/View/Webpages', [
 		'cache' => false,
 	]);
 
@@ -114,7 +115,7 @@ $container['mailer'] = function($container)
 
 	$container['mailerView'] = function($container)
 	{
-		$mailerView = new \Slim\Views\Twig( BASE_PATH . '/view/email', [
+		$mailerView = new \Slim\Views\Twig( BASE_PATH . '/View/Email', [
 			'cache' => false,
 		]);
 

@@ -3,20 +3,34 @@
 namespace App\Controllers;
 
 use App\Models\Webpage;
+use App\Helpers\FrontendUtils;
 
 class WikiController extends Controller
 {
 	/* Request of form <URL>/#{pageName} */
 	public function serveWikiApp($request, $response)
 	{
-		$params = self::getFrontendParametersArray();
-		return $this->view->render($response, 'wiki/index.twig', $params);
+		return $this->view->render($response, 'Indexes/wiki.index.twig',
+			FrontendUtils::constructFrontendParametersArray());
 	}
 
 	/* Request of <URL>/w/{pageName} */
-	public function serveWikiContentJSONResponse($request, $response, $args)
+	public function serveWikiContentGetRequest($request, $response, $args)
 	{
 		$pageName = $args['pageName'];
+
+		if ( substr($pageName, 0, strlen('Special:')) === 'Special:' )
+			$data = $this->getSpecialContentData($pageName);
+		else 
+			$data = self::getDatabaseWebpageData($pageName);
+
+		$response = $response->withJSON($data, 200, JSON_UNESCAPED_UNICODE);
+
+		return $response;
+	}
+
+	private static function getDatabaseWebpageData($pageName = 'Page_Not_Found')
+	{
 		$webpage = Webpage::retrieveWebpageByName($pageName);
 
 		if ( is_null($webpage) )
@@ -24,25 +38,30 @@ class WikiController extends Controller
 
 		$webpage->renderWebpageTemplateToHTML();
 
-		$data = [
-			'webpageName' => $webpage->getWebpageName(),
-			'webpageTitle' => $webpage->getWebpageTitle(),
-			'webpageHTML' => $webpage->getWebpageHTML()
+		return [
+			'webpage' => [
+				'name' => $webpage->getWebpageName(),
+				'title' => $webpage->getWebpageTitle(),
+				'HTML' => $webpage->getWebpageHTML()
+			]
 		];
-
-		$response = $response->withJSON($data, 200, JSON_UNESCAPED_UNICODE);
-
-		return $response;
 	}
 
-	/* == Helpers == */
-
-	private static function getFrontendParametersArray()
+	private function getSpecialContentData($pageName)
 	{
-		return [
-			'auth' => $GLOBALS['auth'],
-			'flash' => $GLOBALS['flash'],
-			'baseUrl' => $GLOBALS['baseUrl']
-		];
+		switch (substr($pageName, strlen('Special:')))
+		{
+			case 'Add_Wiki_Page':
+				return $this->WikiPageController->getAddWebpageData();
+			case 'Edit_Wiki_Page':
+				return $this->WikiPageController->getEditWebpageData();
+			case 'Delete_Wiki_Page':
+				return $this->WikiPageController->getDeleteWebpageData();
+			case 'Template_Formatting':
+				return FrontendUtils::convertToSpecialWebpageDataWithHTML($pageName, 'Meta: Template Formatting', 
+					$this->view, 'templateformatting');
+			default:
+				return $this->getDatabaseWebpageData();
+		}
 	}
 }

@@ -15,6 +15,6 @@ class NotFoundController extends Controller
 
 		$args = [ 'pageName' => 'Page_Not_Found', 'requestPath' => $requestPath ];
 
-		return (new WikiController($this->container))->serveWikiContent($request, $response, $args);
+		return $this->WikiController->serveWikiContentGetRequest($request, $response, $args);
 	}
 }
