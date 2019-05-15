@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-GB">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+		<title>{{ formProperties.title }}</title>
+		<base target="_self">
+
+		<script type="text/javascript">
+			var myApp = {
+				auth: {{ ( auth | json_encode | raw ) }},
+				formProperties: {{ ( formProperties | json_encode | raw ) }},
+				csrfField: '{{ ( csrf.field | raw ) }}'
+			}
+		</script>
+
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/global/css/html5reset.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/global/css/default.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/global/css/navbar.css" />
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/global/css/footer.css" />
+
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/auth/css/form_page.css" />
+
+		<link href="https://fonts.googleapis.com/css?family=Adamina" rel="stylesheet"> 
+	</head>
+	<body>
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root"></div>
+		<script type="text/javascript" src="/js/authentication.bundle.js" ></script>
+	</body>
+</html>

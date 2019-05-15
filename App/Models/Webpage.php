@@ -25,6 +25,8 @@ class Webpage extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
+	// Disallow colons in page name.
+	
 	public static function retrieveWebpageByName($webpageName)
 	{
 		return self::retrieveModelWithEntries(['WebpageName' => $webpageName]);

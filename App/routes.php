@@ -37,6 +37,16 @@ $app->group('', function()
 
 	$this->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
 	$this->post('/Change_Password', 'PasswordController:postChangePassword');
+
+	/* $this->get('/Add_Wiki_Page', 'WikiPageController:getAddWebpage'); */
+	$this->post('/Add_Wiki_Page', 'WikiPageController:postAddWebpage');
+
+	/* $this->get('/Edit_Wiki_Page', 'WikiPageController:getEditWebpage'); */
+	$this->post('/Edit_Wiki_Page', 'WikiPageController:postEditWebpage');
+
+	/* $this->get('/Delete_Wiki_Page', 'WikiPageController:getDeleteWebpage'); */
+	$this->post('/Delete_Wiki_Page', 'WikiPageController:postDeleteWebpage');
+
 })->add(new AuthenticatedMiddleware($container));
 
 $app->group('', function()
@@ -46,9 +56,10 @@ $app->group('', function()
 
 $app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
 
+/* Wiki routes */
 $app->get('/', 'WikiController:serveWikiApp')->setName('home');
-$app->get('/w/{pageName}', 'WikiController:serveWikiContentJSONResponse');
-
+$app->get('/w/{pageName}', 'WikiController:serveWikiContentGetRequest');
+   /* ---- */
 
 $app->get('/{pageName}', function ($request, $response, $args) {
 	return $response->withStatus(302)->withHeader('Location', '/#' . $args['pageName']);

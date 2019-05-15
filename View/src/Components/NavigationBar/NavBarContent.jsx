@@ -19,7 +19,8 @@ class NavBarContent extends Component
 							<NavBarDropdownItem href="/#The_Valen_Ministry" text="The Valen Ministry" />
 							<NavBarDropdownItem href="/#Dra'akna" text="Dra'akna" />
 						</NavBarDropdown>
-						<NavBarButton href="/#Add_Page" text="Add Page" active={false} />
+						<NavBarButton href="/#Special:Add_Wiki_Page" text="Add Page" active={false} />
+						<NavBarButton href="/#Special:Edit_Wiki_Page" text="Edit Page" active={false} />
 						<NavBarButton href="/#About" text="About" active={false} />
 					</NavBarList>
 					<NavBarList position="right">

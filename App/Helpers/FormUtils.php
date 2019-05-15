@@ -2,26 +2,17 @@
 
 namespace App\Helpers;
 
+use App\Helpers\FrontendUtils;
+
 class FormUtils
 {
-
 	public static function getForm($view, $response, $args = [])
 	{
-		return $view->render($response, 'authentication/authentication.twig', 
-			self::constructFrontendParametersArray($args));
+		return $view->render($response, 'Indexes/authentication.index.twig', 
+			FrontendUtils::constructFrontendParametersArray(self::addFormProperties($args)));
 	}
 
-	private static function constructFrontendParametersArray($args)
-	{
-		return array_merge([
-			'auth' => $GLOBALS['auth'],
-			'flash' => $GLOBALS['flash'],
-			'baseUrl' => $GLOBALS['baseUrl']
-		],
-		self::getFormProperties($args));
-	}
-
-	private static function getFormProperties($args)
+	private static function addFormProperties($args)
 	{
 		return ['formProperties' => array_merge(
 			[
