@@ -164,21 +164,34 @@ main {
 
 /* == Forms == */
 #mainPanel form {
-	
 }
 
 #mainPanel .form-group {
-	
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 #mainPanel .form-label {
-	
+	text-decoration: underline;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 
 #mainPanel .form-control {
-	
+	display: block;
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+#mainPanel form textarea {
+	width: 700px;
+	max-width: 700px;
+	height: 400px;
+	max-height: 1000px;
 }
 
 #mainPanel .form-submit {
-	
+	display: block;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
