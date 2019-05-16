@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Webpage;
-use App\Helpers\FrontendUtils;
+use App\Helpers\FrontEndDataUtils;
 
 class WikiController extends Controller
 {
@@ -11,7 +11,7 @@ class WikiController extends Controller
 	public function serveWikiApp($request, $response)
 	{
 		return $this->view->render($response, 'Indexes/wiki.index.twig',
-			FrontendUtils::constructFrontendParametersArray());
+			FrontEndDataUtils::getBaseData());
 	}
 
 	/* Request of <URL>/w/{pageName} */
@@ -24,12 +24,14 @@ class WikiController extends Controller
 		else 
 			$data = self::getDatabaseWebpageData($pageName);
 
-		$response = $response->withJSON($data, 200, JSON_UNESCAPED_UNICODE);
+		$response = $response->withJSON([
+			'webpage' => $data
+		], 200, JSON_UNESCAPED_UNICODE);
 
 		return $response;
 	}
 
-	private static function getDatabaseWebpageData($pageName = 'Page_Not_Found')
+	private static function getDatabaseWebpageData($pageName)
 	{
 		$webpage = Webpage::retrieveWebpageByName($pageName);
 
@@ -39,11 +41,9 @@ class WikiController extends Controller
 		$webpage->renderWebpageTemplateToHTML();
 
 		return [
-			'webpage' => [
-				'name' => $webpage->getWebpageName(),
-				'title' => $webpage->getWebpageTitle(),
-				'HTML' => $webpage->getWebpageHTML()
-			]
+			'name' => $webpage->getWebpageName(),
+			'title' => $webpage->getWebpageTitle(),
+			'HTML' => $webpage->getWebpageHTML()
 		];
 	}
 
@@ -58,10 +58,10 @@ class WikiController extends Controller
 			case 'Delete_Wiki_Page':
 				return $this->WikiPageController->getDeleteWebpageData();
 			case 'Template_Formatting':
-				return FrontendUtils::convertToSpecialWebpageDataWithHTML($pageName, 'Meta: Template Formatting', 
+				return FrontEndDataUtils::getWebpageDataFor($pageName, 'Meta: Template Formatting', 
 					$this->view, 'templateformatting');
 			default:
-				return $this->getDatabaseWebpageData();
+				return $this->getDatabaseWebpageData('Page_Not_Found');
 		}
 	}
 }

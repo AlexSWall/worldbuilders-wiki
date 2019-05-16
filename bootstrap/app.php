@@ -151,15 +151,11 @@ require BASE_PATH . '/App/routes.php';
 
 /* == Set up Globals == */
 
-$check = $container->auth->check();
-$user = $container->auth->userSafe();
-
-$GLOBALS['auth'] = [
-	'check' => $check,
-	'user' => $user
-];
-$GLOBALS['flash'] = $container->flash;
-$GLOBALS['baseUrl'] = $container->get('settings')['app']['url'];
+\App\Globals\FrontEndParametersFacade::createNewFrontEndParametersInstance();
+\App\Globals\FrontEndParametersFacade::setIsAuthenticated($container->auth->check());
+\App\Globals\FrontEndParametersFacade::setUserData($container->auth->userSafe());
+\App\Globals\FrontEndParametersFacade::setBaseUrl($container->get('settings')['app']['url']);
+\App\Globals\FrontEndParametersFacade::setFlash($container->flash);
 
 /* == Miscellaneous == */
 

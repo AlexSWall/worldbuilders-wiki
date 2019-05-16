@@ -23,7 +23,6 @@ class AuthenticationApp extends Component
 									<AuthenticationPanel>
 										<AuthForm 
 											formProperties={this.props.formProperties}
-											csrfField={this.props.csrfField}
 										/>
 									</AuthenticationPanel>
 								</div> {/* mainPanelWrapper */}

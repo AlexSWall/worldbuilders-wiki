@@ -9,5 +9,4 @@ ReactDOM.render(
 	<AuthenticationApp
 		auth={myApp.auth}
 		formProperties={myApp.formProperties}
-		csrfField={myApp.csrfField}
 	/>, document.getElementById('root'));

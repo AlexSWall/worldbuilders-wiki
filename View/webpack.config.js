@@ -20,7 +20,7 @@ module.exports = {
 				resolve: { 
 					alias: {
 						Components: path.resolve(__dirname, 'src/Components/'),
-						Utilities: path.resolve(__dirname, 'src/Utilities/')
+						'Form Components': path.resolve(__dirname, 'src/Components/Form Components/')
 					},
 					extensions: [".js", ".jsx"]
 				}, 

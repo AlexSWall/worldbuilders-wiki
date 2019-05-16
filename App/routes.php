@@ -12,46 +12,49 @@ use App\Middleware\AdministratorMiddleware;
  * is equivalent to
  *
  * 	$app->get('/', function ($request, $response, $args) {
- * 		return (new App\Controllers\HomeController($this))->index($request, $response, $args);
+ * 		return (new App\Controllers\HomeController($app))->index($request, $response, $args);
  * 	})->setName('home');
  */
 
-$app->group('', function()
+global $app;
+global $container;
+
+$app->group('', function() use ($app)
 {
-	$this->get('/Sign_Up', 'AuthController:getSignup')->setName('auth.signup');
-	$this->post('/Sign_Up', 'AuthController:postSignup');
+	$app->get('/Sign_Up', 'AuthController:getSignup')->setName('auth.signup');
+	$app->post('/Sign_Up', 'AuthController:postSignup');
 
-	$this->get('/Sign_In', 'AuthController:getSignIn')->setName('auth.signin');
-	$this->post('/Sign_In', 'AuthController:postSignIn');
+	$app->get('/Sign_In', 'AuthController:getSignIn')->setName('auth.signin');
+	$app->post('/Sign_In', 'AuthController:postSignIn');
 
-	$this->get('/Password_Recovery', 'PasswordController:getPasswordRecovery')->setName('auth.password.recovery');
-	$this->post('/Password_Recovery', 'PasswordController:postPasswordRecovery');
+	$app->get('/Password_Recovery', 'PasswordController:getPasswordRecovery')->setName('auth.password.recovery');
+	$app->post('/Password_Recovery', 'PasswordController:postPasswordRecovery');
 
-	$this->get('/Reset_Password', 'PasswordController:getResetPassword')->setName('auth.password.reset');
-	$this->post('/Reset_Password', 'PasswordController:postResetPassword');
+	$app->get('/Reset_Password', 'PasswordController:getResetPassword')->setName('auth.password.reset');
+	$app->post('/Reset_Password', 'PasswordController:postResetPassword');
 })->add(new GuestMiddleware($container));
 
-$app->group('', function()
+$app->group('', function() use ($app)
 {
-	$this->get('/Sign_Out', 'AuthController:getSignOut')->setName('auth.signout');
+	$app->get('/Sign_Out', 'AuthController:getSignOut')->setName('auth.signout');
 
-	$this->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
-	$this->post('/Change_Password', 'PasswordController:postChangePassword');
+	$app->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
+	$app->post('/Change_Password', 'PasswordController:postChangePassword');
 
-	/* $this->get('/Add_Wiki_Page', 'WikiPageController:getAddWebpage'); */
-	$this->post('/Add_Wiki_Page', 'WikiPageController:postAddWebpage');
+	/* $app->get('/Add_Wiki_Page', 'WikiPageController:getAddWebpage'); */
+	$app->post('/Add_Wiki_Page', 'WikiPageController:postAddWebpage');
 
-	/* $this->get('/Edit_Wiki_Page', 'WikiPageController:getEditWebpage'); */
-	$this->post('/Edit_Wiki_Page', 'WikiPageController:postEditWebpage');
+	/* $app->get('/Edit_Wiki_Page', 'WikiPageController:getEditWebpage'); */
+	$app->post('/Edit_Wiki_Page', 'WikiPageController:postEditWebpage');
 
-	/* $this->get('/Delete_Wiki_Page', 'WikiPageController:getDeleteWebpage'); */
-	$this->post('/Delete_Wiki_Page', 'WikiPageController:postDeleteWebpage');
+	/* $app->get('/Delete_Wiki_Page', 'WikiPageController:getDeleteWebpage'); */
+	$app->post('/Delete_Wiki_Page', 'WikiPageController:postDeleteWebpage');
 
 })->add(new AuthenticatedMiddleware($container));
 
-$app->group('', function()
+$app->group('', function() use ($app)
 {
-	$this->get('/admin/home', 'AdminController:index')->setName('admin.home');
+	$app->get('/admin/home', 'AdminController:index')->setName('admin.home');
 })->add(new AdministratorMiddleware($container));
 
 $app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
