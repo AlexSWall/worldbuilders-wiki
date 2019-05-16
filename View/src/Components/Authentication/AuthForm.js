@@ -9,10 +9,7 @@ class AuthForm extends Component
 		return (
 			<div className="card">
 				<AuthFormHeader text={this.props.formProperties.title} />
-				<AuthFormBody
-					formProperties={this.props.formProperties}
-					csrfField={this.props.csrfField}
-				/>
+				<AuthFormBody formProperties={this.props.formProperties} />
 			</div>
 		);
 	}

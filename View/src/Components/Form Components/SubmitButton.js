@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class FormSubmitButton extends Component 
+class SubmitButton extends Component 
 {
 	render() {
 		return (
@@ -9,4 +9,4 @@ class FormSubmitButton extends Component
 	}
 }
 
-export default FormSubmitButton;
+export default SubmitButton;

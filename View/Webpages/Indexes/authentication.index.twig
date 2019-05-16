@@ -10,8 +10,7 @@
 		<script type="text/javascript">
 			var myApp = {
 				auth: {{ ( auth | json_encode | raw ) }},
-				formProperties: {{ ( formProperties | json_encode | raw ) }},
-				csrfField: '{{ ( csrf.field | raw ) }}'
+				formProperties: {{ ( formProperties | json_encode | raw ) }}
 			}
 		</script>
 

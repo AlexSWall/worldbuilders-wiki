@@ -2,16 +2,23 @@
 
 namespace App\Controllers;
 
-use App\Models\Webpage;
-use App\Helpers\FrontendUtils;
+use App\Helpers\FrontEndDataUtils;
 
 class WikiPageController extends Controller
 {
 	static $logger;
 
+	private static function getData($webpageName, $webpageTitle)
+	{
+		return array_merge(
+			FrontEndDataUtils::getWebpageDataFor($webpageName, $webpageTitle),
+			FrontEndDataUtils::getFormData()
+		);
+	}
+
 	public function getAddWebpageData()
 	{
-		return FrontendUtils::convertToSpecialWebpageDataWithoutHTML('Special:Add_Wiki_Page', 'Add Wiki Page');
+		return self::getData('Special:Add_Wiki_Page', 'Add Wiki Page');
 	}
 
 	public function postAddWebpage($request, $response)
@@ -21,7 +28,7 @@ class WikiPageController extends Controller
 
 	public function getEditWebpageData()
 	{
-		return FrontendUtils::convertToSpecialWebpageDataWithoutHTML('Special:Edit_Wiki_Page', 'Edit Wiki Page');
+		return self::getData('Special:Edit_Wiki_Page', 'Edit Wiki Page');
 	}
 
 	public function postEditWebpage($request, $response)
@@ -31,7 +38,7 @@ class WikiPageController extends Controller
 
 	public function getDeleteWebpageData()
 	{
-		return FrontendUtils::convertToSpecialWebpageDataWithoutHTML('Special:Delete_Wiki_Page', 'Delete Wiki Page');
+		return self::getData('Special:Delete_Wiki_Page', 'Delete Wiki Page');
 	}
 
 	public function postDeleteWebpage($request, $response)

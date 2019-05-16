@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class FormTextArea extends Component 
+class TextInput extends Component 
 {
 	constructor(props) {
 		super(props);
@@ -10,14 +10,15 @@ class FormTextArea extends Component
 	}
 
 	onChange = (event) => {
-		this.setState({value: event.target.value});
+		if ( event.target.value.length <= 30)
+			this.setState({value: event.target.value});
 	};
 
 	render() {
 		return (
 			<div className='form-group'>
 				<label className='form-label' htmlFor={this.props.formId}>{ this.props.labelText }</label>
-				<textarea
+				<input
 					className='form-control'
 					type='text'
 					name={this.props.formId}
@@ -30,4 +31,4 @@ class FormTextArea extends Component
 	}
 }
 
-export default FormTextArea;
+export default TextInput;

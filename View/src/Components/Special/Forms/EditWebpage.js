@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
-import FormTextInput from './Form Components/FormTextInput'
-import FormTextArea from './Form Components/FormTextArea'
-import FormSubmitButton from './Form Components/FormSubmitButton'
+import TextInput    from 'Form Components/TextInput'
+import TextArea     from 'Form Components/TextArea'
+import SubmitButton from 'Form Components/SubmitButton'
+import CSRFField    from 'Form Components/CSRFField'
 
 class EditWebpage extends Component 
 {
@@ -14,15 +15,16 @@ class EditWebpage extends Component
 				<p>To delete a webpage, use the <a href='/#Special:Delete_Wiki_Page'>Delete Wiki Page</a> webpage instead.</p>
 
 				<form action='Edit_Wiki_Page' method='post' autoComplete='off'>
-					<FormTextInput
+					<TextInput
 						formId='pageName'
 						labelText='Page Name:'
 					/>
-					<FormTextArea
+					<TextArea
 						formId='webpageTemplate'
 						labelText='Webpage Template Content'
 					/>
-					<FormSubmitButton text='Edit Webpage' />
+					<SubmitButton text='Edit Webpage' />
+					<CSRFField csrfHTML={this.props.csrfHTML} />
 				</form>
 			</React.Fragment>
 		);

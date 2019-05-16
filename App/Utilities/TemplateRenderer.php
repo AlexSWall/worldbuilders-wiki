@@ -2,8 +2,6 @@
 
 namespace App\Utilities;
 
-use App\Models\Webpage;
-
 /** === Regular Expression Syntax Rules ===
  *
  * For testing: https://regex101.com/
@@ -78,7 +76,7 @@ class TemplateRenderer
 			/* [[Image:"url"|width,height]]  ->  <img src="url" width="width" height="height"> */
 			'/\[\[Image:&quot;([^\]\[\|]+)&quot; *\| *(\d+), *(\d+)\]\]/' => function($matches)
 				{
-					[$str, $location, $width, $height] = $matches;
+					[, $location, $width, $height] = $matches;
 					return "<img src=\"/resources/images/{$location}\" width=\"{$width}\" height=\"{$height}\">";
 				},
 
@@ -129,7 +127,7 @@ class TemplateRenderer
 			/* The beginning or >=2 new lines until the end or two new lines, with anything between, matched lazily. */
 			'/(^\n*|\n\n+)([^<>\[\]=][\S\s]+?[^<>\[\]=])(?=(\n*$|\n\n))/' => function($matches)
 				{
-					[$str, $start, $middle, $end] = $matches;
+					[, $start, $middle,] = $matches;
 					return "{$start}<p>{$middle}</p>";
 				},
 

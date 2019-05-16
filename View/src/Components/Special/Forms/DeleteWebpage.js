@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
-import FormTextInput from './Form Components/FormTextInput'
-import FormSubmitButton from './Form Components/FormSubmitButton'
+import TextInput    from 'Form Components/TextInput'
+import SubmitButton from 'Form Components/SubmitButton'
+import CSRFField    from 'Form Components/CSRFField'
 
 class DeleteWebpage extends Component 
 {
@@ -10,12 +11,13 @@ class DeleteWebpage extends Component
 			<React.Fragment>
 				<h1>Meta: Delete A Webpage</h1>
 
-				<form action='Add_Wiki_Page' method='post' autoComplete='off'>
-					<FormTextInput
+				<form action='Delete_Wiki_Page' method='post' autoComplete='off'>
+					<TextInput
 						formId='pageName'
 						labelText='Page Name:'
 					/>
-					<FormSubmitButton text='Add Webpage' />
+					<SubmitButton text='Delete Webpage' />
+					<CSRFField csrfHTML={this.props.csrfHTML} />
 				</form>
 			</React.Fragment>
 		);

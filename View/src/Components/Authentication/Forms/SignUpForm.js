@@ -4,13 +4,12 @@ import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormLink from './../Form Components/AuthFormLink';
 import AuthFormCheckBox from './../Form Components/AuthFormCheckBox';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
-import CSRFField from './../Form Components/CSRFField';
+import CSRFField from 'Form Components/CSRFField'
 
 class SignUpForm extends Component 
 {
 	render() {
-		let {formType, oldValues, errors} = this.props.formProperties;
-		let csrfField = this.props.csrfField;
+		let {formType, csrfHTML, oldValues, errors} = this.props.formProperties;
 		return (
 			<form action='Sign_Up' method='post' autoComplete='off'>
 				<AuthFormTextEntry 
@@ -55,7 +54,7 @@ class SignUpForm extends Component
 				/>
 				<AuthFormSubmitButton text='Sign Up' />
 
-				<CSRFField csrfField={csrfField}/>
+				<CSRFField csrfHTML={csrfHTML}/>
 			</form>
 		);
 	}

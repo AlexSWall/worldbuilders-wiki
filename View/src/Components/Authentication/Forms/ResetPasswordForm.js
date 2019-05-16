@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 
 import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
-import CSRFField from './../Form Components/CSRFField';
+import CSRFField from 'Form Components/CSRFField'
 
 class ResetPasswordForm extends Component 
 {
 	render() {
-		let {formType, oldValues, errors, email, identifier} = this.props.formProperties;
-		let csrfField = this.props.csrfField;
+		let {formType, csrfHTML, oldValues, errors, email, identifier} = this.props.formProperties;
 		return (
 			<form action={`Reset_Password?email=${email}&identifier=${identifier}`} method='post' autoComplete='off'>
 				<AuthFormTextEntry 
@@ -29,7 +28,7 @@ class ResetPasswordForm extends Component
 				/>
 				<AuthFormSubmitButton text='Change Password' />
 
-				<CSRFField csrfField={csrfField}/>
+				<CSRFField csrfHTML={csrfHTML}/>
 			</form>
 		);
 	}
