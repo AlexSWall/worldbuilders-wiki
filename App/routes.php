@@ -21,11 +21,11 @@ global $container;
 
 $app->group('', function() use ($app)
 {
-	$app->get('/Sign_Up', 'AuthController:getSignup')->setName('auth.signup');
-	$app->post('/Sign_Up', 'AuthController:postSignup');
+	$app->get('/Sign_Up', 'AuthenticationController:getSignup')->setName('auth.signup');
+	$app->post('/Sign_Up', 'AuthenticationController:postSignup');
 
-	$app->get('/Sign_In', 'AuthController:getSignIn')->setName('auth.signin');
-	$app->post('/Sign_In', 'AuthController:postSignIn');
+	$app->get('/Sign_In', 'AuthenticationController:getSignIn')->setName('auth.signin');
+	$app->post('/Sign_In', 'AuthenticationController:postSignIn');
 
 	$app->get('/Password_Recovery', 'PasswordController:getPasswordRecovery')->setName('auth.password.recovery');
 	$app->post('/Password_Recovery', 'PasswordController:postPasswordRecovery');
@@ -36,7 +36,7 @@ $app->group('', function() use ($app)
 
 $app->group('', function() use ($app)
 {
-	$app->get('/Sign_Out', 'AuthController:getSignOut')->setName('auth.signout');
+	$app->get('/Sign_Out', 'AuthenticationController:getSignOut')->setName('auth.signout');
 
 	$app->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
 	$app->post('/Change_Password', 'PasswordController:postChangePassword');
@@ -54,7 +54,7 @@ $app->group('', function() use ($app)
 
 $app->group('', function() use ($app)
 {
-	$app->get('/admin/home', 'AdminController:index')->setName('admin.home');
+	$app->get('/Administration/', 'AdministrationController:index')->setName('admin.home');
 })->add(new AdministratorMiddleware($container));
 
 $app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');

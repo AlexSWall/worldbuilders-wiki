@@ -10,7 +10,7 @@ class NavigationBar extends Component
 			<div id="navbarWrapper">
 				<div id="navbar">
 					<NavBarBrand />
-					<NavBarContent auth={this.props.auth}/>
+					<NavBarContent authenticationData={this.props.authenticationData}/>
 				</div>
 			</div>
 		);
