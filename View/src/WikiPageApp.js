@@ -17,7 +17,7 @@ class WikiPageApp extends Component
 	{
 		return (
 			<div id="pageWrapper">
-				<NavigationBar auth={this.props.auth}/>
+				<NavigationBar authenticationData={this.props.authenticationData}/>
 				<Flash flash={this.props.flash}/>
 				<main>
 					<div id="contentWrapper">

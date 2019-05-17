@@ -8,10 +8,9 @@
 		<base target="_self">
 
 		<script type="text/javascript">
-			var myApp = {
-				auth: {{ (auth|json_encode|raw) }},
-				flash: {{ (flash|json_encode|raw) }},
-				baseUrl: '{{ (baseUrl|raw) }}'
+			const webpageBaseData = {
+				authenticationData: {{ ( authenticationData | json_encode | raw ) }},
+				flash: {{ ( flash | json_encode | raw ) }}
 			}
 		</script>
 

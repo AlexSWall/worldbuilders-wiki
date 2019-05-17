@@ -2,12 +2,9 @@ import React, { Component } from 'react';
 
 import NavigationBar from './Components/NavigationBar';
 import Flash from './Components/Flash';
-import Footer from './Components/Footer';
-import Sidebar from './Components/Sidebar';
-import AuthenticationPanel from './Components/AuthenticationPanel';
-import AuthForm from './Components/Authentication/AuthForm';
+import AdministrationPanel from './Components/AdministrationPanel';
 
-class AuthenticationApp extends Component
+class AdministrationApp extends Component
 {
 	render()
 	{
@@ -20,9 +17,7 @@ class AuthenticationApp extends Component
 						<div id="content">
 							<div id="mainPanelWrapper">
 								<div id="mainPanel">
-									<AuthenticationPanel>
-										<AuthForm formProperties={this.props.formProperties} />
-									</AuthenticationPanel>
+									<AdministrationPanel authenticationData={this.props.authenticationData}/>
 								</div> {/* mainPanelWrapper */}
 							</div> {/* mainPanel */}
 						</div> {/* content */}
@@ -33,4 +28,4 @@ class AuthenticationApp extends Component
 	}
 }
 
-export default AuthenticationApp;
+export default AdministrationApp;

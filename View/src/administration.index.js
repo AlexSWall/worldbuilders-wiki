@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AuthenticationApp from './AuthenticationApp';
+import AdministrationApp from './AdministrationApp';
 
 import webpageBaseData from 'webpageBaseData'; /* Imports webpageBaseData variable from index.php. */
 
-ReactDOM.render(<AuthenticationApp
+ReactDOM.render(<AdministrationApp
 	authenticationData={webpageBaseData.authenticationData}
-	formProperties={webpageBaseData.formProperties}
 	flash={webpageBaseData.flash}
 />, document.getElementById('root'));

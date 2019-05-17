@@ -8,9 +8,10 @@
 		<base target="_self">
 
 		<script type="text/javascript">
-			var myApp = {
-				auth: {{ ( auth | json_encode | raw ) }},
-				formProperties: {{ ( formProperties | json_encode | raw ) }}
+			const webpageBaseData = {
+				authenticationData: {{ ( authenticationData | json_encode | raw ) }},
+				formProperties: {{ ( formProperties | json_encode | raw ) }},
+				flash: {{ ( flash | json_encode | raw ) }}
 			}
 		</script>
 
@@ -24,7 +25,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Adamina" rel="stylesheet"> 
 	</head>
 	<body>
-		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<noscript>You need to enable JavaScript to run use this website.</noscript>
 		<div id="root"></div>
 		<script type="text/javascript" src="/js/authentication.bundle.js" ></script>
 	</body>

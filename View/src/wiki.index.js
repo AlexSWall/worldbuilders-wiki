@@ -2,10 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import WikiPageApp from './WikiPageApp';
 
-import myApp from 'myApp'; /* Imports myApp variable from index.php. */
+import webpageBaseData from 'webpageBaseData'; /* Imports webpageBaseData variable from index.php. */
 
 ReactDOM.render(<WikiPageApp 
-	auth={myApp.auth}
-	csrfHTML={myApp.csrfHTML}
-	flash={myApp.flash}
+	authenticationData={webpageBaseData.authenticationData}
+	flash={webpageBaseData.flash}
 />, document.getElementById('root'));

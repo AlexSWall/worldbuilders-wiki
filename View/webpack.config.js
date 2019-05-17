@@ -7,7 +7,7 @@ module.exports = {
 	entry: {
 		'wiki': ['@babel/polyfill', './src/wiki.index.js'],
 		'authentication': ['@babel/polyfill', './src/authentication.index.js'],
-		'admin': ['@babel/polyfill', './src/admin.index.js']
+		'administration': ['@babel/polyfill', './src/administration.index.js']
 	},
 	output: {
 		filename: '[name].bundle.js',
@@ -38,6 +38,6 @@ module.exports = {
 	},
 	mode: 'development',
 	externals: {
-		myApp: 'myApp'
+		webpageBaseData: 'webpageBaseData'
 	}
 };

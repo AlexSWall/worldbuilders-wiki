@@ -9,7 +9,7 @@ use App\Helpers\FormUtils;
 
 use App\Validation\Rules as Rules;
 
-class AuthController extends Controller
+class AuthenticationController extends Controller
 {
 	static $logger;
 
