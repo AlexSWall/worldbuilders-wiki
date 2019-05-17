@@ -7,14 +7,13 @@ use App\Helpers\FrontEndDataUtils;
 
 class WikiController extends Controller
 {
-	/* Request of form <URL>/#{pageName} */
+	/* Request with URL of the form  '<BaseURL>/#{pageName}'  */
 	public function serveWikiApp($request, $response)
 	{
-		return $this->view->render($response, 'Indexes/wiki.index.twig',
-			FrontEndDataUtils::getBaseData());
+		return FrontEndDataUtils::getEntryPointResponse(	$this->view, $response, 'wiki' );
 	}
 
-	/* Request of <URL>/w/{pageName} */
+	/* Request with URL of the form  '<BaseURL>/w/{pageName}'  */
 	public function serveWikiContentGetRequest($request, $response, $args)
 	{
 		$pageName = $args['pageName'];

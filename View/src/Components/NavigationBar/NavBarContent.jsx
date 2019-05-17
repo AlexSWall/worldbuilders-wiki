@@ -9,7 +9,7 @@ class NavBarContent extends Component
 {	
 	render()
 	{
-		const auth = this.props.auth;
+		const authenticationData = this.props.authenticationData;
 		return (
 			<div id="navbar-content-wrapper">
 				<div id="navbar-content">
@@ -24,10 +24,13 @@ class NavBarContent extends Component
 						<NavBarButton href="/#About" text="About" active={false} />
 					</NavBarList>
 					<NavBarList position="right">
-						{auth.check ? (
+						{authenticationData.isAuthenticated ? (
 							<NavBarDropdown href="#" 
-								text={(auth.user.details && auth.user.details.preferred_name) ? auth.user.details.preferred_name : 'Account'} 
-								active={false}>
+								text={
+									(authenticationData.userData.preferredName)
+									? authenticationData.userData.preferredName 
+									: 'Account'
+								} active={false}>
 								<NavBarDropdownItem href="/Change_Password" text="Change Password" />
 								<NavBarDropdownItem href="/Sign_Out" text="Sign Out" />
 							</NavBarDropdown>

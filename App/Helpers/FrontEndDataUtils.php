@@ -16,11 +16,22 @@ class FrontEndDataUtils
 
 	public static function getBaseData()
 	{
+		$user = FrontEndParametersFacade::getUserData();
+		if ( is_null($user) )
+			$userDetailsData = [];
+		else
+		{
+			$userDetails = $user->getUserDetails();
+			$userDetailsData = [
+				'preferredName' => $userDetails->getPreferredName()
+			];
+		}
+
 		return [
 			'baseUrl' => FrontEndParametersFacade::getBaseUrl(),
-			'auth' => [ 
-				'check' => FrontEndParametersFacade::getIsAuthenticated(),
-				'user' => FrontEndParametersFacade::getUserData()
+			'authenticationData' => [ 
+				'isAuthenticated' => FrontEndParametersFacade::getIsAuthenticated(),
+				'userData' => $userDetailsData
 			],
 			'flash' => FrontEndParametersFacade::getFlash()
 		];
@@ -41,6 +52,13 @@ class FrontEndDataUtils
 	}
 
 	/* == Non-Global Functions */
+
+	public static function getEntryPointResponse($view, $response, $entryPointName, $args = [])
+	{
+		return $view->render($response, 'Indexes/' . $entryPointName . '.index.twig', 
+			array_merge( FrontEndDataUtils::getBaseData(), $args )
+		);
+	}
 
 	public static function getWebpageDataFor($webpageName, $webpageTitle, $view = null, $filePath = null)
 	{
