@@ -1,0 +1,11 @@
+#!/bin/bash
+
+esc=$(printf '\033')
+WHITE='[1;37m'
+GREEN='[1;32m'
+BLUE='[1;34m'
+
+trap 'kill %1' SIGINT
+unbuffer npm run watch | sed -e "s/^/${esc}${GREEN}[Webpack]${esc}${WHITE} /" & unbuffer compass watch | sed -e "s/^/${esc}${BLUE}[Compass]${esc}${WHITE} /"
+trap - SIGINT
+echo

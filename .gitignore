@@ -15,3 +15,5 @@ View/build
 .project
 .settings
 *.bundle*
+Database\ Backups
+*.scssc
