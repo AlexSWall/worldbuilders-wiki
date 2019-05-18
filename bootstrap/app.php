@@ -9,7 +9,7 @@ require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer *
 require BASE_PATH . '/App/Logging/LoggerRegistry.php';
 require BASE_PATH . '/App/Logging/Logger.php';
 
-$config = require BASE_PATH . '/config/' . file_get_contents(BASE_PATH . '/mode.php') . '.config.php';
+$config = require BASE_PATH . '/config/' . trim(file_get_contents(BASE_PATH . '/mode.php')) . '.config.php';
 
 /* == Set up logging == */
 
@@ -40,7 +40,7 @@ spl_autoload_register( function( $class_name ) use ($logger, $logger_names, &$se
 	}
 } );
 
-$logger->addInfo('———————————————');
+$logger->addInfo('---------------');
 $logger->addInfo('Setup starting.');
 
 /* == Begin setup == */
@@ -164,6 +164,6 @@ $logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
 Respect\Validation\Validator::with('App\\Validation\\Rules\\');
 
 $logger->addInfo('Finished running bootstrap/app.php');
-$logger->addInfo('——');
+$logger->addInfo('--');
 
 $setupFinished = true;
