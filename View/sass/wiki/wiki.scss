@@ -190,3 +190,12 @@ main {
 	margin-top: 3px;
 	margin-bottom: 3px;
 }
+
+#mainPanel > div > .image {
+	text-align: center;
+	max-width: 100%;
+	display: block;
+
+}
+#mainPanel > div > .image > img {
+}

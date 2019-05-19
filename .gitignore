@@ -16,3 +16,6 @@ View/build
 *.bundle*
 Database\ Backups
 *.scssc
+public/stylesheets
+public/javascript
+public/images
