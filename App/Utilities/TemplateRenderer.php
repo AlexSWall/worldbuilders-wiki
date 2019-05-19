@@ -77,7 +77,7 @@ class TemplateRenderer
 			'/\[\[Image:&quot;([^\]\[\|]+)&quot; *\| *(\d+), *(\d+)\]\]/' => function($matches)
 				{
 					[, $location, $width, $height] = $matches;
-					return "<img src=\"/resources/images/{$location}\" width=\"{$width}\" height=\"{$height}\">";
+					return "<img src=\"/images/{$location}\" width=\"{$width}\" height=\"{$height}\">";
 				},
 
 			/* == Links == */
