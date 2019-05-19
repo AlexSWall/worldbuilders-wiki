@@ -70,11 +70,12 @@ class TemplateRenderer
 		$workingContent = htmlspecialchars($templateContent, ENT_QUOTES, 'UTF-8');
 		$workingContent = str_replace("\r", '', $workingContent);
 
+		//var_dump($workingContent);
 		$patternAndReplacementPairs = [
 
 			/* == Images == */
 			/* [[Image:"url"|width,height]]  ->  <img src="url" width="width" height="height"> */
-			'/\[\[Image:&quot;([^\]\[\|]+)&quot; *\| *(\d+), *(\d+)\]\]/' => function($matches)
+			'/\[\[ *Image: *&quot;([^\/\]\[\|]+)&quot; *\| *(\d+), *(\d+) *\]\]/' => function($matches)
 				{
 					[, $location, $width, $height] = $matches;
 					return "<img src=\"/images/{$location}\" width=\"{$width}\" height=\"{$height}\">";
@@ -82,7 +83,7 @@ class TemplateRenderer
 
 			/* == Links == */
 			/* [[text]]  ->  <a href="/#text_with_underscores\">text</a> */
-			'/\[\[([^\]\[\|]+)\]\]/' => function($matches)
+			'/\[\[ *([^\]\[\|]+) *\]\]/' => function($matches)
 				{
 					$targetURL = preg_replace('/\s+/', '_', $matches[1]);
 					$targetText = $matches[1];
@@ -90,7 +91,7 @@ class TemplateRenderer
 				},
 
 			/* [[target|text]]  ->  <a href="/#target_with_underscores\">text</a> */
-			'/\[\[([^\]\[\|]+)\|([^\]\[\|]+)\]\]/' => function($matches)
+			'/\[\[ *([^\]\[\|]+)\|([^\]\[\|]+) *\]\]/' => function($matches)
 				{
 					$targetURL = preg_replace('/\s+/', '_', $matches[1]);
 					$targetText = $matches[2];
