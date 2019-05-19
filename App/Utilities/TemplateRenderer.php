@@ -114,11 +114,13 @@ class TemplateRenderer
 				},
 
 			/* == Lists == */
-			'/(((\n|^)[^-\n][^\n]*|^)\s*)(-[^\n]*(\n|$)([ \t]*((\n|$)|(-[^\n]*(\n|$))))*)(\s*($|[^-]))/' => function($matches)
+			/* <ul> ... </ul> */
+			'/((\n|^)[ \t]*)(-[^\n]*(\n|$)([ \t]*((\n|$)|(-[^\n]*(\n|$))))*)(\s*($|[^-]))/' => function($matches)
 				{
-					return "{$matches[1]}<ul>\n{$matches[4]}\n</ul>{$matches[11]}";
+					return "{$matches[1]}<ul>\n{$matches[3]}\n</ul>{$matches[10]}";
 				},
 
+			/* <li> ... </li> */
 			'/\n[ \t]*-[ \t]*([^\n]*)/' => function($matches)
 				{
 					return "\n<li>{$matches[1]}</li>";
