@@ -36,7 +36,7 @@ class RememberMeMiddleware extends Middleware
 		$rememberMeCookie = FigRequestCookies::get($request, $this->container->get('settings')['auth']['remember']);
 		$data = $rememberMeCookie->getValue();
 
-		if ( is_null($data) || empty(trip($data)) )
+		if ( is_null($data) || empty(trim($data)) )
 			return false;
 
 		$credentials = explode('___', $data);
