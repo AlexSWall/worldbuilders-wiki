@@ -62,7 +62,7 @@ class User extends DatabaseEncapsulator
 
 	public static function retrieveUserByRememberMeIdentifier($identifier)
 	{
-		return self::retrieveModelWithEntries(['RememberIdentifier' => $identifier]);
+		return self::retrieveModelWithEntries(['RememberMeIdentifier' => $identifier]);
 	}
 
 	public static function retrieveInactiveUserByEmail($email)
