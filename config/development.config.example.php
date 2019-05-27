@@ -1,13 +1,13 @@
 <?php
 
 /* Example basic variables for config with gmail server. */
-$baseUrl = ''
-$db_name = ''
-$db_username = ''
-$db_password = ''
-$email = ''
-$email_password = ''
-$name = ''
+$baseUrl = '';
+$db_name = '';
+$db_username = '';
+$db_password = '';
+$email = '';
+$email_password = '';
+$name = '';
 
 return [
 	'displayErrorDetails' => true,
