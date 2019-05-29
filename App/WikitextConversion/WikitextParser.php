@@ -4,11 +4,11 @@ namespace App\WikitextConversion;
 
 class WikitextParser
 {
-	private $grammar;
+	private $grammarClass;
 
-	public function __construct( object $grammar )
+	public function __construct( $grammarClass )
 	{
-		$this->grammar = $grammar;
+		$this->grammarClass = $grammarClass;
 	}
 
 	/**
@@ -16,6 +16,14 @@ class WikitextParser
 	 */
 	public function parse( string $wikitext )
 	{
-		return $this->grammar->parse($wikitext);
+		$grammar = new $this->grammarClass( $wikitext ) ;
+		$parseResult = $grammar->match_Start();
+		$tokens = array();
+
+		if ( $parseResult !== FALSE )
+			$tokens = $parseResult['val'];
+
+		print_r( $tokens ) ;
+		return $tokens;
 	}
 }

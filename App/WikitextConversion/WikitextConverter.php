@@ -10,11 +10,12 @@ class WikitextConverter
 
 	public function convertWikitextToHTML( string $wikitext ): string
 	{
-		$wikitextParser = new wikitextParser();
+		$grammarClass = 'App\WikitextConversion\Grammar';
+		$wikitextParser = new wikitextParser($grammarClass);
 		$htmlBuilder = new HTML5Builder();
 
-		$tokens = $wikitextParser.parse($wikitext);
-		$html = $htmlBuilder.build($tokens);
+		$tokens = $wikitextParser->parse($wikitext);
+		$html = $htmlBuilder->build($tokens);
 
 		return $html;
 	}
