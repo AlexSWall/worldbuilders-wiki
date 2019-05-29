@@ -16,9 +16,6 @@ use App\Middleware\AdministratorMiddleware;
  * 	})->setName('home');
  */
 
-global $app;
-global $container;
-
 $app->group('', function() use ($app)
 {
 	$app->get('/Sign_Up', 'AuthenticationController:getSignup')->setName('auth.signup');
