@@ -1,9 +1,7 @@
 <?php
 
-define('BASE_PATH', dirname(__DIR__));
-
 $app = null;
 
-require BASE_PATH . '/bootstrap/app.php';
+require dirname(__DIR__) . '/bootstrap/app.php';
 
 $app->run();
