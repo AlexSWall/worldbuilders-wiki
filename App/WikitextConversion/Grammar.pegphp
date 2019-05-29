@@ -1,0 +1,219 @@
+/* For syntax highlighting: <?php */
+/**
+ *
+ */
+{
+	namespace App\WikitextConversion;
+
+	use App\WikitextConversion\Tokens\ClosingTagToken;
+	use App\WikitextConversion\Tokens\EndOfFileToken;
+	use App\WikitextConversion\Tokens\MetaToken;
+	use App\WikitextConversion\Tokens\NewLineToken;
+	use App\WikitextConversion\Tokens\OpeningTagToken;
+	use App\WikitextConversion\Tokens\SelfClosingTagToken;
+	use App\WikitextConversion\Tokens\TextToken;
+
+	$p = new PEGParser;
+	$p->parse('hello.');
+	var_dump($p);
+}
+{
+	function array_flatten($array = null) {
+		$result = array();
+
+		if (!is_array($array)) {
+			$array = func_get_args();
+		}
+
+		foreach ($array as $key => $value) {
+			if (is_array($value))
+				$result = array_merge($result, array_flatten($value));
+			else
+				$result = array_merge($result, array($key => $value));
+		}
+
+		return $result;
+	}
+}
+
+/* == Top-level Rules == */
+
+start "start" =
+	blocks:topLevelBlock* newLine* {
+		return array_flatten([ $blocks, new EndOfFileToken() ]);
+	}
+
+topLevelBlock =
+	block
+
+block =
+	blockLines
+	/ paragraphLines
+	/ s:startOfLine anySpacing &startOfLine { return $s; }
+
+
+/* == Block-level Rules == */
+
+blockLines =
+	start1:startOfLine
+	anySpacing start2:(sol:startOfLine { return $sol; } )?
+	anySpacing block:blockLine {
+		return array_merge( $start1, $start2 ?: [], $block );
+	}
+
+paragraphLines =
+	start1:startOfLine 
+	anySpacing start2:startOfLine 
+	anySpacing content:inlineContent {
+		return array_merge( $start1, $start2, $content );
+	}
+
+
+/* == Block-style Rules == */
+
+// Matches on a single line, assuming a newline both follows and leads.
+blockLine =
+	heading
+	/ listItem
+
+heading =
+	anySpacing '==' inner:innerHeadingContent '==' anySpacing
+	{
+		$level = $inner['level'];
+		$text = $inner['text'];
+		$trimmedText = trim(trim($text, '='));
+
+		return [
+			OpeningTagToken('h' . $level),
+			TextToken($trimmedText),
+			ClosingTagToken('h' . $level)
+		];
+	}
+
+innerHeadingContent =
+	'=' inner:innerHeadingContent '=' {
+		$inner['level'] += 1;
+		return $inner;
+	}
+	/ innerText:$inlineText {
+		return [ 'level' => 1, 'text' => $innerText ];
+	}
+
+listCharacter = [*#:;]
+
+listItem =
+	bullets:listCharacter+ content:inlineContent? {
+		return array_merge(
+			MetaToken('ListItem', [ 'bullets' => bullets ]),
+			$content ?: []);
+	}
+
+/* == Line/Paragraph-style Rules == */
+
+inlineContent =
+	inlineLine
+	/ inlineText
+
+inlineLine =
+	content:( !inlineBreak element:(inlineElement / [^\r\n]) { return $element; } )+ 
+	{
+		$lineContents = []
+		$textBuffer = '';
+		foreach( $content as $element )
+		{
+			if ( is_string( $element ) )
+				$textBuffer .= $element
+			else
+			{
+				if ( $textBuffer !== '' )
+				{
+					$lineContents[] = TextToken($textBuffer);
+					$textBuffer = '';
+				}
+				$lineContents[] = $element;
+			}
+		}
+		if ( $textBuffer !== '' )
+			$lineContents[] = TextToken($textBuffer);
+
+		return $lineContents;
+	}
+
+inlineBreak =
+	'[['
+	/ "'''"
+	/ "''"
+	/ '{{'
+	/ newLine
+
+inlineElement =
+	& '[' element:( wikilink ) { return $element; }
+	/ & "'" element:quotedContent { return $element; }
+
+inlineText =
+	text:[^\n\r]+ {
+		return [ TextToken(implode('', $text)) ];
+	}
+
+
+/* == Inline Rules == */
+
+wikilink =
+	"[[" target:$[^\]|]* exactText:("|" text:$[^\]] { return $text; })? "]]" {
+		$linkTarget = '/#' . ucwords(str_replace(' ', '_', trim($target)), '_-');
+		$linkText = trim($exactText) ?: trim($target);
+		return [
+			OpeningTagToken('a', [
+				'href' => $linkTarget
+			]),
+			TextToken($linkText),
+			ClosingTagToken('a')
+		];
+	}
+
+quotedContent = bold / italics
+
+bold =
+	"'''" content:inlineContent "'''" {
+		return array_merge(
+			[ OpeningTagToken('b') ],
+			$content,
+			[ ClosingTagToken('b') ]
+		);
+	}
+
+italics =
+	"''" content:inlineContent "''" {
+		return array_merge(
+			[ OpeningTagToken('i') ],
+			$content,
+			[ ClosingTagToken('i') ]
+		);
+	}
+
+
+/* == Positional Rules == */
+
+startOfFile =
+	& { return $this->endOffset() === 0 } {
+		return [];
+	}
+
+startOfLine =
+	newLine
+	/ & { return $this->endOffset() === 0; } {
+		return [];
+	}
+
+newLine = 
+	'\n' { return [ new NewLineToken() ]; }
+	/ '\r\n' { return [ new NewLineToken() ]; }
+
+spacing =
+	[ \t]
+
+anySpacing =
+	$spacing+
+
+someSpacing =
+	$spacing*
