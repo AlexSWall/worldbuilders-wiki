@@ -1,8 +1,10 @@
 <?php
 
-$setupFinished = false;
+$setupFinished = false;  /* For logging purposes. */
 
 /* == Load dependencies and get config == */
+
+define('BASE_PATH', dirname(__DIR__));
 
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
@@ -166,4 +168,4 @@ Respect\Validation\Validator::with('App\\Validation\\Rules\\');
 $logger->addInfo('Finished running bootstrap/app.php');
 $logger->addInfo('--');
 
-$setupFinished = true;
+$setupFinished = true;  /* For logging purposes. */
