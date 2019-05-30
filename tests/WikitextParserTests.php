@@ -24,11 +24,23 @@ final class WikitextParserTests extends TestCase
 		);
 	}
 
-	public function testWikitextConversion(): void
+	private function wikitextConversionTester($wikitextToConvert, $expected): void
 	{
-		$this->assertSame(
-			(new WikitextConverter())->convertWikitextToHTML('Testing'),
-			'<p>Testing</p>'
+		$this->assertSame( $expected,
+			( new WikitextConverter() )->convertWikitextToHTML($wikitextToConvert)
+		);
+	}
+
+	public function testBasicParagraphConversion(): void
+	{
+		$this->wikitextConversionTester('Testing', '<p>Testing</p>');
+	}
+
+	public function testMultipleParagraphsConversion(): void
+	{
+		$this->wikitextConversionTester(
+			"P1 Line1\nP1 Line2\n\nP2 Line1\nP2 Line2\n\nP3 Line3",
+			"<p>P1 Line1\nP1 Line2</p>\n\n<p>P2 Line1\nP2 Line2</p>\n\n<p>P3 Line3</p>"
 		);
 	}
 }
