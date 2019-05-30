@@ -46,27 +46,9 @@ abstract class BaseTagToken extends BaseToken
 		return $attributesString;
 	}
 
-	public function getAttributes(): array
+	public function hasAttributes(): bool
 	{
-		/* Arrays are returned by (shallow?) value. */
-		return $this->attributes;
-	}
-
-	public function getAttributeValueFor( string $key )
-	{
-		return $this->attributes[$key];
-	}
-
-	private function setAttribute( string $key, $value ): void
-	{
-		$this->attributes[$key] = $value;
-	}
-
-	public function addAttribute( string $key, $value ): void
-	{
-		if ( array_key_exists($key, $this->attributes) )
-			throw new \UnexpectedValueException('Attribute to add is already an attribute of the token.');
-		$this->setAttribute($key, $value);
+		return sizeof($this->attributes) > 0;
 	}
 
 	public function jsonSerialize(): array

@@ -13,7 +13,7 @@ class TextToken extends BaseToken
 
 	public function toHTML(): string
 	{
-		return $text;
+		return $this->text;
 	}
 
 	public function jsonSerialize(): array
