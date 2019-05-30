@@ -6,6 +6,6 @@ class OpeningTagToken extends BaseTagToken
 {
 	public function toHTML(): string
 	{
-		return '<' . $this->getName() . ' ' . $this->getTagAttributesString() . '>';
+		return '<' . $this->getName() . ($this->hasAttributes() > 0 ? ' ' : '') . $this->getTagAttributesString() . '>';
 	}
 }

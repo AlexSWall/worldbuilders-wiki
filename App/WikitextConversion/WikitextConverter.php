@@ -10,8 +10,7 @@ class WikitextConverter
 
 	public function convertWikitextToHTML( string $wikitext ): string
 	{
-		$grammarClass = 'App\WikitextConversion\Grammar';
-		$wikitextParser = new wikitextParser($grammarClass);
+		$wikitextParser = new WikitextParser();
 		$htmlBuilder = new HTML5Builder();
 
 		$tokens = $wikitextParser->parse($wikitext);

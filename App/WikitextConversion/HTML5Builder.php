@@ -10,19 +10,19 @@ class HTML5Builder
 	{
 	}
 
-	public function parse( $tokens ): string
+	public function build( $tokens ): string
 	{
 		$this->html = '';
 
 		foreach ( $tokens as $token )
-            processToken($token);
+            $this->processToken($token);
 
 		return $this->html;
 	}
 
 	private function processToken( object $token ): void
 	{
-		assert( is_a($token, App\WikitextConversion\Tokens\BaseToken) );
-    	$this->html .= $token.toHTML();
+		assert( is_a($token, 'App\WikitextConversion\Tokens\BaseToken') );
+    	$this->html .= $token->toHTML();
 	}
 }
