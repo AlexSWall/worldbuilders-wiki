@@ -221,8 +221,8 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   }
   private function a18($target, $exactText) {
   
-  		$linkTarget = '/#' . ucwords(str_replace(' ', '_', trim($target)), '_-');
-  		$linkText = trim($exactText) ?: trim($target);
+  		$linkTarget = '\'/#' . ucwords(str_replace(' ', '_', trim($target)), '_-') . '\'';
+  		$linkText = trim($exactText ?: $target);
   		return [
   			new OpeningTagToken('a', [
   				'href' => $linkTarget
@@ -1097,19 +1097,28 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       goto seq_2;
     }
     $p11 = $this->currPos;
-    $r10 = self::charAt($this->input, $this->currPos);
+    $r10 = self::$FAILED;
+    for (;;) {
+      $r12 = self::charAt($this->input, $this->currPos);
+      if ($r12 !== '' && !($r12 === "]")) {
+        $this->currPos += strlen($r12);
+        $r10 = true;
+      } else {
+        $r12 = self::$FAILED;
+        if (!$silence) {$this->fail(12);}
+        break;
+      }
+    }
     // text <- $r10
-    if ($r10 !== '' && !($r10 === "]")) {
-      $this->currPos += strlen($r10);
+    if ($r10!==self::$FAILED) {
       $r10 = substr($this->input, $p11, $this->currPos - $p11);
     } else {
-      $r10 = self::$FAILED;
-      if (!$silence) {$this->fail(12);}
       $r10 = self::$FAILED;
       $this->currPos = $p8;
       $r7 = self::$FAILED;
       goto seq_2;
     }
+    // free $r12
     // free $p11
     $r7 = true;
     seq_2:
