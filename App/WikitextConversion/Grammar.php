@@ -63,10 +63,10 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     1 => ["type" => "other", "description" => "start"],
     2 => ["type" => "literal", "value" => "\x0a", "description" => "\"\\n\""],
     3 => ["type" => "literal", "value" => "\x0d\x0a", "description" => "\"\\r\\n\""],
-    4 => ["type" => "any", "description" => "any character"],
-    5 => ["type" => "class", "value" => "[ \\t]", "description" => "[ \\t]"],
-    6 => ["type" => "literal", "value" => "==", "description" => "\"==\""],
-    7 => ["type" => "literal", "value" => "=", "description" => "\"=\""],
+    4 => ["type" => "class", "value" => "[ \\t]", "description" => "[ \\t]"],
+    5 => ["type" => "literal", "value" => "==", "description" => "\"==\""],
+    6 => ["type" => "literal", "value" => "=", "description" => "\"=\""],
+    7 => ["type" => "any", "description" => "any character"],
     8 => ["type" => "class", "value" => "[*#:;]", "description" => "[*#:;]"],
     9 => ["type" => "literal", "value" => "[[", "description" => "\"[[\""],
     10 => ["type" => "class", "value" => "[^\\]|]", "description" => "[^\\]|]"],
@@ -113,18 +113,18 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   
   		$tokens[] = $firstLine[0];
   		$tokens[] = new OpeningTagToken('p');
-  		$tokens[] = $firstLine[1];
+  		$tokens = array_merge($tokens, $firstLine[1]);
   
   		foreach( $innerLines as $innerLinePair )
   		{
-  			$paragraph[] = $innerLinePair[0];
-  			$paragraph[] = $innerLinePair[1];
+  			$tokens[] = $innerLinePair[0];
+  			$tokens[] = array_merge($tokens, $innerLinePair[1]);
   		}
   
   		if( sizeof($lines) > 1 )
   		{
   			$tokens[] = $lastLine[0];
-  			$tokens[] = $lastLine[1];
+  			$tokens = array_merge($tokens, $lastLine[1]);
   		}
   		$tokens[] = new ClosingTagToken('p');
   
@@ -136,10 +136,50 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   		return array_merge( $newline1, $newline2 );
   	
   }
-  private function a7($element) {
+  private function a7($line) {
+  
+  
+  		if ( is_a($line[0], TextToken::class) )
+  			$line[0]->ltrim();
+  
+  		if ( is_a( end($line), TextToken::class ) )
+  			end($line)->rtrim();
+  
+  		return $line;
+  	
+  }
+  private function a8() {
+   return $this->endOffset() === 0; 
+  }
+  private function a9() {
+  
+  		return [];
+  	
+  }
+  private function a10($extrasLeft, $inner, $extrasRight) {
+  
+  		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
+  		$textToken = new TextToken($inner);
+  		$textToken->trim();
+  
+  		return [
+  			new OpeningTagToken('h' . $level),
+  			$textToken,
+  			new ClosingTagToken('h' . $level)
+  		];
+  	
+  }
+  private function a11($bullets, $content) {
+  
+  		return array_merge(
+  			new MetaToken('ListItem', [ 'bullets' => bullets ]),
+  			$content ?: []);
+  	
+  }
+  private function a12($element) {
    return $element; 
   }
-  private function a8($content) {
+  private function a13($content) {
   
   		$lineContents = [];
   		$textBuffer = '';
@@ -151,54 +191,35 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   			{
   				if ( $textBuffer !== '' )
   				{
-  					$lineContents[] = new TextToken( trim($textBuffer) );
+  					$lineContents[] = new TextToken( $textBuffer );
   					$textBuffer = '';
   				}
   				$lineContents[] = $element;
   			}
   		}
   		if ( $textBuffer !== '' )
-  			$lineContents[] = new TextToken( trim($textBuffer) );
-  
+  			$lineContents[] = new TextToken( $textBuffer );
+  		
   		return $lineContents;
   	
   }
-  private function a9() {
-   return $this->endOffset() === 0; 
-  }
-  private function a10() {
-  
-  		return [];
-  	
-  }
-  private function a11($extrasLeft, $inner, $extrasRight) {
-  
-  		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
-  		$text = $inner;
-  
-  		return [
-  			new OpeningTagToken('h' . $level),
-  			new TextToken( trim($text) ),
-  			new ClosingTagToken('h' . $level)
-  		];
-  	
-  }
-  private function a12($bullets, $content) {
-  
-  		return array_merge(
-  			new MetaToken('ListItem', [ 'bullets' => bullets ]),
-  			$content ?: []);
-  	
-  }
-  private function a13($innerText) {
+  private function a14($innerText) {
   
   		return $innerText;
   	
   }
-  private function a14($target, $text) {
+  private function a15($c) {
+   return $c; 
+  }
+  private function a16($text) {
+  
+  		return [ new TextToken( implode('', $text) ) ];
+  	
+  }
+  private function a17($target, $text) {
    return $text; 
   }
-  private function a15($target, $exactText) {
+  private function a18($target, $exactText) {
   
   		$linkTarget = '/#' . ucwords(str_replace(' ', '_', trim($target)), '_-');
   		$linkText = trim($exactText) ?: trim($target);
@@ -211,15 +232,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   		];
   	
   }
-  private function a16($c) {
-   return $c; 
-  }
-  private function a17($text) {
-  
-  		return [ new TextToken( trim(implode('', $text)) ) ];
-  	
-  }
-  private function a18($content) {
+  private function a19($content) {
   
   		return array_merge(
   			[ new OpeningTagToken('b') ],
@@ -228,7 +241,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   		);
   	
   }
-  private function a19($content) {
+  private function a20($content) {
   
   		return array_merge(
   			[ new OpeningTagToken('i') ],
@@ -410,7 +423,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
         $r4 = self::$FAILED;
         goto seq_1;
       }
-      $r11 = $this->parseinlineLine($silence, 0x0);
+      $r11 = $this->parsetrimmedInlineLine($silence);
       // content <- $r11
       if ($r11===self::$FAILED) {
         $this->currPos = $p6;
@@ -542,62 +555,14 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     choice_1:
     return $r1;
   }
-  private function parseinlineLine($silence, $boolParams) {
+  private function parsetrimmedInlineLine($silence) {
     $p2 = $this->currPos;
-    $r3 = [];
-    for (;;) {
-      $p5 = $this->currPos;
-      // start seq_1
-      $p6 = $this->currPos;
-      $p7 = $this->currPos;
-      $r8 = $this->discardinlineBreak(true, $boolParams);
-      if ($r8 === self::$FAILED) {
-        $r8 = false;
-      } else {
-        $r8 = self::$FAILED;
-        $this->currPos = $p7;
-        $r4 = self::$FAILED;
-        goto seq_1;
-      }
-      // free $p7
-      // start choice_1
-      $r9 = $this->parseinlineElement($silence);
-      if ($r9!==self::$FAILED) {
-        goto choice_1;
-      }
-      if ($this->currPos < $this->inputLength) {
-        $r9 = self::consumeChar($this->input, $this->currPos);;
-      } else {
-        $r9 = self::$FAILED;
-        if (!$silence) {$this->fail(4);}
-      }
-      choice_1:
-      // element <- $r9
-      if ($r9===self::$FAILED) {
-        $this->currPos = $p6;
-        $r4 = self::$FAILED;
-        goto seq_1;
-      }
-      $r4 = true;
-      seq_1:
-      if ($r4!==self::$FAILED) {
-        $this->savedPos = $p5;
-        $r4 = $this->a7($r9);
-        $r3[] = $r4;
-      } else {
-        break;
-      }
-      // free $p6
-    }
-    if (count($r3) === 0) {
-      $r3 = self::$FAILED;
-    }
-    // content <- $r3
-    // free $r4
+    $r3 = $this->parseinlineLine($silence, 0x0);
+    // line <- $r3
     $r1 = $r3;
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a8($r3);
+      $r1 = $this->a7($r3);
     }
     return $r1;
   }
@@ -607,18 +572,18 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $this->currPos++;
     } else {
       $r1 = self::$FAILED;
-      if (!$silence) {$this->fail(5);}
+      if (!$silence) {$this->fail(4);}
     }
     return $r1;
   }
   private function parsestartOfFile($silence) {
     $p2 = $this->currPos;
     $this->savedPos = $this->currPos;
-    $r1 = $this->a9();
+    $r1 = $this->a8();
     if ($r1) {
       $r1 = false;
       $this->savedPos = $p2;
-      $r1 = $this->a10();
+      $r1 = $this->a9();
     } else {
       $r1 = self::$FAILED;
     }
@@ -637,7 +602,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $r5 = "==";
       $this->currPos += 2;
     } else {
-      if (!$silence) {$this->fail(6);}
+      if (!$silence) {$this->fail(5);}
       $r5 = self::$FAILED;
       $this->currPos = $p3;
       $r1 = self::$FAILED;
@@ -650,7 +615,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
         $r7 = "=";
         $r6[] = $r7;
       } else {
-        if (!$silence) {$this->fail(7);}
+        if (!$silence) {$this->fail(6);}
         $r7 = self::$FAILED;
         break;
       }
@@ -668,7 +633,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $r8 = "==";
       $this->currPos += 2;
     } else {
-      if (!$silence) {$this->fail(6);}
+      if (!$silence) {$this->fail(5);}
       $r8 = self::$FAILED;
       $this->currPos = $p3;
       $r1 = self::$FAILED;
@@ -681,7 +646,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
         $r10 = "=";
         $r9[] = $r10;
       } else {
-        if (!$silence) {$this->fail(7);}
+        if (!$silence) {$this->fail(6);}
         $r10 = self::$FAILED;
         break;
       }
@@ -698,7 +663,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a11($r6, $r7, $r9);
+      $r1 = $this->a10($r6, $r7, $r9);
     }
     // free $p3
     return $r1;
@@ -734,7 +699,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a12($r4, $r5);
+      $r1 = $this->a11($r4, $r5);
     }
     // free $p3
     return $r1;
@@ -769,6 +734,92 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $r1 = $this->a3($r4, $r6);
     }
     // free $p3
+    return $r1;
+  }
+  private function parseinlineLine($silence, $boolParams) {
+    $p2 = $this->currPos;
+    $r3 = [];
+    for (;;) {
+      $p5 = $this->currPos;
+      // start seq_1
+      $p6 = $this->currPos;
+      $p7 = $this->currPos;
+      $r8 = $this->discardinlineBreak(true, $boolParams);
+      if ($r8 === self::$FAILED) {
+        $r8 = false;
+      } else {
+        $r8 = self::$FAILED;
+        $this->currPos = $p7;
+        $r4 = self::$FAILED;
+        goto seq_1;
+      }
+      // free $p7
+      // start choice_1
+      $r9 = $this->parseinlineElement($silence);
+      if ($r9!==self::$FAILED) {
+        goto choice_1;
+      }
+      if ($this->currPos < $this->inputLength) {
+        $r9 = self::consumeChar($this->input, $this->currPos);;
+      } else {
+        $r9 = self::$FAILED;
+        if (!$silence) {$this->fail(7);}
+      }
+      choice_1:
+      // element <- $r9
+      if ($r9===self::$FAILED) {
+        $this->currPos = $p6;
+        $r4 = self::$FAILED;
+        goto seq_1;
+      }
+      $r4 = true;
+      seq_1:
+      if ($r4!==self::$FAILED) {
+        $this->savedPos = $p5;
+        $r4 = $this->a12($r9);
+        $r3[] = $r4;
+      } else {
+        break;
+      }
+      // free $p6
+    }
+    if (count($r3) === 0) {
+      $r3 = self::$FAILED;
+    }
+    // content <- $r3
+    // free $r4
+    $r1 = $r3;
+    if ($r1!==self::$FAILED) {
+      $this->savedPos = $p2;
+      $r1 = $this->a13($r3);
+    }
+    return $r1;
+  }
+  private function parseinnerHeaderContent($silence) {
+    $p2 = $this->currPos;
+    $p4 = $this->currPos;
+    $r3 = $this->discardinlineText($silence, 0x1);
+    // innerText <- $r3
+    if ($r3!==self::$FAILED) {
+      $r3 = substr($this->input, $p4, $this->currPos - $p4);
+    } else {
+      $r3 = self::$FAILED;
+    }
+    // free $p4
+    $r1 = $r3;
+    if ($r1!==self::$FAILED) {
+      $this->savedPos = $p2;
+      $r1 = $this->a14($r3);
+    }
+    return $r1;
+  }
+  private function parselistCharacter($silence) {
+    if (strspn($this->input, "*#:;", $this->currPos, 1) !== 0) {
+      $r1 = $this->input[$this->currPos++];
+    } else {
+      $r1 = self::$FAILED;
+      if (!$silence) {$this->fail(8);}
+    }
     return $r1;
   }
   private function discardinlineBreak($silence, $boolParams) {
@@ -859,6 +910,23 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       goto seq_3;
     }
     // free $p4
+    $p4 = $this->currPos;
+    if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "'''", $this->currPos, 3, false) === 0) {
+      $r10 = "'''";
+      $this->currPos += 3;
+    } else {
+      $r10 = self::$FAILED;
+    }
+    if ($r10 === self::$FAILED) {
+      $r10 = false;
+    } else {
+      $r10 = self::$FAILED;
+      $this->currPos = $p4;
+      $this->currPos = $p2;
+      $r1 = self::$FAILED;
+      goto seq_3;
+    }
+    // free $p4
     $r1 = true;
     seq_3:
     // free $p2
@@ -893,7 +961,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a7($r6);
+      $r1 = $this->a12($r6);
       goto choice_1;
     }
     // free $p3
@@ -923,36 +991,60 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_2:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p3;
-      $r1 = $this->a7($r9);
+      $r1 = $this->a12($r9);
     }
     // free $p4
     choice_1:
     return $r1;
   }
-  private function parseinnerHeaderContent($silence) {
+  private function discardinlineText($silence, $boolParams) {
     $p2 = $this->currPos;
-    $p4 = $this->currPos;
-    $r3 = $this->discardinlineText($silence, 0x1);
-    // innerText <- $r3
-    if ($r3!==self::$FAILED) {
-      $r3 = substr($this->input, $p4, $this->currPos - $p4);
-    } else {
+    $r3 = [];
+    for (;;) {
+      $p5 = $this->currPos;
+      // start seq_1
+      $p6 = $this->currPos;
+      $p7 = $this->currPos;
+      $r8 = $this->discardinlineBreak(true, $boolParams);
+      if ($r8 === self::$FAILED) {
+        $r8 = false;
+      } else {
+        $r8 = self::$FAILED;
+        $this->currPos = $p7;
+        $r4 = self::$FAILED;
+        goto seq_1;
+      }
+      // free $p7
+      // c <- $r9
+      if ($this->currPos < $this->inputLength) {
+        $r9 = self::consumeChar($this->input, $this->currPos);;
+      } else {
+        $r9 = self::$FAILED;
+        if (!$silence) {$this->fail(7);}
+        $this->currPos = $p6;
+        $r4 = self::$FAILED;
+        goto seq_1;
+      }
+      $r4 = true;
+      seq_1:
+      if ($r4!==self::$FAILED) {
+        $this->savedPos = $p5;
+        $r4 = $this->a15($r9);
+        $r3[] = $r4;
+      } else {
+        break;
+      }
+      // free $p6
+    }
+    if (count($r3) === 0) {
       $r3 = self::$FAILED;
     }
-    // free $p4
+    // text <- $r3
+    // free $r4
     $r1 = $r3;
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a13($r3);
-    }
-    return $r1;
-  }
-  private function parselistCharacter($silence) {
-    if (strspn($this->input, "*#:;", $this->currPos, 1) !== 0) {
-      $r1 = $this->input[$this->currPos++];
-    } else {
-      $r1 = self::$FAILED;
-      if (!$silence) {$this->fail(8);}
+      $r1 = $this->a16($r3);
     }
     return $r1;
   }
@@ -1023,7 +1115,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_2:
     if ($r7!==self::$FAILED) {
       $this->savedPos = $p6;
-      $r7 = $this->a14($r5, $r10);
+      $r7 = $this->a17($r5, $r10);
     } else {
       $r7 = null;
     }
@@ -1043,7 +1135,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a15($r5, $r7);
+      $r1 = $this->a18($r5, $r7);
     }
     // free $p3
     return $r1;
@@ -1056,57 +1148,6 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     }
     $r1 = $this->parseitalics($silence);
     choice_1:
-    return $r1;
-  }
-  private function discardinlineText($silence, $boolParams) {
-    $p2 = $this->currPos;
-    $r3 = [];
-    for (;;) {
-      $p5 = $this->currPos;
-      // start seq_1
-      $p6 = $this->currPos;
-      $p7 = $this->currPos;
-      $r8 = $this->discardinlineBreak(true, $boolParams);
-      if ($r8 === self::$FAILED) {
-        $r8 = false;
-      } else {
-        $r8 = self::$FAILED;
-        $this->currPos = $p7;
-        $r4 = self::$FAILED;
-        goto seq_1;
-      }
-      // free $p7
-      // c <- $r9
-      if ($this->currPos < $this->inputLength) {
-        $r9 = self::consumeChar($this->input, $this->currPos);;
-      } else {
-        $r9 = self::$FAILED;
-        if (!$silence) {$this->fail(4);}
-        $this->currPos = $p6;
-        $r4 = self::$FAILED;
-        goto seq_1;
-      }
-      $r4 = true;
-      seq_1:
-      if ($r4!==self::$FAILED) {
-        $this->savedPos = $p5;
-        $r4 = $this->a16($r9);
-        $r3[] = $r4;
-      } else {
-        break;
-      }
-      // free $p6
-    }
-    if (count($r3) === 0) {
-      $r3 = self::$FAILED;
-    }
-    // text <- $r3
-    // free $r4
-    $r1 = $r3;
-    if ($r1!==self::$FAILED) {
-      $this->savedPos = $p2;
-      $r1 = $this->a17($r3);
-    }
     return $r1;
   }
   private function parsebold($silence) {
@@ -1122,28 +1163,62 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $r1 = self::$FAILED;
       goto seq_1;
     }
-    $r5 = $this->parseinlineLine($silence, 0x2);
-    // content <- $r5
-    if ($r5===self::$FAILED) {
+    $p5 = $this->currPos;
+    if (($this->input[$this->currPos] ?? null) === "'") {
+      $this->currPos++;
+      $r6 = "'";
+    } else {
+      $r6 = self::$FAILED;
+    }
+    if ($r6 === self::$FAILED) {
+      $r6 = false;
+    } else {
+      $r6 = self::$FAILED;
+      $this->currPos = $p5;
+      $this->currPos = $p3;
+      $r1 = self::$FAILED;
+      goto seq_1;
+    }
+    // free $p5
+    $r7 = $this->parseinlineLine($silence, 0x2);
+    // content <- $r7
+    if ($r7===self::$FAILED) {
       $this->currPos = $p3;
       $r1 = self::$FAILED;
       goto seq_1;
     }
     if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "'''", $this->currPos, 3, false) === 0) {
-      $r6 = "'''";
+      $r8 = "'''";
       $this->currPos += 3;
     } else {
       if (!$silence) {$this->fail(14);}
-      $r6 = self::$FAILED;
+      $r8 = self::$FAILED;
       $this->currPos = $p3;
       $r1 = self::$FAILED;
       goto seq_1;
     }
+    $p5 = $this->currPos;
+    if (($this->input[$this->currPos] ?? null) === "'") {
+      $this->currPos++;
+      $r9 = "'";
+    } else {
+      $r9 = self::$FAILED;
+    }
+    if ($r9 === self::$FAILED) {
+      $r9 = false;
+    } else {
+      $r9 = self::$FAILED;
+      $this->currPos = $p5;
+      $this->currPos = $p3;
+      $r1 = self::$FAILED;
+      goto seq_1;
+    }
+    // free $p5
     $r1 = true;
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a18($r5);
+      $r1 = $this->a19($r7);
     }
     // free $p3
     return $r1;
@@ -1161,19 +1236,36 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $r1 = self::$FAILED;
       goto seq_1;
     }
-    $r5 = $this->parseinlineLine($silence, 0x4);
-    // content <- $r5
-    if ($r5===self::$FAILED) {
+    $p5 = $this->currPos;
+    if (($this->input[$this->currPos] ?? null) === "'") {
+      $this->currPos++;
+      $r6 = "'";
+    } else {
+      $r6 = self::$FAILED;
+    }
+    if ($r6 === self::$FAILED) {
+      $r6 = false;
+    } else {
+      $r6 = self::$FAILED;
+      $this->currPos = $p5;
+      $this->currPos = $p3;
+      $r1 = self::$FAILED;
+      goto seq_1;
+    }
+    // free $p5
+    $r7 = $this->parseinlineLine($silence, 0x4);
+    // content <- $r7
+    if ($r7===self::$FAILED) {
       $this->currPos = $p3;
       $r1 = self::$FAILED;
       goto seq_1;
     }
     if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "''", $this->currPos, 2, false) === 0) {
-      $r6 = "''";
+      $r8 = "''";
       $this->currPos += 2;
     } else {
       if (!$silence) {$this->fail(15);}
-      $r6 = self::$FAILED;
+      $r8 = self::$FAILED;
       $this->currPos = $p3;
       $r1 = self::$FAILED;
       goto seq_1;
@@ -1182,7 +1274,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a19($r5);
+      $r1 = $this->a20($r7);
     }
     // free $p3
     return $r1;
