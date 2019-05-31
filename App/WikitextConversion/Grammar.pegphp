@@ -78,7 +78,7 @@ blockLines =
 	}
 
 paragraphLines =
-	lines:(!paragraphBreak start:startOfLine anySpacing content:inlineContent {
+	lines:(!paragraphBreak start:startOfLine anySpacing content:trimmedInlineLine {
 		return [$start, $content];
 	})+ {
 		$tokens = array();
@@ -91,18 +91,18 @@ paragraphLines =
 
 		$tokens[] = $firstLine[0];
 		$tokens[] = new OpeningTagToken('p');
-		$tokens[] = $firstLine[1];
+		$tokens = array_merge($tokens, $firstLine[1]);
 
 		foreach( $innerLines as $innerLinePair )
 		{
-			$paragraph[] = $innerLinePair[0];
-			$paragraph[] = $innerLinePair[1];
+			$tokens[] = $innerLinePair[0];
+			$tokens[] = array_merge($tokens, $innerLinePair[1]);
 		}
 
 		if( sizeof($lines) > 1 )
 		{
 			$tokens[] = $lastLine[0];
-			$tokens[] = $lastLine[1];
+			$tokens = array_merge($tokens, $lastLine[1]);
 		}
 		$tokens[] = new ClosingTagToken('p');
 
@@ -129,11 +129,12 @@ header =
 	anySpacing '==' extrasLeft:'='* inner:innerHeaderContent '==' extrasRight:'='* anySpacing
 	{
 		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
-		$text = $inner;
+		$textToken = new TextToken($inner);
+		$textToken->trim();
 
 		return [
 			new OpeningTagToken('h' . $level),
-			new TextToken( trim($text) ),
+			$textToken,
 			new ClosingTagToken('h' . $level)
 		];
 	}
@@ -158,6 +159,18 @@ listCharacter = [*#:;]
 inlineContent =
 	inlineLine
 
+trimmedInlineLine =
+	line:inlineLine {
+
+		if ( is_a($line[0], TextToken::class) )
+			$line[0]->ltrim();
+
+		if ( is_a( end($line), TextToken::class ) )
+			end($line)->rtrim();
+
+		return $line;
+	}
+
 // This can have a template passed to it to represent the context, which affects what is counted as an inline break.
 inlineLine =
 	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+ 
@@ -172,15 +185,15 @@ inlineLine =
 			{
 				if ( $textBuffer !== '' )
 				{
-					$lineContents[] = new TextToken( trim($textBuffer) );
+					$lineContents[] = new TextToken( $textBuffer );
 					$textBuffer = '';
 				}
 				$lineContents[] = $element;
 			}
 		}
 		if ( $textBuffer !== '' )
-			$lineContents[] = new TextToken( trim($textBuffer) );
-
+			$lineContents[] = new TextToken( $textBuffer );
+		
 		return $lineContents;
 	}
 
@@ -192,14 +205,14 @@ inlineElement =
 inlineText =
 	text:( !inlineBreak c:. { return $c; } )+ 
 	{
-		return [ new TextToken( trim(implode('', $text)) ) ];
+		return [ new TextToken( implode('', $text) ) ];
 	}
 
 inlineBreak =
 	& newLine
 	/ & <header> & '=='
 	/ & <bold> & "'''"
-	/ & <italics> & "''"
+	/ & <italics> & "''" ! "'''"
 
 /* == Inline Rules == */
 
@@ -219,7 +232,7 @@ wikilink =
 quotedContent = bold / italics
 
 bold =
-	"'''" content:inlineContent<bold> "'''" {
+	"'''" !"'" content:inlineContent<bold> "'''" !"'" {
 		return array_merge(
 			[ new OpeningTagToken('b') ],
 			$content,
@@ -228,7 +241,7 @@ bold =
 	}
 
 italics =
-	"''" content:inlineContent<italics> "''" {
+	"''" !"'" content:inlineContent<italics> "''" {
 		return array_merge(
 			[ new OpeningTagToken('i') ],
 			$content,

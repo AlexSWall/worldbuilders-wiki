@@ -11,6 +11,21 @@ class TextToken extends BaseToken
 		$this->text = $text;
 	}
 
+	public function trim()
+	{
+		$this->text = trim($this->text);
+	}
+
+	public function ltrim()
+	{
+		$this->text = ltrim($this->text);
+	}
+
+	public function rtrim()
+	{
+		$this->text = rtrim($this->text);
+	}
+
 	public function toHTML(): string
 	{
 		return $this->text;
