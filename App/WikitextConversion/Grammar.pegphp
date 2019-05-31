@@ -217,9 +217,9 @@ inlineBreak =
 /* == Inline Rules == */
 
 wikilink =
-	"[[" target:$[^\]|]* exactText:("|" text:$[^\]] { return $text; })? "]]" {
-		$linkTarget = '/#' . ucwords(str_replace(' ', '_', trim($target)), '_-');
-		$linkText = trim($exactText) ?: trim($target);
+	"[[" target:$[^\]|]* exactText:("|" text:$[^\]]+ { return $text; })? "]]" {
+		$linkTarget = '\'/#' . ucwords(str_replace(' ', '_', trim($target)), '_-') . '\'';
+		$linkText = trim($exactText ?: $target);
 		return [
 			new OpeningTagToken('a', [
 				'href' => $linkTarget
