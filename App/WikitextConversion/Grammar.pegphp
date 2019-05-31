@@ -73,8 +73,7 @@ block =
 /* == Block-level Rules == */
 
 blockLines =
-	start:startOfLine
-	anySpacing block:blockLine {
+	start:startOfLine anySpacing block:blockLine {
 		return array_merge( $start, $block );
 	}
 
@@ -87,6 +86,8 @@ paragraphLines =
 		$firstLine = $lines[0];
 		$innerLines = array_slice($lines, 1, -1);
 		$lastLine = end($lines);
+
+		// A line is a pair [newline, content].
 
 		$tokens[] = $firstLine[0];
 		$tokens[] = new OpeningTagToken('p');
@@ -109,7 +110,7 @@ paragraphLines =
 	}
 
 paragraphBreak =
-	&blockLines
+	blockLines
 	/ newline1:newLine
 	anySpacing
 	newline2:newLine {
@@ -117,37 +118,30 @@ paragraphBreak =
 	}
 
 
-/* == Block-style Rules == */
+/* == Block Rules == */
 
 // Matches on a single line, assuming a newline both follows and leads.
 blockLine =
-	heading
+	header
 	/ listItem
 
-heading =
-	anySpacing '==' inner:innerHeadingContent '==' anySpacing
+header =
+	anySpacing '==' extrasLeft:'='* inner:innerHeaderContent '==' extrasRight:'='* anySpacing
 	{
-		$level = $inner['level'];
-		$text = $inner['text'];
-		$trimmedText = trim(trim($text, '='));
+		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
+		$text = $inner;
 
 		return [
 			new OpeningTagToken('h' . $level),
-			new TextToken($trimmedText),
+			new TextToken( trim($text) ),
 			new ClosingTagToken('h' . $level)
 		];
 	}
 
-innerHeadingContent =
-	'=' inner:innerHeadingContent '=' {
-		$inner['level'] += 1;
-		return $inner;
+innerHeaderContent =
+	innerText:$inlineText<header> {
+		return $innerText;
 	}
-	/ innerText:$inlineText {
-		return [ 'level' => 1, 'text' => $innerText ];
-	}
-
-listCharacter = [*#:;]
 
 listItem =
 	bullets:listCharacter+ content:inlineContent? {
@@ -156,14 +150,17 @@ listItem =
 			$content ?: []);
 	}
 
-/* == Line/Paragraph-style Rules == */
+listCharacter = [*#:;]
+
+
+/* == Inline Rules == */
 
 inlineContent =
 	inlineLine
-	/ inlineText
 
+// This can have a template passed to it to represent the context, which affects what is counted as an inline break.
 inlineLine =
-	content:( !inlineBreak element:(inlineElement / [^\r\n]) { return $element; } )+ 
+	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+ 
 	{
 		$lineContents = [];
 		$textBuffer = '';
@@ -175,34 +172,34 @@ inlineLine =
 			{
 				if ( $textBuffer !== '' )
 				{
-					$lineContents[] = new TextToken($textBuffer);
+					$lineContents[] = new TextToken( trim($textBuffer) );
 					$textBuffer = '';
 				}
 				$lineContents[] = $element;
 			}
 		}
 		if ( $textBuffer !== '' )
-			$lineContents[] = new TextToken($textBuffer);
+			$lineContents[] = new TextToken( trim($textBuffer) );
 
 		return $lineContents;
 	}
-
-inlineBreak =
-	&'[['
-	/ &"'''"
-	/ &"''"
-	/ &'{{'
-	/ &newLine
 
 inlineElement =
 	& '[' element:( wikilink ) { return $element; }
 	/ & "'" element:quotedContent { return $element; }
 
+// This can have a template passed to it to represent the context, which affects what is counted as an inline break.
 inlineText =
-	text:[^\n\r]+ {
-		return [ new TextToken(implode('', $text)) ];
+	text:( !inlineBreak c:. { return $c; } )+ 
+	{
+		return [ new TextToken( trim(implode('', $text)) ) ];
 	}
 
+inlineBreak =
+	& newLine
+	/ & <header> & '=='
+	/ & <bold> & "'''"
+	/ & <italics> & "''"
 
 /* == Inline Rules == */
 
@@ -214,7 +211,7 @@ wikilink =
 			new OpeningTagToken('a', [
 				'href' => $linkTarget
 			]),
-			new TextToken($linkText),
+			new TextToken( trim($linkText) ),
 			new ClosingTagToken('a')
 		];
 	}
@@ -222,7 +219,7 @@ wikilink =
 quotedContent = bold / italics
 
 bold =
-	"'''" content:inlineContent "'''" {
+	"'''" content:inlineContent<bold> "'''" {
 		return array_merge(
 			[ new OpeningTagToken('b') ],
 			$content,
@@ -231,7 +228,7 @@ bold =
 	}
 
 italics =
-	"''" content:inlineContent "''" {
+	"''" content:inlineContent<italics> "''" {
 		return array_merge(
 			[ new OpeningTagToken('i') ],
 			$content,
