@@ -33,9 +33,9 @@ abstract class BaseTagToken extends BaseToken
 			elseif ( is_string($value) )
 			{
 				if ( preg_match( '/\s/', $value ) )
-				    $pairString .= '=\'' . $value . '\'';
+				    $pairString .= $key . '=\'' . $value . '\'';
 				else
-				    $pairString .= '=' . $value;
+				    $pairString .= $key . '=' . $value;
 			}
 
 			if ( $pairString !== '' )
