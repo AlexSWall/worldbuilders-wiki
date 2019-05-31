@@ -29,6 +29,8 @@ final class WikitextParserTests extends TestCase
 		$this->assertSame( $expected, ( new WikitextConverter() )->convertWikitextToHTML($wikitextToConvert) );
 	}
 
+	/* == Headers == */
+
 	public function testBasicHeaderConversion(): void
 	{
 		$this->wikitextConversionTester('==Header==', '<h2>Header</h2>');
@@ -38,6 +40,8 @@ final class WikitextParserTests extends TestCase
 	{
 		$this->wikitextConversionTester('==  Header ===', '<h2>Header</h2>');
 	}
+
+	/* == Paragraphs == */
 
 	public function testBasicParagraphConversion(): void
 	{
@@ -52,6 +56,40 @@ final class WikitextParserTests extends TestCase
 		);
 	}
 
+	/* == Bold & Italics == */
+
+	public function testBasicBoldConversion(): void
+	{
+		$this->wikitextConversionTester("'''Testing'''", '<p><b>Testing</b></p>');
+	}
+
+	public function testBasicBoldConversion2(): void
+	{
+		$this->wikitextConversionTester("a''' bc '''d", '<p>a<b> bc </b>d</p>');
+	}
+
+	public function testBasicItalicsConversion(): void
+	{
+		$this->wikitextConversionTester("''Testing''", '<p><i>Testing</i></p>');
+	}
+
+	public function testBasicItalicsConversion2(): void
+	{
+		$this->wikitextConversionTester("a'' bc ''d", '<p>a<i> bc </i>d</p>');
+	}
+
+	public function testBoldInsideItalicsConversion(): void
+	{
+		$this->wikitextConversionTester("Some ''italics with '''bold''' inside''.", '<p>Some <i>italics with <b>bold</b> inside</i>.</p>');
+	}
+
+	public function testBoldInsideItalicsConversion2(): void
+	{
+		$this->wikitextConversionTester("Some '''bold with ''italics'' inside'''.", '<p>Some <b>bold with <i>italics</i> inside</b>.</p>');
+	}
+
+	/* == Headers with Paragraphs == */
+
 	public function testHeaderBetweenParagraphs(): void
 	{
 		$this->wikitextConversionTester(
@@ -59,6 +97,8 @@ final class WikitextParserTests extends TestCase
 			"<p>First paragraph.</p>\n<h2>Heading</h2>\n<p>Second paragraph.</p>"
 		);
 	}
+
+	/* == Complex Wikitext Rules == */
 
 	public function testComplexWikitextConversion(): void
 	{
