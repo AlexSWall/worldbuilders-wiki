@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Utilities\TemplateRenderer;
+use App\WikitextConversion\WikitextConverter;
 
 class Webpage extends DatabaseEncapsulator
 {
@@ -62,7 +62,7 @@ class Webpage extends DatabaseEncapsulator
 
 	public function renderWebpageTemplateToHTML()
 	{
-		$this->setWebpageHTML(TemplateRenderer::renderTemplate(
+		$this->setWebpageHTML(WikitextConverter::convertWikitextToHTML(
 			$this->getWebpageName(), $this->getWebpageTemplate()
 		));
 	}

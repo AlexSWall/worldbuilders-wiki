@@ -10,7 +10,7 @@ class WikiController extends Controller
 	/* Request with URL of the form  '<BaseURL>/#{pageName}'  */
 	public function serveWikiApp($request, $response)
 	{
-		return FrontEndDataUtils::getEntryPointResponse(	$this->view, $response, 'wiki' );
+		return FrontEndDataUtils::getEntryPointResponse( $this->view, $response, 'wiki' );
 	}
 
 	/* Request with URL of the form  '<BaseURL>/w/{pageName}'  */
