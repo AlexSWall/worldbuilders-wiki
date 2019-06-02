@@ -11,6 +11,12 @@ class WikitextParser
 	{
 		$grammarParser = Grammar::getNewGrammarParser() ;
 		$parseResult = $grammarParser->parse($wikitext);
+		$tokensArray = $this->postProcess($parseResult);
+		return $tokensArray;
+	}
+
+	private function postProcess( $parseResult )
+	{
 		return $parseResult;
 	}
 }
