@@ -121,7 +121,7 @@ private function createListTokenArray( $listItems )
 		}
 
 		$listTokens[] = new OpeningTagToken('li');
-		$listTokens[] = $itemContent;
+		$listTokens = array_merge($listTokens, $itemContent);
 		
 		$previousPrefix = $newPrefix;
 	}
@@ -247,8 +247,8 @@ list =
 	}
 
 listItem =
-	prefix:$listCharacter+ anySpacing content:inlineContent? {
-		return [ 'prefix' => $prefix, 'content' => $content ?: new TextToken('') ];
+	anySpacing prefix:$listCharacter+ anySpacing content:trimmedInlineLine? {
+		return [ 'prefix' => $prefix, 'content' => $content ?: [ new TextToken('') ] ];
 	}
 
 listCharacter = [*#;:]
