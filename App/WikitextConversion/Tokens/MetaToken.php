@@ -24,9 +24,10 @@ class MetaToken extends BaseToken
 		return $this->attributes;
 	}
 
-	public function toHtml()
+	public function toHtml(): string
 	{
-		throw new Exception('Cannot convert a meta token to HTML.');
+		throw new \Exception('Cannot convert a meta token to HTML.');
+		return '';
 	}
 
 	public function jsonSerialize(): array
