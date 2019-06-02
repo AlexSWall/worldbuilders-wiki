@@ -162,6 +162,12 @@ final class WikitextParserTests extends TestCase
 			"<ol><li>Point 1\n<ul><li>Point 1.1</li>\n<li>Point 1.2</li></ul></li>\n<li>Point 2</li></ol>");
 	}
 
+	public function testNestedListConversion3(): void
+	{
+		$this->wikitextConversionTester("*   Point 1   \n *# Point 1.1 \n *# Point 1.2  \n *## Point 1.2.1  \n *## Point 1.2.2",
+			"<ul><li>Point 1\n<ol><li>Point 1.1</li>\n<li>Point 1.2\n<ol><li>Point 1.2.1</li>\n<li>Point 1.2.2</li></ol></li></ol></li></ul>");
+	}
+
 
 	/* == Headers with Paragraphs == */
 
