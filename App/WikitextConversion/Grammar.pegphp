@@ -25,7 +25,7 @@ class Grammar
 }
 /* ----------------------------------------------------------- */ {
 
-function array_flatten($array = null) {
+private function array_flatten($array = null) {
 	$result = array();
 
 	if (!is_array($array)) {
@@ -50,12 +50,105 @@ private function endOffset() {
 	return $this->currPos;
 }
 
+private function createListTokenArray( $listItems )
+{
+	$previousPrefix = '';
+	$listTokens = array();
+
+	$prefixToTagText = [
+		'*' => 'ul',
+		'#' => 'ol'
+	];
+
+	foreach ( $listItems as $item )
+	{
+		[ 'prefix' => $newPrefix, 'content' => $itemContent ] = $item;
+
+		if ( $previousPrefix !== $newPrefix )
+		{
+			/* Opening and/or closing tags will need to be added for lists. */
+
+			/* Determine where the first difference is. */
+			$indexOfFirstDifference = strspn($previousPrefix ^ $newPrefix, "\0");
+
+			$itemClosesLists = $indexOfFirstDifference < strlen($previousPrefix);
+			$itemOpensNewLists = $indexOfFirstDifference < strlen($newPrefix);
+
+			if ( $itemClosesLists || !$itemOpensNewLists )
+			{
+				/* We must close the previous list item's tag. */
+				$listTokens[] = new ClosingTagToken('li');
+			}
+
+			/* Add closing tags for each previously open list opened after the
+			 * first difference between the two prefixes. */
+			if ( $itemClosesLists )
+			{
+				$listsToClose = substr( $previousPrefix, $indexOfFirstDifference );
+
+				for ( $i = strlen( $listsToClose ) - 1; $i >= 0; $i-- )
+				{
+					$tagText = $prefixToTagText[ $listsToClose[$i] ];
+					$listTokens[] = new ClosingTagToken($tagText);
+
+					/* Close the list item which the sublist was contained in. */
+					$listTokens[] = new ClosingTagToken('li');
+				}
+			}
+
+			if ( isset($item['end']) )
+				$listTokens[] = $item['end'];
+
+			/* Add opening tags for each newly opened list. */
+			if ( $itemOpensNewLists )
+			{
+				$listsToOpen = substr( $newPrefix, $indexOfFirstDifference );
+
+				for ( $i = 0; $i < strlen( $listsToOpen ); $i++ )
+				{
+					$tagText = $prefixToTagText[ $listsToOpen[$i] ];
+					$listTokens[] = new OpeningTagToken($tagText);
+				}
+			}
+		} /* Finished closing and opening list tags. */
+		else
+		{
+			/* We must close the previous list item's tag. */
+			$listTokens[] = new ClosingTagToken('li');
+
+			if ( isset($item['end']) )
+				$listTokens[] = $item['end'];
+		}
+
+		$listTokens[] = new OpeningTagToken('li');
+		$listTokens[] = $itemContent;
+		
+		$previousPrefix = $newPrefix;
+	}
+
+	$listTokens[] = new ClosingTagToken('li'); /* Close the last item. */
+
+	for ( $i = strlen( $previousPrefix ) - 1; $i >= 0; $i-- )
+	{
+		$tagText = $prefixToTagText[ $previousPrefix[$i] ];
+		$listTokens[] = new ClosingTagToken($tagText);
+
+		if ( $i > 0 )
+		{
+			/* Close the list item which the sublist was contained in. */
+			$listTokens[] = new ClosingTagToken('li');
+		}
+	}
+
+	return $listTokens;
+}
+
 } /* ----------------------------------------------------------- */
 
 /* == Top-level Rules == */
 
 start "start" =
-	blocks:topLevelBlock+ newLine* {
+	blocks:topLevelBlock+ newLine* endOfFile {
 		return array_flatten([ $blocks, new EndOfFileToken() ]);
 	}
 
@@ -123,7 +216,7 @@ paragraphBreak =
 // Matches on a single line, assuming a newline both follows and leads.
 blockLine =
 	header
-	/ listItem
+	/ list
 
 header =
 	anySpacing '==' extrasLeft:'='* inner:innerHeaderContent '==' extrasRight:'='* anySpacing
@@ -144,14 +237,21 @@ innerHeaderContent =
 		return $innerText;
 	}
 
-listItem =
-	bullets:listCharacter+ content:inlineContent? {
-		return array_merge(
-			new MetaToken('ListItem', [ 'bullets' => bullets ]),
-			$content ?: []);
+list =
+	firstItem:listItem & endOfLine
+	otherItems:(
+		end:endOfLine item:listItem & endOfLine { return array_merge( [ 'end' => $end ], $item ); }
+	) * {
+		$listItems = array_merge([ $firstItem ], $otherItems);
+		return $this->createListTokenArray($listItems);
 	}
 
-listCharacter = [*#:;]
+listItem =
+	prefix:$listCharacter+ anySpacing content:inlineContent? {
+		return [ 'prefix' => $prefix, 'content' => $content ?: new TextToken('') ];
+	}
+
+listCharacter = [*#;:]
 
 
 /* == Inline Rules == */
@@ -221,11 +321,11 @@ templateElement =
 	image / wikilink
 
 image =
-	"[[" anySpacing 
+	"[[" anySpacing
 	( "Image:" / "image:" ) anySpacing imageFileName:$inlineText<template>
-	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing { 
-			return [ $width, $height ]; 
-		} 
+	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing {
+			return [ $width, $height ];
+		}
 	) ?
 	"]]" {
 		$tokenAttributes = [ 'src' => '/images/wiki-images/' . trim($imageFileName) ];
@@ -282,12 +382,21 @@ startOfLine =
 	newLine
 	/ startOfFile
 
+endOfLine =
+	newLine
+	/ endOfFile
+
 newLine = 
 	'\n' { return [ new NewLineToken() ]; }
 	/ '\r\n' { return [ new NewLineToken() ]; }
 
 startOfFile =
 	& { return $this->endOffset() === 0; } {
+		return [];
+	}
+
+endOfFile =
+	& { return $this->endOffset() === $this->inputLength; } {
 		return [];
 	}
 
