@@ -110,6 +110,24 @@ final class WikitextParserTests extends TestCase
 		$this->wikitextConversionTester("[[ Place link  |  some text ]]  ", "<p><a href='/#Place_Link'>some text</a></p>");
 	}
 
+	/* == Images == */
+
+	/* [[Image:'url'|width,height]]  ->  <img src='url' width='width' height='height'> */
+	public function testSimpleImageConversion(): void
+	{
+		$this->wikitextConversionTester("[[Image:image.jpg]]", "<p><img src='/images/wiki-images/image.jpg'></p>");
+	}
+
+	public function testImageWithDimensionsConversion(): void
+	{
+		$this->wikitextConversionTester("[[Image:image.jpg|200,100]]", "<p><img src='/images/wiki-images/image.jpg' width='200' height='100'></p>");
+	}
+
+	public function testImageWithDimensionsAndSpacingConversion(): void
+	{
+		$this->wikitextConversionTester("[[   Image: image.jpg    | 200,    100 ]]", "<p><img src='/images/wiki-images/image.jpg' width='200' height='100'></p>");
+	}
+
 	/* == Headers with Paragraphs == */
 
 	public function testHeaderBetweenParagraphsConversion(): void
@@ -128,5 +146,12 @@ final class WikitextParserTests extends TestCase
 			" Intro  \n== Heading ===\n[[P2L1]]\n[[ P2 | L2 ]]\n== Heading  2==\n\n\n '''P''3L''1''' \n ====Sub Heading===\nend",
 			"<p>Intro</p>\n<h2>Heading</h2>\n<p><a href='/#P2L1'>P2L1</a>\n<a href='/#P2'>L2</a></p>\n<h2>Heading  2</h2>\n\n\n<p><b>P<i>3L</i>1</b></p>\n<h3>Sub Heading</h3>\n<p>end</p>"
 		);
+	}
+
+	/* == Safety Tests == */
+
+	public function testScriptTagConversion(): void
+	{
+		$this->wikitextConversionTester('<script>script;</script>', '<p>&lt;script&gt;script;&lt;/script&gt;</p>');
 	}
 }
