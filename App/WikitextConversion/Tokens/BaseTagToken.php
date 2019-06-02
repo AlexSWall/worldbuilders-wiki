@@ -18,6 +18,11 @@ abstract class BaseTagToken extends BaseToken
 		return $this->name;
 	}
 
+	private function removeSpecialHtmlTagCharacters( string $s ): string
+	{
+		return str_replace( [ '\'', '"', '=', '<', '>' ], '', $s );
+	}
+
 	/**
 	 * @return string The tag's attributes as a string for use within a HTML string.
 	 */
@@ -27,16 +32,14 @@ abstract class BaseTagToken extends BaseToken
 
 		foreach( $this->attributes as $key => $value )
 		{
+			$safeKey = $this->removeSpecialHtmlTagCharacters($key);
+
 			$pairString = '';
 			if ( is_bool($value) && $value )
-				$pairString = $key;
-			elseif ( is_string($value) )
-			{
-				if ( preg_match( '/\s/', $value ) )
-				    $pairString .= $key . '=\'' . $value . '\'';
-				else
-				    $pairString .= $key . '=' . $value;
-			}
+				$pairString = $safeKey;
+			else
+				$strValue = strval($value);
+				$pairString .= $safeKey . '=\'' . $this->removeSpecialHtmlTagCharacters($strValue) . '\'';
 
 			if ( $pairString !== '' )
 				$attributePairStrings[] = $pairString;
