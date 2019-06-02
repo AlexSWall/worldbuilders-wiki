@@ -128,6 +128,41 @@ final class WikitextParserTests extends TestCase
 		$this->wikitextConversionTester("[[   Image: image.jpg    | 200,    100 ]]", "<p><img src='/images/wiki-images/image.jpg' width='200' height='100'></p>");
 	}
 
+	/* == Lists == */
+
+	public function testSimpleUnorderedListConversion(): void
+	{
+		$this->wikitextConversionTester("* Point 1", "<ul><li>Point 1</li></ul>");
+	}
+
+	public function testSimpleUnorderedListConversion2(): void
+	{
+		$this->wikitextConversionTester("* Point 1\n* Point 2", "<ul><li>Point 1</li>\n<li>Point 2</li></ul>");
+	}
+
+	public function testSimpleOrderedListConversion(): void
+	{
+		$this->wikitextConversionTester("# Point 1", "<ol><li>Point 1</li></ol>");
+	}
+
+	public function testSimpleOrderedListConversion2(): void
+	{
+		$this->wikitextConversionTester("# Point 1\n# Point 2", "<ol><li>Point 1</li>\n<li>Point 2</li></ol>");
+	}
+
+	public function testNestedListConversion(): void
+	{
+		$this->wikitextConversionTester("* Point 1\n**Point 1.1\n**Point 1.2\n*Point 2",
+			"<ul><li>Point 1\n<ul><li>Point 1.1</li>\n<li>Point 1.2</li></ul></li>\n<li>Point 2</li></ul>");
+	}
+
+	public function testNestedListConversion2(): void
+	{
+		$this->wikitextConversionTester("# Point 1\n#*Point 1.1\n#*Point 1.2\n#Point 2",
+			"<ol><li>Point 1\n<ul><li>Point 1.1</li>\n<li>Point 1.2</li></ul></li>\n<li>Point 2</li></ol>");
+	}
+
+
 	/* == Headers with Paragraphs == */
 
 	public function testHeaderBetweenParagraphsConversion(): void
