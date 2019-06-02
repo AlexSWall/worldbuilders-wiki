@@ -123,7 +123,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   		}
   
   		$listTokens[] = new OpeningTagToken('li');
-  		$listTokens[] = $itemContent;
+  		$listTokens = array_merge($listTokens, $itemContent);
   		
   		$previousPrefix = $newPrefix;
   	}
@@ -310,7 +310,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   }
   private function a17($prefix, $content) {
   
-  		return [ 'prefix' => $prefix, 'content' => $content ?: new TextToken('') ];
+  		return [ 'prefix' => $prefix, 'content' => $content ?: [ new TextToken('') ] ];
   	
   }
   private function a18($c) {
@@ -1001,42 +1001,48 @@ class PEGParser extends \WikiPEG\PEGParserBase {
     $p2 = $this->currPos;
     // start seq_1
     $p3 = $this->currPos;
-    $p5 = $this->currPos;
-    $r4 = self::$FAILED;
+    $r4 = $this->discardanySpacing($silence);
+    if ($r4===self::$FAILED) {
+      $r1 = self::$FAILED;
+      goto seq_1;
+    }
+    $p6 = $this->currPos;
+    $r5 = self::$FAILED;
     for (;;) {
-      $r6 = $this->discardlistCharacter($silence);
-      if ($r6!==self::$FAILED) {
-        $r4 = true;
+      $r7 = $this->discardlistCharacter($silence);
+      if ($r7!==self::$FAILED) {
+        $r5 = true;
       } else {
         break;
       }
     }
-    // prefix <- $r4
-    if ($r4!==self::$FAILED) {
-      $r4 = substr($this->input, $p5, $this->currPos - $p5);
+    // prefix <- $r5
+    if ($r5!==self::$FAILED) {
+      $r5 = substr($this->input, $p6, $this->currPos - $p6);
     } else {
-      $r4 = self::$FAILED;
-      $r1 = self::$FAILED;
-      goto seq_1;
-    }
-    // free $r6
-    // free $p5
-    $r6 = $this->discardanySpacing($silence);
-    if ($r6===self::$FAILED) {
+      $r5 = self::$FAILED;
       $this->currPos = $p3;
       $r1 = self::$FAILED;
       goto seq_1;
     }
-    $r7 = $this->parseinlineLine($silence, 0x0);
+    // free $r7
+    // free $p6
+    $r7 = $this->discardanySpacing($silence);
     if ($r7===self::$FAILED) {
-      $r7 = null;
+      $this->currPos = $p3;
+      $r1 = self::$FAILED;
+      goto seq_1;
     }
-    // content <- $r7
+    $r8 = $this->parsetrimmedInlineLine($silence);
+    if ($r8===self::$FAILED) {
+      $r8 = null;
+    }
+    // content <- $r8
     $r1 = true;
     seq_1:
     if ($r1!==self::$FAILED) {
       $this->savedPos = $p2;
-      $r1 = $this->a17($r4, $r7);
+      $r1 = $this->a17($r5, $r8);
     }
     // free $p3
     return $r1;
