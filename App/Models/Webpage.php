@@ -63,7 +63,7 @@ class Webpage extends DatabaseEncapsulator
 	public function renderWebpageTemplateToHTML()
 	{
 		$this->setWebpageHTML(WikitextConverter::convertWikitextToHTML(
-			$this->getWebpageName(), $this->getWebpageTemplate()
+			$this->getWebpageTemplate(), $this->getWebpageName()
 		));
 	}
 

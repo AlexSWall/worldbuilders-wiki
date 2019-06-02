@@ -8,7 +8,7 @@ class WikitextConverter
 	{
 	}
 
-	public static function convertWikitextToHTML( string $pageName, string $wikitext ): string
+	public static function convertWikitextToHTML( string $wikitext, string $pageName = '' ): string
 	{
 		$wikitextParser = new WikitextParser();
 		$htmlBuilder = new HTML5Builder();
