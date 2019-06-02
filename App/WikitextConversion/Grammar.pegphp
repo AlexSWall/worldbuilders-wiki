@@ -198,8 +198,8 @@ inlineLine =
 	}
 
 inlineElement =
-	& '[' element:( wikilink ) { return $element; }
-	/ & "'" element:quotedContent { return $element; }
+	& '[[' element:( templateElement ) { return $element; }
+	/ & "''" element:quotedContent { return $element; }
 
 // This can have a template passed to it to represent the context, which affects what is counted as an inline break.
 inlineText =
@@ -213,13 +213,39 @@ inlineBreak =
 	/ & <header> & '=='
 	/ & <bold> & "'''"
 	/ & <italics> & "''" ! "'''"
+	/ & <template> & ( "]]" / "|" )
 
 /* == Inline Rules == */
 
+templateElement =
+	image / wikilink
+
+image =
+	"[[" anySpacing 
+	( "Image:" / "image:" ) anySpacing imageFileName:$inlineText<template>
+	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing { 
+			return [ $width, $height ]; 
+		} 
+	) ?
+	"]]" {
+		$tokenAttributes = [ 'src' => '/images/wiki-images/' . trim($imageFileName) ];
+
+		if ( $dimensions )
+		{
+			[ $width, $height ] = $dimensions;
+			$tokenAttributes['width'] = $width;
+			$tokenAttributes['height'] = $height;
+		}
+
+		return [
+			new OpeningTagToken('img', $tokenAttributes),
+		];
+	}
+
 wikilink =
-	"[[" target:$[^\]|]* exactText:("|" text:$[^\]]+ { return $text; })? "]]" {
+	"[[" target:$inlineText<template> displayText:("|" text:$inlineText<template> { return $text; })? "]]" {
 		$linkTarget = '\'/#' . ucwords(str_replace(' ', '_', trim($target)), '_-') . '\'';
-		$linkText = trim($exactText ?: $target);
+		$linkText = trim($displayText ?: $target);
 		return [
 			new OpeningTagToken('a', [
 				'href' => $linkTarget
@@ -273,3 +299,6 @@ anySpacing =
 
 spacing =
 	[ \t]
+
+number =
+	numberString:$[0-9]+ { return intval($numberString); }
