@@ -221,7 +221,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   		foreach( $innerLines as $innerLinePair )
   		{
   			$tokens[] = $innerLinePair[0];
-  			$tokens[] = array_merge($tokens, $innerLinePair[1]);
+  			$tokens = array_merge($tokens, $innerLinePair[1]);
   		}
   
   		if( sizeof($lines) > 1 )
