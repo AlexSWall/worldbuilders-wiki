@@ -219,22 +219,30 @@ blockLine =
 	/ list
 
 header =
-	anySpacing '==' extrasLeft:'='* inner:innerHeaderContent '==' extrasRight:'='* anySpacing
+	anySpacing '==' extrasLeft:'='* inner:$inlineText<header>
+	rpnPermissionsString:(
+		'|' anySpacing rpnPermissionsStr:permissionsExpression anySpacing { 
+			return $rpnPermissionsStr; 
+		}
+	)?
+	'==' extrasRight:'='* anySpacing
 	{
 		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
 		$textToken = new TextToken($inner);
 		$textToken->trim();
 
-		return [
+		$tokens = array();
+
+		if ( $rpnPermissionsString )
+			$tokens[] = new MetaToken('permissions-specifier', [
+				'RPN Permissions Expression' => $rpnPermissionsString
+			]);
+
+		return array_merge( $tokens, [
 			new OpeningTagToken('h' . $level),
 			$textToken,
 			new ClosingTagToken('h' . $level)
-		];
-	}
-
-innerHeaderContent =
-	innerText:$inlineText<header> {
-		return $innerText;
+		]);
 	}
 
 list =
@@ -310,10 +318,11 @@ inlineText =
 
 inlineBreak =
 	& newLine
-	/ & <header> & '=='
+	/ & <header> & ( "==" / "|" )
 	/ & <bold> & "'''"
 	/ & <italics> & "''" ! "'''"
 	/ & <template> & ( "]]" / "|" )
+	/ & <permission> & ( "==" / spacing )
 
 /* == Inline Rules == */
 
@@ -321,8 +330,7 @@ templateElement =
 	image / wikilink
 
 image =
-	"[[" anySpacing
-	( "Image:" / "image:" ) anySpacing imageFileName:$inlineText<template>
+	"[[" anySpacing "image:"i anySpacing imageFileName:$inlineText<template>
 	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing {
 			return [ $width, $height ];
 		}
@@ -411,3 +419,49 @@ spacing =
 
 number =
 	numberString:$[0-9]+ { return intval($numberString); }
+
+
+/* == Permissions Rules == */
+
+// Returns the permissions string in Reverse Polish Notation.
+permissionsExpression =
+	orExpressionGroup
+
+orExpressionGroup =
+	firstAndExpression:andExpressionGroup
+	others:(
+		anySpacing orOperation:orBooleanOperator anySpacing andGroup:andExpressionGroup { 
+			return [ $orOperation, $andGroup ];
+		}
+	)* {
+		$expressionRPN = $firstAndExpression;
+		foreach ( $others as $operatorPermissionGroupPair )
+			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1] . ' ' . $operatorPermissionGroupPair[0];
+		return $expressionRPN;
+	}
+
+andExpressionGroup =
+	firstPermissionGroup:permissionGroup 
+	others:(
+		anySpacing andOperation:andBooleanOperator anySpacing permGroup:permissionGroup { 
+			return [ $andOperation, $permGroup ];
+		}
+	)* {
+		$expressionRPN = $firstPermissionGroup;
+		foreach ( $others as $operatorPermissionGroupPair )
+			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1] . ' ' . $operatorPermissionGroupPair[0];
+		return $expressionRPN;
+	}
+
+permissionGroup =
+	"(" anySpacing expr:permissionsExpression anySpacing ")" { return $expr; }
+	/ permission
+
+permission =
+	$inlineText<permission>
+
+orBooleanOperator =
+	( 'or'i / '||' ) { return '||'; } 
+
+andBooleanOperator =
+	( 'and'i / '&&' ) { return '&&'; }
