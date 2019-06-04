@@ -8,14 +8,14 @@ class WikitextConverter
 	{
 	}
 
-	public static function convertWikitextToHTML( string $wikitext, string $pageName = '' ): string
+	public static function convertWikitextToHtmlBlocks( string $wikitext, string $pageName = '' ): string
 	{
 		$wikitextParser = new WikitextParser();
 		$htmlBuilder = new HTML5Builder();
 
 		$tokens = $wikitextParser->parse($wikitext);
-		$html = $htmlBuilder->build($tokens);
+		$htmlBlocks = $htmlBuilder->buildAndGetHtmlBlocks($tokens);
 
-		return $html;
+		return $htmlBlocks;
 	}
 }
