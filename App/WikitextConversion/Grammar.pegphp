@@ -221,8 +221,8 @@ blockLine =
 header =
 	anySpacing '==' extrasLeft:'='* inner:$inlineText<header>
 	rpnPermissionsString:(
-		'|' anySpacing rpnPermissionsStr:permissionsExpression anySpacing { 
-			return $rpnPermissionsStr; 
+		'|' anySpacing rpnPermissionsStr:( permissionsExpression / '' ) anySpacing { 
+			return $rpnPermissionsStr;
 		}
 	)?
 	'==' extrasRight:'='* anySpacing
