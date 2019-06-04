@@ -26,7 +26,7 @@ final class WikitextParserTests extends TestCase
 
 	private function wikitextConversionTester($wikitextToConvert, $expected): void
 	{
-		$this->assertSame( $expected, ( new WikitextConverter() )->convertWikitextToHTML($wikitextToConvert) );
+		$this->assertSame( $expected, ( new WikitextConverter() )->convertWikitextToHtml( $wikitextToConvert ) );
 	}
 
 	/* == Headers == */
