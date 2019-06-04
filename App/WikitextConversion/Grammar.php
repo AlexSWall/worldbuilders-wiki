@@ -261,7 +261,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
   }
   private function a11($extrasLeft, $inner, $rpnPermissionsStr) {
    
-  			return $rpnPermissionsStr; 
+  			return $rpnPermissionsStr;
   		
   }
   private function a12($extrasLeft, $inner, $rpnPermissionsString, $extrasRight) {
@@ -847,7 +847,13 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       $r9 = self::$FAILED;
       goto seq_2;
     }
+    // start choice_1
     $r13 = $this->parseorExpressionGroup($silence);
+    if ($r13!==self::$FAILED) {
+      goto choice_1;
+    }
+    $r13 = '';
+    choice_1:
     // rpnPermissionsStr <- $r13
     if ($r13===self::$FAILED) {
       $this->currPos = $p10;
