@@ -9,7 +9,7 @@ class WikitextParser
 	 */
 	public function parse( string $wikitext )
 	{
-		$grammarParser = Grammar::getNewGrammarParser() ;
+		$grammarParser = Grammar::getNewGrammarParser();
 		$parseResult = $grammarParser->parse($wikitext);
 		$tokensArray = $this->postProcess($parseResult);
 		return $tokensArray;
