@@ -30,9 +30,17 @@ class HTML5Builder
 		return $this->htmlBlocks;
 	}
 
-	private function addHtmlBlock( string: $permissions, string $html ): void
+	private function addHtmlBlock( string $permissions, string $html ): void
 	{
-		$htmlBlocks[] = WikitextPermissionBlock($permissions, $html);
+		$this->htmlBlocks[] = new WikitextPermissionBlock( sizeof($this->htmlBlocks), $permissions, $html );
+	}
+
+	public function getHtml(): string
+	{
+		$entireHtml = '';
+		foreach ( $this->getHtmlBlocks() as $htmlBlock )
+			$entireHtml .= $htmlBlock->getHtml();
+		return $entireHtml;
 	}
 
 	public function add( $tokens ): void

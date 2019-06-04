@@ -4,18 +4,32 @@ namespace App\WikitextConversion;
 
 class WikitextConverter
 {
+	private $wikitextParser;
+	private $htmlBuilder;
+
 	public function __construct()
 	{
+		$this->wikitextParser = new WikitextParser();
+		$this->htmlBuilder = new HTML5Builder();
 	}
 
-	public static function convertWikitextToHtmlBlocks( string $wikitext, string $pageName = '' ): string
+	private function parseAndBuild( string $wikitext, string $pageName = '' ): void
 	{
-		$wikitextParser = new WikitextParser();
-		$htmlBuilder = new HTML5Builder();
+		$tokens = $this->wikitextParser->parse($wikitext);
 
-		$tokens = $wikitextParser->parse($wikitext);
-		$htmlBlocks = $htmlBuilder->buildAndGetHtmlBlocks($tokens);
+		$this->htmlBuilder->initialise();
+		$this->htmlBuilder->build($tokens);
+	}
 
-		return $htmlBlocks;
+	public function convertWikitextToHtmlBlocks( string $wikitext, string $pageName = '' ): string
+	{
+		$this->parseAndBuild( $wikitext, $pageName );
+		return $this->htmlBuilder->getHtmlBlocks();
+	}
+
+	public function convertWikitextToHtml( string $wikitext, string $pageName = '' ): string
+	{
+		$this->parseAndBuild( $wikitext, $pageName );
+		return $this->htmlBuilder->getHtml();
 	}
 }
