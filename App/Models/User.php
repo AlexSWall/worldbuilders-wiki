@@ -12,7 +12,7 @@ class User extends DatabaseEncapsulator
 	
 	protected static function getTableName()
 	{
-		return 'users';
+		return 'Users';
 	}
 	
 	protected static function getPrimaryKey()

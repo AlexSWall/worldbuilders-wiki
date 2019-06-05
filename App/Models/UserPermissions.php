@@ -13,7 +13,7 @@ class UserPermissions extends DatabaseEncapsulator
 	
 	protected static function getTableName()
 	{
-		return 'user_permissions';
+		return 'UserPermissions';
 	}
 	
 	protected static function getPrimaryKey()

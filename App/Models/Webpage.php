@@ -14,7 +14,7 @@ class Webpage extends DatabaseEncapsulator
 
 	protected static function getTableName()
 	{
-		return 'webpages';
+		return 'Webpages';
 	}
 	
 	protected static function getPrimaryKey()

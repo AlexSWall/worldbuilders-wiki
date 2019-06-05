@@ -14,7 +14,7 @@ class UserDetails extends DatabaseEncapsulator
 	
 	protected static function getTableName()
 	{
-		return 'user_details';
+		return 'UserDetails';
 	}
 	
 	protected static function getPrimaryKey()
