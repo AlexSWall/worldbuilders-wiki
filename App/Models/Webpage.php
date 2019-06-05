@@ -25,8 +25,11 @@ class Webpage extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	// Disallow colons in page name.
-	
+	public static function retrieveWebpageById($id)
+	{
+		return self::retrieveModelWithEntries(['id' => $id]);
+	}
+
 	public static function retrieveWebpageByName($webpageName)
 	{
 		return self::retrieveModelWithEntries(['WebpageName' => $webpageName]);
@@ -34,6 +37,11 @@ class Webpage extends DatabaseEncapsulator
 
 	
 	/* == Getters & Setters == */
+
+	public function getWebpageId()
+	{
+		return $this->get('id');
+	}
 
 	public function getWebpageName()
 	{
