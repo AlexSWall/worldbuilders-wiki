@@ -4,13 +4,7 @@ namespace App\Models;
 
 class UserDetails extends DatabaseEncapsulator
 {
-	protected static function getDefaults()
-	{
-		return [
-			'PreferredName' => null,
-			'Description' => null
-		];
-	}
+	/* == Required Abstract Methods == */
 	
 	protected static function getTableName()
 	{
@@ -21,6 +15,18 @@ class UserDetails extends DatabaseEncapsulator
 	{
 		return 'Id';
 	}
+	
+	protected static function getDefaults()
+	{
+		return [
+			'PreferredName' => null,
+			'Description' => null
+		];
+	}
+
+
+	/* == Instance Variables == */
+
 
 	/* == Creators & Retrievers == */
 
