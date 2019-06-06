@@ -4,11 +4,7 @@ namespace App\Models;
 
 class User extends DatabaseEncapsulator
 {
-	protected static function getDefaults()
-	{
-		return [
-		];
-	}
+	/* == Required Abstract Methods == */
 	
 	protected static function getTableName()
 	{
@@ -19,6 +15,15 @@ class User extends DatabaseEncapsulator
 	{
 		return 'UserId';
 	}
+	
+	protected static function getDefaults()
+	{
+		return [
+		];
+	}
+
+
+	/* == Instance Variables == */
 
 	private $userPermissions;
 	private $userDetails;

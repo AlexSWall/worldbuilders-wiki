@@ -6,11 +6,7 @@ use App\WikitextConversion\WikitextConverter;
 
 class Webpage extends DatabaseEncapsulator
 {
-	protected static function getDefaults()
-	{
-		return [
-		];
-	}
+	/* == Required Abstract Methods == */
 
 	protected static function getTableName()
 	{
@@ -19,8 +15,19 @@ class Webpage extends DatabaseEncapsulator
 	
 	protected static function getPrimaryKey()
 	{
-		return 'WebpageName';
+		return 'WebpageId';
 	}
+	
+	protected static function getDefaults()
+	{
+		return [
+		];
+	}
+
+
+	/* == Instance Variables == */
+
+	private $webpagePermissionBlockModels;
 	
 
 	/* == Creators & Retrievers == */

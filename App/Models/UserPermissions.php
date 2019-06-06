@@ -4,6 +4,8 @@ namespace App\Models;
 
 class UserPermissions extends DatabaseEncapsulator
 {
+	/* == Required Abstract Methods == */
+	
 	protected static function getDefaults()
 	{
 		return [
@@ -20,6 +22,10 @@ class UserPermissions extends DatabaseEncapsulator
 	{
 		return 'Id';
 	}
+
+
+	/* == Instance Variables == */
+
 
 	/* == Creators & Retrievers == */
 

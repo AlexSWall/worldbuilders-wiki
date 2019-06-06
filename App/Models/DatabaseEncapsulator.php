@@ -11,8 +11,8 @@ abstract class DatabaseEncapsulator
 	private $model;
 	
 	protected static abstract function getTableName();
-	protected static abstract function getDefaults();
 	protected static abstract function getPrimaryKey();
+	protected static abstract function getDefaults();
 
 	private function __construct($model)
 	{
@@ -54,6 +54,14 @@ abstract class DatabaseEncapsulator
 		return self::createIfNotNull(self::getTable()->where($args)->first());
 	}
 
+	protected static function retrieveModelsWithEntries($args)
+	{
+		$models = array();
+		foreach ( self::getTable()->where($args)->get()->getIterator() as $bareModel )
+			$models[] = self::createIfNotNull($bareModel);
+		return $models;
+	}
+
 	protected function get($key)
 	{
 		return $this->model->$key;
@@ -69,7 +77,7 @@ abstract class DatabaseEncapsulator
 
 	protected function update($arr)
 	{
-		$keyArr = [static::getPrimaryKey() => $this->model->{static::getPrimaryKey()}];
+		$keyArr = [static::getPrimaryKey() => $this->get( static::getPrimaryKey() )];
 		static::getTable()->where($keyArr)->update($arr);
 	}
 }
