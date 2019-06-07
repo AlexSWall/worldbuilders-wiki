@@ -9,7 +9,7 @@ abstract class DatabaseEncapsulator
 	static $db_logger;
 
 	private $model;
-	
+
 	protected static abstract function getTableName();
 	protected static abstract function getPrimaryKey();
 	protected static abstract function getDefaults();
@@ -79,5 +79,11 @@ abstract class DatabaseEncapsulator
 	{
 		$keyArr = [static::getPrimaryKey() => $this->get( static::getPrimaryKey() )];
 		static::getTable()->where($keyArr)->update($arr);
+	}
+
+	protected function delete()
+	{
+		$keyArr = [static::getPrimaryKey() => $this->get( static::getPrimaryKey() )];
+		static::getTable()->where($keyArr)->delete();
 	}
 }
