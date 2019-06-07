@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\SpecialisedQueries\CharacterPermissionsQueries;
+
 class Character extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
@@ -85,34 +87,53 @@ class Character extends DatabaseEncapsulator
 
 	/* == Character Permissions == */
 
-	public function addPermission()
+	private function setPermissionsIfNeeded()
 	{
-		// TODO
-	}
-
-	public function addPermissions()
-	{
-		// TODO
-	}
-
-	public function removePermissio()
-	{
-		// TODO
-	}
-
-	public function removePermission()
-	{
-		// TODO
+		if ( !$this->permissions )
+	    	$this->permissions = CharacterPermissionsQueries::runCharacterIdToPermissionNamesQuery($this->getCharacterId());
 	}
 
 	public function getPermissions()
 	{
-		// TODO
+		$this->setPermissionsIfNeeded();
+	    return $this->permissions;
 	}
 
-	public function hasPermission()
+	public function addPermissions($permissions)
 	{
-		// TODO
+		$this->setPermissionsIfNeeded();
+		for ( $permissions as $permission )
+			$this->permissions->add($permission);
+		
+	}
+
+	public function removePermissions($permissions)
+	{
+		$this->setPermissionsIfNeeded();
+		for ( $permissions as $permission )
+			$this->permissions->remove($permission);
+		
+	}
+
+	public function hasPermissions($permissions)
+	{
+		$this->setPermissionsIfNeeded();
+		return $this->permissions->has($permission);
+	}
+
+	public function addPermission($permission)
+	{
+		$this->addPermissions([ $permission ]);
+	}
+
+	public function removePermission($permission)
+	{
+		$this->removePermissions([ $permission ]);
+	}
+
+	public function hasPermission($permission)
+	{
+		$this->hasPermissions([ $permission ]);
 	}
 
 }
