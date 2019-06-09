@@ -9,7 +9,11 @@ interface SetInterface extends \Traversable, \Countable
 
 	public function add($item);
 
+	public function addAll($items);
+
 	public function delete($item);
+
+	public function deleteAll($items);
 
 	public function clear();
 
