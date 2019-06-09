@@ -2,16 +2,17 @@
 
 $setupFinished = false;  /* For logging purposes. */
 
-/* == Load dependencies and get config == */
+/* == Load dependencies == */
 
-define('BASE_PATH', dirname(__DIR__));
+assert(isset($config));
+
+if ( ! defined('BASE_PATH') )
+	define('BASE_PATH', dirname(__DIR__));
 
 require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
 require BASE_PATH . '/App/Logging/LoggerRegistry.php';
 require BASE_PATH . '/App/Logging/Logger.php';
-
-$config = require BASE_PATH . '/config/' . trim(file_get_contents(BASE_PATH . '/mode.php')) . '.config.php';
 
 /* == Set up logging == */
 
@@ -57,19 +58,19 @@ $container = $app->getContainer();
 
 $logger->addInfo('Populating the container.');
 
-$container['HashUtils']            = function($container) { return new \App\Helpers\HashUtils($container->get('settings')['app']['hash']); };
-$container['randomlib']            = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
-$container['auth']                 = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashUtils, $container->randomlib); };
-$container['validator']            = function($container) { return new \App\Validation\Validator; };
-$container['HomeController']       = function($container) { return new \App\Controllers\HomeController($container); };
-$container['AuthenticationController']       = function($container) { return new \App\Controllers\Auth\AuthenticationController($container); };
-$container['AdministrationController']      = function($container) { return new \App\Controllers\Auth\AdministrationController($container); };
-$container['PasswordController']   = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
-$container['ActivationController'] = function($container) { return new \App\Controllers\Auth\ActivationController($container); };
-$container['WikiController']       = function($container) { return new \App\Controllers\WikiController($container); };
-$container['WikiPageController']   = function($container) { return new \App\Controllers\WikiPageController($container); };
-$container['csrf']                 = function($container) { return new \Slim\Csrf\Guard; };
-$container['flash']                = function($container) { return new \Slim\Flash\Messages; };
+$container['HashUtils']                = function($container) { return new \App\Helpers\HashUtils($container->get('settings')['app']['hash']); };
+$container['randomlib']                = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
+$container['auth']                     = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashUtils, $container->randomlib); };
+$container['validator']                = function($container) { return new \App\Validation\Validator; };
+$container['HomeController']           = function($container) { return new \App\Controllers\HomeController($container); };
+$container['AuthenticationController'] = function($container) { return new \App\Controllers\Auth\AuthenticationController($container); };
+$container['AdministrationController'] = function($container) { return new \App\Controllers\Auth\AdministrationController($container); };
+$container['PasswordController']       = function($container) { return new \App\Controllers\Auth\PasswordController($container); };
+$container['ActivationController']     = function($container) { return new \App\Controllers\Auth\ActivationController($container); };
+$container['WikiController']           = function($container) { return new \App\Controllers\WikiController($container); };
+$container['WikiPageController']       = function($container) { return new \App\Controllers\WikiPageController($container); };
+$container['csrf']                     = function($container) { return new \Slim\Csrf\Guard; };
+$container['flash']                    = function($container) { return new \Slim\Flash\Messages; };
 
 
 $container['view'] = function($container)
@@ -169,3 +170,5 @@ $logger->addInfo('Finished running bootstrap/app.php');
 $logger->addInfo('--');
 
 $setupFinished = true;  /* For logging purposes. */
+
+return $app;
