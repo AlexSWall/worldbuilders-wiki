@@ -87,37 +87,35 @@ class Character extends DatabaseEncapsulator
 
 	/* == Character Permissions == */
 
-	private function setPermissionsIfNeeded()
+	private function setPermissionsFieldIfNeeded()
 	{
 		if ( !$this->permissions )
-	    	$this->permissions = CharacterPermissionsQueries::runCharacterIdToPermissionNamesQuery($this->getCharacterId());
+	    	$this->permissions = CharacterPermissionsQueries::getCharacterPermissions($this->getCharacterId());
 	}
 
 	public function getPermissions()
 	{
-		$this->setPermissionsIfNeeded();
+		$this->setPermissionsFieldIfNeeded();
 	    return $this->permissions;
 	}
 
 	public function addPermissions($permissions)
 	{
-		$this->setPermissionsIfNeeded();
-		for ( $permissions as $permission )
-			$this->permissions->add($permission);
-		
+		$this->setPermissionsFieldIfNeeded();
+		$this->permissions->addAll($permission);
+		CharacterPermissionsQueries::addCharacterPermissions($this->getCharacterId(), $permissions);
 	}
 
 	public function removePermissions($permissions)
 	{
-		$this->setPermissionsIfNeeded();
-		for ( $permissions as $permission )
-			$this->permissions->remove($permission);
-		
+		$this->setPermissionsFieldIfNeeded();
+		$this->permissions->removeAll($permission);
+		CharacterPermissionsQueries::removeCharacterPermissions($this->getCharacterId(), $permissions);
 	}
 
 	public function hasPermissions($permissions)
 	{
-		$this->setPermissionsIfNeeded();
+		$this->setPermissionsFieldIfNeeded();
 		return $this->permissions->has($permission);
 	}
 
