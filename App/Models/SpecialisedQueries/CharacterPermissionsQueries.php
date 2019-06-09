@@ -23,11 +23,11 @@ class CharacterPermissionsQueries
 				->where('CharacterPermissionRelations.CharacterId', $characterId)
 				->get()->all();
 
-		$permissionsArray = array();
-		foreach( $permissionNameStdClassArray as $permissionNameStdClass )
-			$permissionsArray[] = $permissionNameStdClass->PermissionName;
+		$permissionsSet = new ArrayBasedSet();
 
-		$permissionsSet = new ArrayBasedSet($permissionsArray);
+		foreach( $permissionNameStdClassArray as $permissionNameStdClass )
+			$permissionsSet->add($permissionNameStdClass->PermissionName);
+
 		return $permissionsSet;
 	}
 
