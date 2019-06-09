@@ -1,6 +1,8 @@
 <?php declare( strict_types = 1 );
 
-require dirname(__DIR__) . '/bootstrap/app.php';
+namespace tests;
+
+require dirname(__FILE__) . '/TestsBootstrapper.php';
 
 use PHPUnit\Framework\TestCase;
 
