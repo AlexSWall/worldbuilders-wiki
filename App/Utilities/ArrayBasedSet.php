@@ -28,9 +28,21 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 		$this->data[$item] = self::CONTAINED;
 	}
 
+	public function addAll($items)
+	{
+		foreach ( $items as $item )
+			$this->data[$item] = self::CONTAINED;
+	}
+
 	public function delete($item)
 	{
 		unset($this->data[$item]);
+	}
+
+	public function deleteAll($items)
+	{
+		foreach ( $items as $item )
+			unset($this->data[$item]);
 	}
 
 	public function clear()
@@ -85,6 +97,6 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function count()
 	{
-		return count($this->data);
+		return @count($this->data);
 	}
 }
