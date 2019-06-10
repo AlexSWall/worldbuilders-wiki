@@ -58,9 +58,9 @@ $container = $app->getContainer();
 
 $logger->addInfo('Populating the container.');
 
-$container['HashUtils']                = function($container) { return new \App\Helpers\HashUtils($container->get('settings')['app']['hash']); };
+$container['HashingUtilities']         = function($container) { return new \App\Helpers\HashingUtilities($container->get('settings')['app']['hash']); };
 $container['randomlib']                = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
-$container['auth']                     = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashUtils, $container->randomlib); };
+$container['auth']                     = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashingUtilities, $container->randomlib); };
 $container['validator']                = function($container) { return new \App\Validation\Validator; };
 $container['HomeController']           = function($container) { return new \App\Controllers\HomeController($container); };
 $container['AuthenticationController'] = function($container) { return new \App\Controllers\Auth\AuthenticationController($container); };
@@ -155,8 +155,8 @@ require BASE_PATH . '/App/routes.php';
 /* == Set up Globals == */
 
 \App\Globals\FrontEndParametersFacade::createNewFrontEndParametersInstance();
-\App\Globals\FrontEndParametersFacade::setIsAuthenticated($container->auth->check());
-\App\Globals\FrontEndParametersFacade::setUserData($container->auth->userSafe());
+\App\Globals\FrontEndParametersFacade::setIsAuthenticated($container->auth->isAuthenticated());
+\App\Globals\FrontEndParametersFacade::setUserData($container->auth->getUserSafely());
 \App\Globals\FrontEndParametersFacade::setBaseUrl($container->get('settings')['app']['url']);
 \App\Globals\FrontEndParametersFacade::setFlash($container->flash);
 
