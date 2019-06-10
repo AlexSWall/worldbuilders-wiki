@@ -40,7 +40,7 @@ class Character extends DatabaseEncapsulator
 		]);
 	}
 
-	public static function retrieveCharacterByUserCharacterId($characterId)
+	public static function retrieveCharacterByCharacterId($characterId)
 	{
 		return self::retrieveModelWithEntries(['CharacterId' => $characterId]);
 	}
