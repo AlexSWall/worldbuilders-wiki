@@ -5,7 +5,7 @@ namespace App\Controllers\Auth;
 use App\Controllers\Controller;
 
 use App\Models\User;
-use App\Helpers\FormUtils;
+use App\Helpers\FormUtilities;
 
 use App\Validation\Rules as Rules;
 
@@ -15,7 +15,7 @@ class AuthenticationController extends Controller
 
 	public function getSignup($request, $response)
 	{
-		return FormUtils::getForm($this->view, $response, [
+		return FormUtilities::getForm($this->view, $response, [
 			'title' => 'Sign Up',
 			'formType' => 'Sign Up'
 		]);
@@ -43,8 +43,8 @@ class AuthenticationController extends Controller
 		$user = User::createInactiveUser(
 			$signupParams['username'],
 			$signupParams['email'],
-			$this->HashUtils->hashPassword($signupParams['password']),
-			$this->HashUtils->hash($identifier)
+			$this->HashingUtilities->hashPassword($signupParams['password']),
+			$this->HashingUtilities->hash($identifier)
 		);
 
 		$user->createUserPermissions();
@@ -66,7 +66,7 @@ class AuthenticationController extends Controller
 
 	public function getSignIn($request, $response)
 	{
-		return FormUtils::getForm($this->view, $response, [
+		return FormUtilities::getForm($this->view, $response, [
 			'title' => 'Sign In',
 			'formType' => 'Sign In'
 		]);

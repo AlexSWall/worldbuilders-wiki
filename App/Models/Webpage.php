@@ -4,6 +4,11 @@ namespace App\Models;
 
 use App\WikitextConversion\WikitextConverter;
 
+use App\Models\SpecialisedQueries\WebpagePermissionBlockQueries;
+
+use App\Permissions\PermissionsUtilities;
+use App\Permissions\WebpagePermissionBlock;
+
 class Webpage extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
@@ -27,59 +32,63 @@ class Webpage extends DatabaseEncapsulator
 
 	/* == Instance Variables == */
 
-	private $webpagePermissionBlockModels;
+	private $webpagePermissionBlocks;
 	
 
 	/* == Creators & Retrievers == */
 
 	public static function retrieveWebpageById($id)
 	{
-		return self::retrieveModelWithEntries(['id' => $id]);
+		return self::retrieveModelWithEntries(['WebpageId' => $id]);
 	}
 
-	public static function retrieveWebpageByName($webpageName)
+	public static function retrieveWebpageByUrlPath($urlPath)
 	{
-		return self::retrieveModelWithEntries(['WebpageName' => $webpageName]);
+		return self::retrieveModelWithEntries(['UrlPath' => $urlPath]);
 	}
 
-	
+
 	/* == Getters & Setters == */
 
 	public function getWebpageId()
 	{
-		return $this->get('id');
+		return $this->get('WebpageId');
 	}
 
-	public function getWebpageName()
+	public function getTitle()
 	{
-		return $this->get('WebpageName');
+		return $this->get('Title');
 	}
 
-	public function getWebpageTitle()
+	public function getUrlPath()
 	{
-		return $this->get('WebpageTitle');
+		return $this->get('UrlPath');
 	}
 
-	public function getWebpageTemplate()
+	public function getWikiText()
 	{
-		return $this->get('WebpageTemplate');
+		return $this->get('WikiText');
 	}
 
-	public function getWebpageHTML()
+	public function getAllHtml()
 	{
-		return $this->get('WebpageHTML');
+		return WebpagePermissionBlock::convertBlocksToHtml( $this->getPermissionBlocks() );
 	}
 
-	private function setWebpageHTML($webpageHTML)
+	private function getViewableBlocks( $permissionsExpression )
 	{
-		$this->set('WebpageHTML', $webpageHTML);
+		return PermissionsUtilities::getViewableBlocks( $permissionsExpression, $this->getPermissionBlocks() );
 	}
 
-	public function renderWebpageTemplateToHTML()
+	public function getHtmlForPermissionsExpression( $permissionsExpression )
 	{
-		$this->setWebpageHTML( ( new WikitextConverter )->convertWikitextToHtml(
-			$this->getWebpageTemplate(), $this->getWebpageName()
-		));
+		$viewableBlocks = $this->getViewableBlocks( $permissionsExpression );
+		return WebpagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
+	}
+
+	private function setHtml($html)
+	{
+		$this->set('Html', $html);
 	}
 
 	public function isAdminOnly()

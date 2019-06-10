@@ -2,6 +2,8 @@
 
 namespace App\WikitextConversion;
 
+use App\Permissions\WebpagePermissionBlock;
+
 class HTML5Builder
 {
 	private $currentPermissionsExpression;
@@ -30,9 +32,9 @@ class HTML5Builder
 		return $this->htmlBlocks;
 	}
 
-	private function addHtmlBlock( string $permissions, string $html ): void
+	private function addHtmlBlock( string $permissionsExpression, string $html ): void
 	{
-		$this->htmlBlocks[] = new WikitextPermissionBlock( sizeof($this->htmlBlocks), $permissions, $html );
+		$this->htmlBlocks[] = new WebpagePermissionBlock( $permissionsExpression, $html );
 	}
 
 	public function getHtml(): string
@@ -76,8 +78,8 @@ class HTML5Builder
 		switch ( $token->getName() )
 		{
 			case 'permissions-specifier':
-				$permission = $token->getAttribute('RPN Permissions Expression');
-				$this->addHtmlBlock($permission, $this->html);
+				$this->addHtmlBlock($this->currentPermissionsExpression, $this->html);
+				$this->currentPermissionsExpression = $token->getAttribute('RPN Permissions Expression');
 				$this->html = '';
 				break;
 		}

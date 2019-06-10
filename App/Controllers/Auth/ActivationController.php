@@ -11,11 +11,11 @@ class ActivationController extends Controller
 	public function attemptActivation($request, $response)
 	{
 		$identifier = $request->getParam('identifier');
-		$hashedIdentifier = $this->HashUtils->hash($identifier);
+		$hashedIdentifier = $this->HashingUtilities->hash($identifier);
 
 		$user = User::retrieveInactiveUserByEmail($request->getParam('email'));
 
-		if ( !$user || !$this->HashUtils->checkHash($user->getActiveHash(), $hashedIdentifier))
+		if ( !$user || !$this->HashingUtilities->checkHash($user->getActiveHash(), $hashedIdentifier))
 		{
 			$this->flash->addMessage('info', 'There was a problem activating your account');
 			return $response->withRedirect($this->router->pathFor('home'));
