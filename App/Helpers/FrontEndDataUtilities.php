@@ -7,7 +7,7 @@ use App\Globals\FrontEndParametersFacade;
 /**
  * A collection of public static helpers for getting front-end data.
  */ 
-class FrontEndDataUtils
+class FrontEndDataUtilities
 {
 	/* == Getters for Structured Globally-Set Data == */
 	/**
@@ -56,21 +56,25 @@ class FrontEndDataUtils
 	public static function getEntryPointResponse($view, $response, $entryPointName, $args = [])
 	{
 		return $view->render($response, 'Indexes/' . $entryPointName . '.index.twig', 
-			array_merge( FrontEndDataUtils::getBaseData(), $args )
+			array_merge( FrontEndDataUtilities::getBaseData(), $args )
 		);
 	}
 
-	public static function getWebpageDataFor($webpageName, $webpageTitle, $view = null, $filePath = null)
+	public static function getWebpageDataFor($urlPath, $title, $view = null, $filePath = null)
 	{
 		if ( !is_null($view) && !is_null($filePath) )
 			$html = $view->fetch("SpecialWebpages/{$filePath}.html");
 		else
 			$html = '';
+		return self::constructEndpointDataArray($urlPath, $title, $html);
+	}
 
-		return [ 
-			'name' => $webpageName,
-			'title' => $webpageTitle,
-			'HTML' => $html
+	public static function constructEndpointDataArray($urlPath, $title, $html)
+	{
+		return [
+			'urlPath' => $urlPath,
+			'title' => $title,
+			'html' => $html
 		];
 	}
 }
