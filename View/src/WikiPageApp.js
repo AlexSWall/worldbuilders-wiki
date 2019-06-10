@@ -26,16 +26,17 @@ class WikiPageApp extends Component
 								<div id="mainPanel">
 									<WebpageLoader 
 										urlBase='http://localhost:8080/w/'
-										componentMapper={(webpageName) =>
+										componentMapper={(urlPath) =>
 											{
 												const map = {
 													'Special:Add_Wiki_Page': AddWebpage,
 													'Special:Edit_Wiki_Page': EditWebpage,
 													'Special:Delete_Wiki_Page': DeleteWebpage
 												};
-												if (webpageName in map)
-													return map[webpageName];
-												return WikiPanel;
+												if (urlPath in map)
+													return map[urlPath];
+												else
+													return WikiPanel;
 											}}
 									/>
 								</div> {/* mainPanelWrapper */}

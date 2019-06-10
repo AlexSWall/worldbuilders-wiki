@@ -2,17 +2,17 @@
 
 namespace App\Controllers;
 
-use App\Helpers\FrontEndDataUtils;
+use App\Helpers\FrontEndDataUtilities;
 
 class WikiPageController extends Controller
 {
 	static $logger;
 
-	private static function getData($webpageName, $webpageTitle)
+	private static function getData($urlPath, $webpageTitle)
 	{
 		return array_merge(
-			FrontEndDataUtils::getWebpageDataFor($webpageName, $webpageTitle),
-			FrontEndDataUtils::getFormData()
+			FrontEndDataUtilities::getWebpageDataFor($urlPath, $webpageTitle),
+			FrontEndDataUtilities::getFormData()
 		);
 	}
 

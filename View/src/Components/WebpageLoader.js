@@ -37,7 +37,7 @@ class WebpageLoader extends Component
 					document.title = response.webpage.title;
 
 					this.setState({
-						childComponent: this.props.componentMapper(response.webpage.name),
+						childComponent: this.props.componentMapper(response.webpage.urlPath),
 						webpageData: response.webpage
 					});
 

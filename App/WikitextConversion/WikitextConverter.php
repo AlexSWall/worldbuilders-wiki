@@ -13,7 +13,7 @@ class WikitextConverter
 		$this->htmlBuilder = new HTML5Builder();
 	}
 
-	private function parseAndBuild( string $wikitext, string $pageName = '' ): void
+	private function parseAndBuild( string $wikitext, string $pageName ): void
 	{
 		$tokens = $this->wikitextParser->parse($wikitext);
 
@@ -21,7 +21,7 @@ class WikitextConverter
 		$this->htmlBuilder->build($tokens);
 	}
 
-	public function convertWikitextToHtmlBlocks( string $wikitext, string $pageName = '' ): string
+	public function convertWikitextToHtmlBlocks( string $wikitext, string $pageName = '' ): array
 	{
 		$this->parseAndBuild( $wikitext, $pageName );
 		return $this->htmlBuilder->getHtmlBlocks();

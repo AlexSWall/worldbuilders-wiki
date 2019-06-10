@@ -73,7 +73,8 @@ return [
 	],
 	'auth' => [
 		'session' => 'user_id',
-		'remember' => 'user_r'
+		'remember' => 'user_r',
+		'characterId' => 'char_id'
 	],
 	'mail' => [
 		'host' => 'smtp.gmail.com',

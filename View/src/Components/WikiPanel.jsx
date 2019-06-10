@@ -11,7 +11,7 @@ class WikiPanel extends Component
 		return (
 			<React.Fragment>
 				<h1>{this.props.title}</h1>
-				<div dangerouslySetInnerHTML={ {__html: this.props.HTML} } />
+				<div dangerouslySetInnerHTML={ {__html: this.props.html} } />
 			</React.Fragment>
 		);
 	}
