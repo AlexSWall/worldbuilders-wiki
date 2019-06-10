@@ -30,7 +30,7 @@ class RememberMeMiddleware extends Middleware
  */
 	public function attemptLogin($request)
 	{
-		if ($this->auth->check())
+		if ($this->auth->isAuthenticated())
 			return false;
 
 		$rememberMeCookie = FigRequestCookies::get($request, $this->container->get('settings')['auth']['remember']);
@@ -45,14 +45,14 @@ class RememberMeMiddleware extends Middleware
 			return false;
 
 		$identifier = $credentials[0];
-		$token = $this->HashUtils->hash($credentials[1]);
+		$token = $this->HashingUtilities->hash($credentials[1]);
 
 		$user = User::retrieveUserByRememberMeIdentifier($identifier);
 
 		if ( !$user )
 			return false;
 
-		if ( !$this->HashUtils->checkHash($token, $user->getRememberMeToken()) )
+		if ( !$this->HashingUtilities->checkHash($token, $user->getRememberMeToken()) )
 		{
 			$user->removeRememberMeCredentials();
 			return false;
