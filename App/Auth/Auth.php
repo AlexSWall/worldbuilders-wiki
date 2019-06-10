@@ -3,6 +3,7 @@
 namespace App\Auth;
 
 use App\Models\User;
+use App\Models\Character;
 
 use Dflydev\FigCookies\SetCookie;
 use Dflydev\FigCookies\FigResponseCookies;
@@ -11,13 +12,13 @@ use Carbon\Carbon;
 
 class Auth
 {
-	protected $hashUtils;
+	protected $hashUtilities;
 	protected $authConfig;
 	protected $generator;
 
-	public function __construct($authConfig, $hashUtils, $generator)
+	public function __construct($authConfig, $hashUtilities, $generator)
 	{
-		$this->hashUtils = $hashUtils;
+		$this->hashUtilities = $hashUtilities;
 		$this->authConfig = $authConfig;
 		$this->generator = $generator;
 	}
@@ -39,10 +40,15 @@ class Auth
 		if (!$user)
 			return false;
 
-		if ( !$this->hashUtils->checkPassword($password, $user->getPasswordHash()) )
+		if ( !$this->hashUtilities->checkPassword($password, $user->getPasswordHash()) )
 			return false;
 
 		$_SESSION[$this->authConfig['session']] = $user->getUserId();
+
+		$characters = Character::retrieveCharactersByUserId($user->getUserId());
+		if ( $characters )
+			$_SESSION[$this->authConfig['characterId']] = $characters[0]->getCharacterId();
+
 		return true;
 	}
 
@@ -63,30 +69,46 @@ class Auth
 
 		$user->setRememberMeCredentials(
 			$rememberIdentifier,
-			$this->hashUtils->hash($rememberToken)
+			$this->hashUtilities->hash($rememberToken)
 		);
 
 		$response = FigResponseCookies::set(
-			$response, 
+			$response,
 			$this->createRememberMeCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
 		);
 
 		return $response;
 	}
 
-	public function check()
+	public function isAuthenticated()
 	{
 		return isset($_SESSION[$this->authConfig['session']]);
 	}
 
-	public function user()
+	public function getUser()
 	{
 		return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
 	}
 
-	public function userSafe()
+	public function getCharacter()
 	{
-		if ( $this->check() )
+		if ( ! $this->isAuthenticated() )
+			return null;
+
+		$user = $this->getUser();
+
+		$characterId = $_SESSION[$this->authConfig['characterId']];
+		$character = Character::retrieveCharacterByCharacterId($characterId);
+
+		if ( $user && $character && $user->getUserId() === $character->getUserId() )
+			return $character;
+		else
+			return null;
+	}
+
+	public function getUserSafely()
+	{
+		if ( $this->isAuthenticated() )
 			return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
 	}
 
@@ -97,7 +119,7 @@ class Auth
 
 		if ( !is_null($data) )
 		{
-			$user = $this->user();
+			$user = $this->getUser();
 			if ($user)
 				$user->removeRememberMeCredentials();
 
