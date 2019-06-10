@@ -8,6 +8,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function __construct( array $arr = [] )
 	{
+		$this->data = array();
 		foreach ($arr as $item) {
 			$this->data[$item] = self::CONTAINED;
 		}
