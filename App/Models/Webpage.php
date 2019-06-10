@@ -101,4 +101,30 @@ class Webpage extends DatabaseEncapsulator
 		return $this->get('IsGlobal');
 	}
 
+
+	/* == Webpage Permission Blocks == */
+
+	public function getPermissionBlocks()
+	{
+		if ( !$this->webpagePermissionBlocks )
+			$this->setWebpagePermissionBlocks( 
+				WebpagePermissionBlockQueries::getWebpagePermissionBlocks( $this->getWebpageId() ),
+				false
+			);
+		return $this->webpagePermissionBlocks;
+	}
+
+	public function setPermissionBlocks( $webpagePermissionBlocks, $setInDatabase )
+	{
+		$this->webpagePermissionBlocks = $webpagePermissionBlocks;
+		WebpagePermissionBlockQueries::setPermissionBlocksForWebpage( $this->getWebpageId(), $this->getPermissionBlocks() );
+	}
+
+	public function renderWikiTextToHtmlBlocks()
+	{
+		$permissionBlocks = ( new WikitextConverter )->convertWikitextToHtmlBlocks(
+			$this->getWikiText(), $this->getUrlPath()
+		);
+		$this->setPermissionBlocks( $permissionBlocks, true);
+	}
 }
