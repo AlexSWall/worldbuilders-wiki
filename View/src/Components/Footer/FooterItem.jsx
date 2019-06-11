@@ -4,11 +4,11 @@ class FooterItem extends Component
 {	
 	render() {
 		return (
-			<li>
+			<div id="rightFooterLineItem">
 				<a className="footerLink" href={this.props.href}>
 					{this.props.text}
 				</a>
-			</li>
+			</div>
 		);
 	}
 }
