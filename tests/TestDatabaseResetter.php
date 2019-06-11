@@ -44,7 +44,7 @@ class TestDatabaseResetter
 			'UserId' => 1,
 			'Username' => 'User',
 			'Email' => 'alexwalldnd@gmail.com',
-			'Password' => $this->container->HashUtils->hashPassword('password'),
+			'Password' => $this->container->HashingUtilities->hashPassword('password'),
 			'Active' => 1
 		]);
 
