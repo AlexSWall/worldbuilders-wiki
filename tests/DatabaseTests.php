@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use App\Utilities\ArrayBasedSet;
 use App\Models\SpecialisedQueries\CharacterPermissionsQueries;
 use App\Models\SpecialisedQueries\WebpagePermissionBlockQueries;
-use App\Models\WebpagePermissionBlock;
+use App\Permissions\WebpagePermissionBlock;
 
 final class DatabaseTests extends TestCase
 {

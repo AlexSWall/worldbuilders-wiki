@@ -3,7 +3,7 @@
 namespace App\Models\SpecialisedQueries;
 
 use Illuminate\Database\Capsule\Manager as DB;
-use App\Models\WebpagePermissionBlock;
+use App\Permissions\WebpagePermissionBlock;
 
 class WebpagePermissionBlockQueries
 {
