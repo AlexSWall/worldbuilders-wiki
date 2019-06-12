@@ -15,10 +15,10 @@ class AuthFormTextEntry extends Component
 
 	render() {
 		return (
-			<div className={ this.props.errors ? 'form-group is-invalid' : 'form-group'}>
+			<div className={this.props.errors ? 'form-group is-invalid' : 'form-group'}>
 				<label className='form-label' htmlFor={this.props.formId}>{ this.props.labelText }</label>
 				<input
-					className='form-control'
+					className={this.props.errors ? 'form-control has-error' : 'form-control'}
 					type={this.props.type}
 					name={this.props.formId}
 					id={this.props.formId}
@@ -26,7 +26,7 @@ class AuthFormTextEntry extends Component
 					placeholder={this.props.placeholder}
 					onChange={this.onChange}
 				/>
-				{this.props.errors && <span className='help-block'>{this.props.errors[0]}</span>}
+				{this.props.errors && <span className='help-block'>{this.props.errors}</span>}
 			</div>
 		);
 	}

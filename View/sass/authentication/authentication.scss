@@ -95,6 +95,12 @@ main {
 	box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, rgba(102, 175, 233, 0.6) 0px 0px 8px;
 }
 
+.has-error {
+	border-color: rgb(179, 27, 27);
+	outline: 0px;
+	box-shadow: rgba(179, 27, 27, 0.3) 0px 0px 3px;
+}
+
 
 
 
