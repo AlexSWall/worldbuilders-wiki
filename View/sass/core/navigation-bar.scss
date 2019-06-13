@@ -10,7 +10,7 @@
 
 	text-align: center;
 	text-decoration: none;
-	background-color: #222;
+	background-color: #111;
 	opacity: 0.95;
 }
 
@@ -133,4 +133,72 @@
 
 .navbar-dropdown .dropdown-content > a:hover {
 	background-color: #eaeaea;
+}
+
+
+/* == Search Bar == */
+
+.searchbar-wrapper {
+	width: 220px;
+	padding-top: 6px;
+	padding-bottom: 5px;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.searchbar {
+	width: 100%;
+	position: relative;
+	display: flex;
+}
+
+.searchbar-input {
+	width: 100%;
+	border: 1px solid #2d2d2d;
+	border-right: none;
+	padding-top: 8px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	height: 17px;
+	outline: none;
+	color: #aaa;
+	font-family: Helvetica, Arial, sans-serif;
+	background: #121212;
+	font-size: 14px;
+}
+
+.fa {
+	display: inline-block;
+	font: normal normal normal 14px/1 FontAwesome;
+	font-size: inherit;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
+}
+
+@font-face{
+	font-family: 'FontAwesome';
+	src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.woff2?v=4.4.0') format('woff2'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.woff?v=4.4.0') format('woff'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.ttf?v=4.4.0') format('truetype'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.svg?v=4.4.0#fontawesomeregular') format('svg');
+	font-weight: normal;
+	font-style: normal
+}
+
+.fa-search:before {
+	content: "\f002"
+}
+
+.searchbar-input:focus {
+	
+}
+
+.searchbar-button {
+	width: 40px;
+	height: 31px;
+	border: 1px solid #2d2d2d;
+	background: #2d2d2d;
+	text-align: center;
+	color: #666;
+	border-radius: 0 2px 2px 0;
+	cursor: pointer;
+	font-size: 20px;
 }

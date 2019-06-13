@@ -4,6 +4,7 @@ import NavBarList         from './NavBarList';
 import NavBarDropdown     from './NavBarDropdown';
 import NavBarDropdownItem from './NavBarDropdownItem';
 import NavBarButton       from './NavBarButton';
+import NavBarSearchBar    from './NavBarSearchBar';
 
 class NavBarContent extends Component 
 {	
@@ -24,6 +25,7 @@ class NavBarContent extends Component
 						<NavBarButton href="/#About" text="About" active={false} />
 					</NavBarList>
 					<NavBarList position="right">
+						<NavBarSearchBar />
 						{authenticationData.isAuthenticated ? (
 							<NavBarDropdown href="#" 
 								text={
