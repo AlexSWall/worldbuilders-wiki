@@ -50,20 +50,3 @@ class NavBarContent extends Component
 }
 
 export default NavBarContent;
-
-/* const buttons = {
-	addpage: {
-		href: "Add_Page",
-		text: "Add Page",
-		active: {false}
-	},
-	about: {
-		href: "About",
-		text: "About",
-		active: {false}
-	}
-};
-
-this.buttons.map({ href, text, active } => (
-	<NavBarButton href={href} text={text} active={active} />
-)); */
