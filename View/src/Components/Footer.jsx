@@ -15,7 +15,7 @@ class Footer extends Component
 									Alex's World's D<small>&</small>D Wiki
 								</div>
 								<div id="leftFooterLineItem">
-									Dungeons & Dragons is property of Wizards of the Coast LLC in the U.S.A. and other countries. ©2019 Wizards.
+									Dungeons & Dragons is property of Wizards of the Coast LLC. © 2019 Wizards.
 								</div>
 							</div>
 						</div>
