@@ -45,14 +45,11 @@ footer {
 		color: #979AA4;
 		font-size: 12px;
 		font-weight: 300;
-
-		padding: 0px 2px;
-		margin: 0em 2px;
 	}
 
 	#leftFooterLineItem:not(:first-child):before {
 		content: "|";
-		padding: 0px 15px;
+		margin: 0px 15px;
 	}
 }
 
@@ -69,7 +66,7 @@ footer {
 
 	#rightFooterLineItem:not(:first-child):before {
 		content: "\00B7";
-		padding: 0px 5px;
+		margin: 0px 5px;
 
 		color: #979AA4;
 		font-size: 12px;
@@ -81,8 +78,5 @@ footer {
 		color: #979AA4;
 		font-size: 12px;
 		font-weight: 500;
-
-		padding: 0px 2px;
-		margin-left: 0em 2px;
 	}
 }
