@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import NavBarItem from './NavBarItem';
 
-class NavBarButton extends Component 
+class NavBarLink extends Component 
 {	
 	render() {
 		return (
@@ -15,4 +15,4 @@ class NavBarButton extends Component
 	}
 }
 
-export default NavBarButton;
+export default NavBarLink;
