@@ -22,6 +22,8 @@ class Footer extends Component
 						<div id="rightFooterContent">
 							<div id="rightFooterLine">
 								<FooterItem href="/#About" text="About" />
+								<FooterItem href="/#Privacy_Policy" text="Privacy Policy" />
+								<FooterItem href="/#Terms_of_Service" text="Terms of Service" />
 								<FooterItem href="/#Contact" text="Contact" />
 								<FooterItem href="/#Bugs" text="Known Bugs" />
 							</div>
