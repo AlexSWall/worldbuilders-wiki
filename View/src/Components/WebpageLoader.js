@@ -18,8 +18,11 @@ class WebpageLoader extends Component
 		window.dispatchEvent(new HashChangeEvent("hashchange"));
 	}
 
-	onHashChange = () =>
+	onHashChange = (event) =>
 	{
+		let oldHash = event.oldURL;
+		let newHash = event.newURL;
+
 		const hash = window.location.hash.substring(1);
 		const [webpageName, heading] = hash.split('#');
 
