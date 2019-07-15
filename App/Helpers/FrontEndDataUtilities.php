@@ -60,10 +60,10 @@ class FrontEndDataUtilities
 		);
 	}
 
-	public static function getWebpageDataFor($urlPath, $title, $view = null, $filePath = null)
+	public static function getWikiPageDataFor($urlPath, $title, $view = null, $filePath = null)
 	{
 		if ( !is_null($view) && !is_null($filePath) )
-			$html = $view->fetch("SpecialWebpages/{$filePath}.html");
+			$html = $view->fetch("SpecialWikiPages/{$filePath}.html");
 		else
 			$html = '';
 		return self::constructEndpointDataArray($urlPath, $title, $html);

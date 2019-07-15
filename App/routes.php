@@ -38,14 +38,14 @@ $app->group('', function() use ($app)
 	$app->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
 	$app->post('/Change_Password', 'PasswordController:postChangePassword');
 
-	/* $app->get('/Add_Wiki_Page', 'WikiPageController:getAddWebpage'); */
-	$app->post('/Add_Wiki_Page', 'WikiPageController:postAddWebpage');
+	/* $app->get('/Add_Wiki_Page', 'WikiPageController:getAddWikiPage'); */
+	$app->post('/Add_Wiki_Page', 'WikiPageController:postAddWikiPage');
 
-	/* $app->get('/Edit_Wiki_Page', 'WikiPageController:getEditWebpage'); */
-	$app->post('/Edit_Wiki_Page', 'WikiPageController:postEditWebpage');
+	/* $app->get('/Edit_Wiki_Page', 'WikiPageController:getEditWikiPage'); */
+	$app->post('/Edit_Wiki_Page', 'WikiPageController:postEditWikiPage');
 
-	/* $app->get('/Delete_Wiki_Page', 'WikiPageController:getDeleteWebpage'); */
-	$app->post('/Delete_Wiki_Page', 'WikiPageController:postDeleteWebpage');
+	/* $app->get('/Delete_Wiki_Page', 'WikiPageController:getDeleteWikiPage'); */
+	$app->post('/Delete_Wiki_Page', 'WikiPageController:postDeleteWikiPage');
 
 })->add(new AuthenticatedMiddleware($container));
 

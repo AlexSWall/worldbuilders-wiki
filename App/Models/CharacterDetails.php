@@ -20,7 +20,7 @@ class CharacterDetails extends DatabaseEncapsulator
 	{
 		return [
 			'Nickname' => null,
-			'WebpageLink' => null
+			'WikiPageLink' => null
 		];
 	}
 
@@ -76,14 +76,14 @@ class CharacterDetails extends DatabaseEncapsulator
 		$this->set('Nickname', $nickname);
 	}
 
-	public function getWebpageLink()
+	public function getWikiPageLink()
 	{
-		return $this->get('WebpageLink');
+		return $this->get('WikiPageLink');
 	}
 
-	public function setWebpageLink($webpageLink)
+	public function setWikiPageLink($wikiPageLink)
 	{
-		$this->set('WebpageLink', $webpageLink);
+		$this->set('WikiPageLink', $wikiPageLink);
 	}
 
 	public function getDescription()

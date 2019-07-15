@@ -4,23 +4,23 @@ namespace App\Models;
 
 use App\WikitextConversion\WikitextConverter;
 
-use App\Models\SpecialisedQueries\WebpagePermissionBlockQueries;
+use App\Models\SpecialisedQueries\WikiPagePermissionBlockQueries;
 
 use App\Permissions\PermissionsUtilities;
-use App\Permissions\WebpagePermissionBlock;
+use App\Permissions\WikiPagePermissionBlock;
 
-class Webpage extends DatabaseEncapsulator
+class WikiPage extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
 
 	protected static function getTableName()
 	{
-		return 'Webpages';
+		return 'WikiPages';
 	}
 	
 	protected static function getPrimaryKey()
 	{
-		return 'WebpageId';
+		return 'WikiPageId';
 	}
 	
 	protected static function getDefaults()
@@ -32,17 +32,17 @@ class Webpage extends DatabaseEncapsulator
 
 	/* == Instance Variables == */
 
-	private $webpagePermissionBlocks;
+	private $wikiPagePermissionBlocks;
 	
 
 	/* == Creators & Retrievers == */
 
-	public static function retrieveWebpageById($id)
+	public static function retrieveWikiPageById($id)
 	{
-		return self::retrieveModelWithEntries(['WebpageId' => $id]);
+		return self::retrieveModelWithEntries(['WikiPageId' => $id]);
 	}
 
-	public static function retrieveWebpageByUrlPath($urlPath)
+	public static function retrieveWikiPageByUrlPath($urlPath)
 	{
 		return self::retrieveModelWithEntries(['UrlPath' => $urlPath]);
 	}
@@ -50,9 +50,9 @@ class Webpage extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	public function getWebpageId()
+	public function getWikiPageId()
 	{
-		return $this->get('WebpageId');
+		return $this->get('WikiPageId');
 	}
 
 	public function getTitle()
@@ -72,7 +72,7 @@ class Webpage extends DatabaseEncapsulator
 
 	public function getAllHtml()
 	{
-		return WebpagePermissionBlock::convertBlocksToHtml( $this->getPermissionBlocks() );
+		return WikiPagePermissionBlock::convertBlocksToHtml( $this->getPermissionBlocks() );
 	}
 
 	private function getViewableBlocks( $permissionsExpression )
@@ -83,7 +83,7 @@ class Webpage extends DatabaseEncapsulator
 	public function getHtmlForPermissionsExpression( $permissionsExpression )
 	{
 		$viewableBlocks = $this->getViewableBlocks( $permissionsExpression );
-		return WebpagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
+		return WikiPagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
 	}
 
 	private function setHtml($html)
@@ -92,22 +92,22 @@ class Webpage extends DatabaseEncapsulator
 	}
 
 
-	/* == Webpage Permission Blocks == */
+	/* == WikiPage Permission Blocks == */
 
 	public function getPermissionBlocks()
 	{
-		if ( !$this->webpagePermissionBlocks )
-			$this->setWebpagePermissionBlocks( 
-				WebpagePermissionBlockQueries::getWebpagePermissionBlocks( $this->getWebpageId() ),
+		if ( !$this->wikiPagePermissionBlocks )
+			$this->setWikiPagePermissionBlocks( 
+				WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks( $this->getWikiPageId() ),
 				false
 			);
-		return $this->webpagePermissionBlocks;
+		return $this->wikiPagePermissionBlocks;
 	}
 
-	public function setPermissionBlocks( $webpagePermissionBlocks, $setInDatabase )
+	public function setPermissionBlocks( $wikiPagePermissionBlocks, $setInDatabase )
 	{
-		$this->webpagePermissionBlocks = $webpagePermissionBlocks;
-		WebpagePermissionBlockQueries::setPermissionBlocksForWebpage( $this->getWebpageId(), $this->getPermissionBlocks() );
+		$this->wikiPagePermissionBlocks = $wikiPagePermissionBlocks;
+		WikiPagePermissionBlockQueries::setPermissionBlocksForWikiPage( $this->getWikiPageId(), $this->getPermissionBlocks() );
 	}
 
 	public function renderWikiTextToHtmlBlocks()

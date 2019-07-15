@@ -6,10 +6,10 @@ use App\Utilities\ArrayBasedSet;
 
 class PermissionsUtilities
 {
-	public static function getViewableBlocks( $permissions, array $webpagePermissionBlocks ): array
+	public static function getViewableBlocks( $permissions, array $wikiPagePermissionBlocks ): array
 	{
 		$viewableBlocks = array();
-		foreach ( $webpagePermissionBlocks as $block )
+		foreach ( $wikiPagePermissionBlocks as $block )
 			if ( self::satisfiesPermissionExpression( $permissions, $block->getPermissionsExpression() ) )
 				$viewableBlocks[] = $block;
 		return $viewableBlocks;

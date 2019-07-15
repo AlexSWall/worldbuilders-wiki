@@ -2,7 +2,7 @@
 
 namespace App\WikitextConversion;
 
-use App\Permissions\WebpagePermissionBlock;
+use App\Permissions\WikiPagePermissionBlock;
 
 class HTML5Builder
 {
@@ -34,7 +34,7 @@ class HTML5Builder
 
 	private function addHtmlBlock( string $permissionsExpression, string $html ): void
 	{
-		$this->htmlBlocks[] = new WebpagePermissionBlock( $permissionsExpression, $html );
+		$this->htmlBlocks[] = new WikiPagePermissionBlock( $permissionsExpression, $html );
 	}
 
 	public function getHtml(): string

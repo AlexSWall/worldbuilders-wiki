@@ -37,11 +37,11 @@ class WebpageLoader extends Component
 		fetch(this.props.urlBase + webpageName)
 			.then(res => res.json())
 			.then(response => {
-					document.title = response.webpage.title;
+					document.title = response.wikiPage.title;
 
 					this.setState({
-						childComponent: this.props.componentMapper(response.webpage.urlPath),
-						webpageData: response.webpage
+						childComponent: this.props.componentMapper(response.wikiPage.urlPath),
+						webpageData: response.wikiPage
 					});
 
 					this.moveToHeading(heading);

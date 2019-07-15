@@ -8,40 +8,40 @@ class WikiPageController extends Controller
 {
 	static $logger;
 
-	private static function getData($urlPath, $webpageTitle)
+	private static function getData($urlPath, $wikiPageTitle)
 	{
 		return array_merge(
-			FrontEndDataUtilities::getWebpageDataFor($urlPath, $webpageTitle),
+			FrontEndDataUtilities::getWikiPageDataFor($urlPath, $wikiPageTitle),
 			FrontEndDataUtilities::getFormData()
 		);
 	}
 
-	public function getAddWebpageData()
+	public function getAddWikiPageData()
 	{
 		return self::getData('Special:Add_Wiki_Page', 'Add Wiki Page');
 	}
 
-	public function postAddWebpage($request, $response)
+	public function postAddWikiPage($request, $response)
 	{
 		return $response;
 	}
 
-	public function getEditWebpageData()
+	public function getEditWikiPageData()
 	{
 		return self::getData('Special:Edit_Wiki_Page', 'Edit Wiki Page');
 	}
 
-	public function postEditWebpage($request, $response)
+	public function postEditWikiPage($request, $response)
 	{
 		return $response;
 	}
 
-	public function getDeleteWebpageData()
+	public function getDeleteWikiPageData()
 	{
 		return self::getData('Special:Delete_Wiki_Page', 'Delete Wiki Page');
 	}
 
-	public function postDeleteWebpage($request, $response)
+	public function postDeleteWikiPage($request, $response)
 	{
 		return $response;
 	}

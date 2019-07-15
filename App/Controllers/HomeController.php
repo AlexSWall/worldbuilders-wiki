@@ -6,6 +6,6 @@ class HomeController extends Controller
 {
 	public function index($request, $response)
 	{
-		return (new WikiController($this->container))->serveWebpage($request, $response, ['page_name' => 'Home']);
+		return (new WikiController($this->container))->serveWikiPage($request, $response, ['page_name' => 'Home']);
 	}
 }
