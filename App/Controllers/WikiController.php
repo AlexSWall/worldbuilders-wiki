@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Webpage;
+use App\Models\WikiPage;
 use App\Helpers\FrontEndDataUtilities;
 
 class WikiController extends Controller
@@ -27,28 +27,28 @@ class WikiController extends Controller
 		if ( substr($pageName, 0, strlen('Special:')) === 'Special:' )
 			$data = $this->getSpecialContentData($pageName);
 		else 
-			$data = self::getDatabaseWebpageData($pageName, $viewingPermissions);
+			$data = self::getDatabaseWikiPageData($pageName, $viewingPermissions);
 
 		$response = $response->withJSON([
-			'webpage' => $data
+			'wikiPage' => $data
 		], 200, JSON_UNESCAPED_UNICODE);
 
 		return $response;
 	}
 
-	private static function getDatabaseWebpageData($pageName, $viewingPermissions)
+	private static function getDatabaseWikiPageData($pageName, $viewingPermissions)
 	{
-		$webpage = Webpage::retrieveWebpageByUrlPath($pageName);
+		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($pageName);
 
-		if ( is_null($webpage) )
-			$webpage = Webpage::retrieveWebpageByUrlPath('Page_Not_Found');
+		if ( is_null($wikiPage) )
+			$wikiPage = WikiPage::retrieveWikiPageByUrlPath('Page_Not_Found');
 
-		$webpage->renderWikiTextToHtmlBlocks();
+		$wikiPage->renderWikiTextToHtmlBlocks();
 
 		return FrontEndDataUtilities::constructEndpointDataArray(
-			$webpage->getUrlPath(),
-			$webpage->getTitle(),
-			$webpage->getHtmlForPermissionsExpression($viewingPermissions)
+			$wikiPage->getUrlPath(),
+			$wikiPage->getTitle(),
+			$wikiPage->getHtmlForPermissionsExpression($viewingPermissions)
 		);
 	}
 
@@ -57,16 +57,16 @@ class WikiController extends Controller
 		switch (substr($pageName, strlen('Special:')))
 		{
 			case 'Add_Wiki_Page':
-				return $this->WikiPageController->getAddWebpageData();
+				return $this->WikiPageController->getAddWikiPageData();
 			case 'Edit_Wiki_Page':
-				return $this->WikiPageController->getEditWebpageData();
+				return $this->WikiPageController->getEditWikiPageData();
 			case 'Delete_Wiki_Page':
-				return $this->WikiPageController->getDeleteWebpageData();
+				return $this->WikiPageController->getDeleteWikiPageData();
 			case 'Template_Formatting':
-				return FrontEndDataUtilities::getWebpageDataFor($pageName, 'Meta: Template Formatting', 
+				return FrontEndDataUtilities::getWikiPageDataFor($pageName, 'Meta: Template Formatting', 
 					$this->view, 'templateformatting');
 			default:
-				return $this->getDatabaseWebpageData('Page_Not_Found');
+				return $this->getDatabaseWikiPageData('Page_Not_Found');
 		}
 	}
 }
