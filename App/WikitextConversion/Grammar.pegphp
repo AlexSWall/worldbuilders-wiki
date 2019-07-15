@@ -233,10 +233,12 @@ header =
 
 		$tokens = array();
 
-		if ( $rpnPermissionsString )
+		if ( is_string($rpnPermissionsString) )
+		{
 			$tokens[] = new MetaToken('permissions-specifier', [
 				'RPN Permissions Expression' => $rpnPermissionsString
 			]);
+		}
 
 		return array_merge( $tokens, [
 			new OpeningTagToken('h' . $level),
