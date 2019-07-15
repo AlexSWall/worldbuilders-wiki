@@ -91,16 +91,6 @@ class Webpage extends DatabaseEncapsulator
 		$this->set('Html', $html);
 	}
 
-	public function isAdminOnly()
-	{
-		return $this->get('IsAdminOnly');
-	}
-
-	public function isGloballyAccessible()
-	{
-		return $this->get('IsGlobal');
-	}
-
 
 	/* == Webpage Permission Blocks == */
 

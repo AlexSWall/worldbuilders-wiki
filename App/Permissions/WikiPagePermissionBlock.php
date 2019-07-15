@@ -2,7 +2,7 @@
 
 namespace App\Permissions;
 
-class WebpagePermissionBlock
+class WikiPagePermissionBlock
 {
 	private $permissionsExpression;
 	private $html;
