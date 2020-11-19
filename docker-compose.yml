@@ -1,7 +1,8 @@
 version: '3'
 services:
-    web:
+    nginx:
         image: nginx:alpine
+        container_name: nginx
         volumes:
             - "./config/etc/nginx/default.conf:/etc/nginx/conf.d/default.conf"
             - "./config/etc/nginx/default.template.conf:/etc/nginx/conf.d/default.template"
@@ -19,6 +20,7 @@ services:
             - mysqldb
     php:
         image: nanoninja/php-fpm:7.4.10
+        container_name: php
         restart: always
         volumes:
             - "./config/etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
@@ -27,22 +29,27 @@ services:
             - "./logs:/logs"
     composer:
         image: composer:latest
+        container_name: composer
+        user: "1000:1000"
         volumes:
             - "./web/backend:/app"
         command: install
     frontend-dev:
         image: node:15
+        container_name: frontend-dev
         working_dir: /app/frontend
         environment:
             - NODE_ENV=development
         volumes:
             - "./web:/app"
-        command: sh -c 'npm install webpack webpack-cli wikipeg -g &&
-                        npm run build &&
-                        apt update &&
+        command: sh -c 'apt update &&
                         apt install inotify-tools expect ruby-full -y &&
+                        npm install -g webpack webpack-cli wikipeg &&
+                        npm install &&
+                        npm run build &&
                         gem install sass compass &&
                         ./watch'
+                        # tail -F anything'
     mysqldb:
         image: mysql:${MYSQL_VERSION}
         container_name: ${MYSQL_HOST}
