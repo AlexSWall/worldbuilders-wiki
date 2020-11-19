@@ -23,9 +23,12 @@ help:
 ${LOGS_DIR}:
 	mkdir -p $@
 
-setup: | ${LOGS_DIR}
-	@touch ${LOGS_DIR}/{app,tests}.log
-	@docker exec -i $(shell docker-compose ps -q mysqldb) mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" < ./db.sql
+${MYSQL_DUMPS_DIR}:
+	mkdir -p $@
+
+setup: | ${LOGS_DIR} ${MYSQL_DUMPS_DIR}
+	touch ${LOGS_DIR}/{app,tests}.log
+	chmod 666 ${LOGS_DIR}/{app,tests}.log
 
 clean:
 	@rm -Rf ${LOGS_DIR}
@@ -48,7 +51,7 @@ mysql-dump:
 	@make resetOwner
 
 mysql-restore:
-	@docker exec -i $(shell docker-compose ps -q mysqldb) mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" < $(MYSQL_DUMPS_DIR)/db.sql
+	@docker exec -i $(shell docker-compose ps -q mysqldb) mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" website < $(MYSQL_DUMPS_DIR)/db.sql
 
 test:
 	@docker-compose exec -T php ./app/vendor/bin/phpunit --colors=always --configuration ./app/
