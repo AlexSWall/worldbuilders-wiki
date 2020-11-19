@@ -1,0 +1,470 @@
+/*<?*/
+/**
+ *
+ */
+
+/* ----------------------------------------------------------- */ {
+
+namespace App\WikitextConversion;
+
+use App\WikitextConversion\Tokens\ClosingTagToken;
+use App\WikitextConversion\Tokens\EndOfFileToken;
+use App\WikitextConversion\Tokens\MetaToken;
+use App\WikitextConversion\Tokens\NewLineToken;
+use App\WikitextConversion\Tokens\OpeningTagToken;
+use App\WikitextConversion\Tokens\SelfClosingTagToken;
+use App\WikitextConversion\Tokens\TextToken;
+
+class Grammar
+{
+	static function getNewGrammarParser()
+	{
+		return new PEGParser();
+	}
+}
+}
+/* ----------------------------------------------------------- */ {
+
+private function array_flatten($array = null) {
+	$result = array();
+
+	if (!is_array($array)) {
+		$array = func_get_args();
+	}
+
+	foreach ($array as $key => $value) {
+		if (is_array($value))
+			$result = array_merge($result, array_flatten($value));
+		else
+			$result = array_merge($result, array($key => $value));
+	}
+
+	return $result;
+}
+
+private function startOffset() {
+	return $this->savedPos;
+}
+
+private function endOffset() {
+	return $this->currPos;
+}
+
+private function createListTokenArray( $listItems )
+{
+	$previousPrefix = '';
+	$listTokens = array();
+
+	$prefixToTagText = [
+		'*' => 'ul',
+		'#' => 'ol'
+	];
+
+	foreach ( $listItems as $item )
+	{
+		[ 'prefix' => $newPrefix, 'content' => $itemContent ] = $item;
+
+		if ( $previousPrefix !== $newPrefix )
+		{
+			/* Opening and/or closing tags will need to be added for lists. */
+
+			/* Determine where the first difference is. */
+			$indexOfFirstDifference = strspn($previousPrefix ^ $newPrefix, "\0");
+
+			$itemClosesLists = $indexOfFirstDifference < strlen($previousPrefix);
+			$itemOpensNewLists = $indexOfFirstDifference < strlen($newPrefix);
+
+			if ( $itemClosesLists || !$itemOpensNewLists )
+			{
+				/* We must close the previous list item's tag. */
+				$listTokens[] = new ClosingTagToken('li');
+			}
+
+			/* Add closing tags for each previously open list opened after the
+			 * first difference between the two prefixes. */
+			if ( $itemClosesLists )
+			{
+				$listsToClose = substr( $previousPrefix, $indexOfFirstDifference );
+
+				for ( $i = strlen( $listsToClose ) - 1; $i >= 0; $i-- )
+				{
+					$tagText = $prefixToTagText[ $listsToClose[$i] ];
+					$listTokens[] = new ClosingTagToken($tagText);
+
+					/* Close the list item which the sublist was contained in. */
+					$listTokens[] = new ClosingTagToken('li');
+				}
+			}
+
+			if ( isset($item['end']) )
+				$listTokens[] = $item['end'];
+
+			/* Add opening tags for each newly opened list. */
+			if ( $itemOpensNewLists )
+			{
+				$listsToOpen = substr( $newPrefix, $indexOfFirstDifference );
+
+				for ( $i = 0; $i < strlen( $listsToOpen ); $i++ )
+				{
+					$tagText = $prefixToTagText[ $listsToOpen[$i] ];
+					$listTokens[] = new OpeningTagToken($tagText);
+				}
+			}
+		} /* Finished closing and opening list tags. */
+		else
+		{
+			/* We must close the previous list item's tag. */
+			$listTokens[] = new ClosingTagToken('li');
+
+			if ( isset($item['end']) )
+				$listTokens[] = $item['end'];
+		}
+
+		$listTokens[] = new OpeningTagToken('li');
+		$listTokens = array_merge($listTokens, $itemContent);
+		
+		$previousPrefix = $newPrefix;
+	}
+
+	$listTokens[] = new ClosingTagToken('li'); /* Close the last item. */
+
+	for ( $i = strlen( $previousPrefix ) - 1; $i >= 0; $i-- )
+	{
+		$tagText = $prefixToTagText[ $previousPrefix[$i] ];
+		$listTokens[] = new ClosingTagToken($tagText);
+
+		if ( $i > 0 )
+		{
+			/* Close the list item which the sublist was contained in. */
+			$listTokens[] = new ClosingTagToken('li');
+		}
+	}
+
+	return $listTokens;
+}
+
+} /* ----------------------------------------------------------- */
+
+/* == Top-level Rules == */
+
+start "start" =
+	blocks:topLevelBlock+ newLine* endOfFile {
+		return array_flatten([ $blocks, new EndOfFileToken() ]);
+	}
+
+topLevelBlock =
+	block
+
+block =
+	blockLines
+	/ paragraphLines
+	/ nl:newLine anySpacing {
+		return $nl;
+	}
+
+
+/* == Block-level Rules == */
+
+blockLines =
+	start:startOfLine anySpacing block:blockLine {
+		return array_merge( $start, $block );
+	}
+
+paragraphLines =
+	lines:(!paragraphBreak start:startOfLine anySpacing content:trimmedInlineLine {
+		return [$start, $content];
+	})+ {
+		$tokens = array();
+
+		$firstLine = $lines[0];
+		$innerLines = array_slice($lines, 1, -1);
+		$lastLine = end($lines);
+
+		// A line is a pair [newline, content].
+
+		$tokens[] = $firstLine[0];
+		$tokens[] = new OpeningTagToken('p');
+		$tokens = array_merge($tokens, $firstLine[1]);
+
+		foreach( $innerLines as $innerLinePair )
+		{
+			$tokens[] = $innerLinePair[0];
+			$tokens = array_merge($tokens, $innerLinePair[1]);
+		}
+
+		if( sizeof($lines) > 1 )
+		{
+			$tokens[] = $lastLine[0];
+			$tokens = array_merge($tokens, $lastLine[1]);
+		}
+		$tokens[] = new ClosingTagToken('p');
+
+		return $tokens;
+	}
+
+paragraphBreak =
+	blockLines
+	/ newline1:newLine
+	anySpacing
+	newline2:newLine {
+		return array_merge( $newline1, $newline2 );
+	}
+
+
+/* == Block Rules == */
+
+// Matches on a single line, assuming a newline both follows and leads.
+blockLine =
+	header
+	/ list
+
+header =
+	anySpacing '==' extrasLeft:'='* inner:$inlineText<header>
+	rpnPermissionsString:(
+		'|' anySpacing rpnPermissionsStr:( permissionsExpression / '' ) anySpacing { 
+			return $rpnPermissionsStr;
+		}
+	)?
+	'==' extrasRight:'='* anySpacing
+	{
+		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
+		$textToken = new TextToken($inner);
+		$textToken->trim();
+
+		$tokens = array();
+
+		if ( is_string($rpnPermissionsString) )
+		{
+			$tokens[] = new MetaToken('permissions-specifier', [
+				'RPN Permissions Expression' => $rpnPermissionsString
+			]);
+		}
+
+		return array_merge( $tokens, [
+			new OpeningTagToken('h' . $level),
+			$textToken,
+			new ClosingTagToken('h' . $level)
+		]);
+	}
+
+list =
+	firstItem:listItem & endOfLine
+	otherItems:(
+		end:endOfLine item:listItem & endOfLine { return array_merge( [ 'end' => $end ], $item ); }
+	) * {
+		$listItems = array_merge([ $firstItem ], $otherItems);
+		return $this->createListTokenArray($listItems);
+	}
+
+listItem =
+	anySpacing prefix:$listCharacter+ anySpacing content:trimmedInlineLine? {
+		return [ 'prefix' => $prefix, 'content' => $content ?: [ new TextToken('') ] ];
+	}
+
+listCharacter = [*#;:]
+
+
+/* == Inline Rules == */
+
+inlineContent =
+	inlineLine
+
+trimmedInlineLine =
+	line:inlineLine {
+
+		if ( is_a($line[0], TextToken::class) )
+			$line[0]->ltrim();
+
+		if ( is_a( end($line), TextToken::class ) )
+			end($line)->rtrim();
+
+		return $line;
+	}
+
+// This can have a template passed to it to represent the context, which affects what is counted as an inline break.
+inlineLine =
+	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+ 
+	{
+		$lineContents = [];
+		$textBuffer = '';
+		foreach( $content as $element )
+		{
+			if ( is_string( $element ) )
+				$textBuffer .= $element;
+			else
+			{
+				if ( $textBuffer !== '' )
+				{
+					$lineContents[] = new TextToken( $textBuffer );
+					$textBuffer = '';
+				}
+				$lineContents[] = $element;
+			}
+		}
+		if ( $textBuffer !== '' )
+			$lineContents[] = new TextToken( $textBuffer );
+		
+		return $lineContents;
+	}
+
+inlineElement =
+	& '[[' element:( templateElement ) { return $element; }
+	/ & "''" element:quotedContent { return $element; }
+
+// This can have a template passed to it to represent the context, which affects what is counted as an inline break.
+inlineText =
+	text:( !inlineBreak c:. { return $c; } )+ 
+	{
+		return [ new TextToken( implode('', $text) ) ];
+	}
+
+inlineBreak =
+	& newLine
+	/ & <header> & ( "==" / "|" )
+	/ & <bold> & "'''"
+	/ & <italics> & "''" ! "'''"
+	/ & <template> & ( "]]" / "|" )
+	/ & <permission> & ( "==" / spacing )
+
+/* == Inline Rules == */
+
+templateElement =
+	image / wikilink
+
+image =
+	"[[" anySpacing "image:"i anySpacing imageFileName:$inlineText<template>
+	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing {
+			return [ $width, $height ];
+		}
+	) ?
+	"]]" {
+		$tokenAttributes = [ 'src' => '/images/wiki-images/' . trim($imageFileName) ];
+
+		if ( $dimensions )
+		{
+			[ $width, $height ] = $dimensions;
+			$tokenAttributes['width'] = $width;
+			$tokenAttributes['height'] = $height;
+			$tokenAttributes['style'] = 'display: block; margin-left: auto; margin-right: auto;';
+		}
+
+		return [
+			new OpeningTagToken('img', $tokenAttributes),
+		];
+	}
+
+wikilink =
+	"[[" target:$inlineText<template> displayText:("|" text:$inlineText<template> { return $text; })? "]]" {
+		$linkTarget = '\'/#' . ucwords(str_replace(' ', '_', trim($target)), '_-') . '\'';
+		$linkText = trim($displayText ?: $target);
+		return [
+			new OpeningTagToken('a', [
+				'href' => $linkTarget
+			]),
+			new TextToken( trim($linkText) ),
+			new ClosingTagToken('a')
+		];
+	}
+
+quotedContent = bold / italics
+
+bold =
+	"'''" !"'" content:inlineContent<bold> "'''" !"'" {
+		return array_merge(
+			[ new OpeningTagToken('b') ],
+			$content,
+			[ new ClosingTagToken('b') ]
+		);
+	}
+
+italics =
+	"''" !"'" content:inlineContent<italics> "''" {
+		return array_merge(
+			[ new OpeningTagToken('i') ],
+			$content,
+			[ new ClosingTagToken('i') ]
+		);
+	}
+
+
+/* == Positional Rules == */
+
+startOfLine =
+	newLine
+	/ startOfFile
+
+endOfLine =
+	newLine
+	/ endOfFile
+
+newLine = 
+	'\n' { return [ new NewLineToken() ]; }
+	/ '\r\n' { return [ new NewLineToken() ]; }
+
+startOfFile =
+	& { return $this->endOffset() === 0; } {
+		return [];
+	}
+
+endOfFile =
+	& { return $this->endOffset() === $this->inputLength; } {
+		return [];
+	}
+
+someSpacing =
+	$spacing+
+
+anySpacing =
+	$spacing*
+
+spacing =
+	[ \t]
+
+number =
+	numberString:$[0-9]+ { return intval($numberString); }
+
+
+/* == Permissions Rules == */
+
+// Returns the permissions string in Reverse Polish Notation.
+permissionsExpression =
+	orExpressionGroup
+
+orExpressionGroup =
+	firstAndExpression:andExpressionGroup
+	others:(
+		anySpacing orOperation:orBooleanOperator anySpacing andGroup:andExpressionGroup { 
+			return [ $orOperation, $andGroup ];
+		}
+	)* {
+		$expressionRPN = $firstAndExpression;
+		foreach ( $others as $operatorPermissionGroupPair )
+			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1] . ' ' . $operatorPermissionGroupPair[0];
+		return $expressionRPN;
+	}
+
+andExpressionGroup =
+	firstPermissionGroup:permissionGroup 
+	others:(
+		anySpacing andOperation:andBooleanOperator anySpacing permGroup:permissionGroup { 
+			return [ $andOperation, $permGroup ];
+		}
+	)* {
+		$expressionRPN = $firstPermissionGroup;
+		foreach ( $others as $operatorPermissionGroupPair )
+			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1] . ' ' . $operatorPermissionGroupPair[0];
+		return $expressionRPN;
+	}
+
+permissionGroup =
+	"(" anySpacing expr:permissionsExpression anySpacing ")" { return $expr; }
+	/ permission
+
+permission =
+	$inlineText<permission>
+
+orBooleanOperator =
+	( 'or'i / '||' ) { return '||'; } 
+
+andBooleanOperator =
+	( 'and'i / '&&' ) { return '&&'; }

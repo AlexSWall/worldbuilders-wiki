@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if ! type inotifywait &>/dev/null ; then
+	echo "The dependency 'inotifywait' is missing. Install the package inotify-tools (apt-get install inotify-tools)"
+	exit 1
+fi
+
+function watchscss () {
+	unbuffer compass compile --output-style compressed --force
+	while true
+	do
+		inotifywait --quiet -r -e close_write,moved_to,create sass > /dev/null
+		unbuffer compass compile --output-style compressed --force
+		sleep .1
+	done
+}
+
+function watchjs() {
+	unbuffer npm run watch
+}
+
+function watchpegparser() {
+	cd ../backend/app/WikitextConversion >/dev/null
+	unbuffer echo 'Compiling PEG Parser'
+	unbuffer wikipeg Grammar.pegphp Grammar.php
+	unbuffer echo 'Compiled PEG Parser'
+	while true
+	do
+		inotifywait --quiet -e close_write,moved_to,create Grammar.pegphp > /dev/null
+		unbuffer echo 'Compiling PEG Parser'
+		unbuffer wikipeg Grammar.pegphp Grammar.php
+		unbuffer echo 'Compiled PEG Parser'
+		sleep .1
+	done
+}
+
+esc=$(printf '\033'); WHITE='[1;37m'; GREEN='[1;32m'; BLUE='[1;34m'; COLOUR='[1;36m'
+
+trap 'kill %1 %2' SIGINT
+watchjs | sed -e "s/^/${esc}${GREEN}[Webpack]${esc}${WHITE} /" & watchscss | sed -e "s/^/${esc}${BLUE}[Compass]${esc}${WHITE} /" & watchpegparser | sed -e "s/^/${esc}${COLOUR}[Parser] ${esc}${WHITE} /"
+
+trap - SIGINT
+echo
