@@ -42,12 +42,12 @@ services:
             - NODE_ENV=development
         volumes:
             - "./web:/app"
-        command: sh -c 'apt update &&
-                        apt install inotify-tools expect ruby-full -y &&
-                        npm install -g webpack webpack-cli wikipeg &&
-                        npm install &&
-                        npm run build &&
-                        gem install sass compass &&
+        command: sh -c 'apt update > /dev/null &&
+                        apt-get install inotify-tools expect ruby-full -y > /dev/null &&
+                        npm install -g webpack webpack-cli wikipeg > /dev/null &&
+                        npm install > /dev/null &&
+                        npm run build > /dev/null &&
+                        gem install sass compass > /dev/null &&
                         ./watch'
                         # tail -F anything'
     mysqldb:
