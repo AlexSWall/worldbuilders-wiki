@@ -1,6 +1,5 @@
 <?php
 
-/* Example basic variables for config with gmail server. */
 $baseUrl = '';
 $db_name = '';
 $db_username = '';
@@ -19,7 +18,7 @@ return [
 			'cost' => 10,
 			'standard_hash_algorithm' => 'sha256'
 		],
-		'logging' => true
+		'logging' => true /* TODO */
 	],
 	'loggers' => [
 		/* Loggers: setup, general, network, database, security */
@@ -28,42 +27,42 @@ return [
 			'logger_name' => 'setup_logger',
 			'channel_name' => 'setup',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/app.log'
+			'path' => '/logs/app.log'
 		],
 		'general' => [  /* The default logger */
 			'logger_name' => 'gen_logger',
 			'channel_name' => 'general',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/app.log'
+			'path' => '/logs/app.log'
 		],
 		'network' => [
 			'logger_name' => 'net_logger',
 			'channel_name' => 'network',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/app.log'
+			'path' => '/logs/app.log'
 		],
 		'database' => [
 			'logger_name' => 'db_logger',
 			'channel_name' => 'database',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/app.log'
+			'path' => '/logs/app.log'
 		],
 		'security' => [
 			'logger_name' => 'sec_logger',
 			'channel_name' => 'security',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/app.log'
+			'path' => '/logs/app.log'
 		],
 		'debug' => [
 			'logger_name' => 'debug_logger',
 			'channel_name' => 'debug',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/app.log'
+			'path' => '/logs/app.log'
 		]
 	],
 	'db' => [
 		'driver' => 'mysql',
-		'host' => '127.0.0.1',
+		'host' => 'mysql',
 		'database' => $db_name,
 		'username' => $db_username,
 		'password' => $db_password,

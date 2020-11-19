@@ -1,8 +1,7 @@
 <?php
 
-/* Example basic variables for test config with gmail server. */
 $baseUrl = '';
-$test_db_name = '';
+$db_name = '';
 $db_username = '';
 $db_password = '';
 $email = '';
@@ -13,7 +12,7 @@ return [
 	'displayErrorDetails' => true,
 	'addContentLengthHeader' => false,
 	'app' => [
-		'url' => 'http://localhost:8080',
+		'url' => $baseUrl,
 		'hash' => [
 			'password_hash_algorithm' => PASSWORD_BCRYPT,
 			'cost' => 10,
@@ -28,43 +27,43 @@ return [
 			'logger_name' => 'setup_logger',
 			'channel_name' => 'setup',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/tests.log'
+			'path' => '/logs/tests.log'
 		],
 		'general' => [  /* The default logger */
 			'logger_name' => 'gen_logger',
 			'channel_name' => 'general',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/tests.log'
+			'path' => '/logs/tests.log'
 		],
 		'network' => [
 			'logger_name' => 'net_logger',
 			'channel_name' => 'network',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/tests.log'
+			'path' => '/logs/tests.log'
 		],
 		'database' => [
 			'logger_name' => 'db_logger',
 			'channel_name' => 'database',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/tests.log'
+			'path' => '/logs/tests.log'
 		],
 		'security' => [
 			'logger_name' => 'sec_logger',
 			'channel_name' => 'security',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/tests.log'
+			'path' => '/logs/tests.log'
 		],
 		'debug' => [
 			'logger_name' => 'debug_logger',
 			'channel_name' => 'debug',
 			'level' => 100,
-			'path' => BASE_PATH . '/logs/tests.log'
+			'path' => '/logs/tests.log'
 		]
 	],
 	'db' => [
 		'driver' => 'mysql',
-		'host' => '127.0.0.1',
-		'database' => $test_db_name,
+		'host' => 'mysql',
+		'database' => $db_name,
 		'username' => $db_username,
 		'password' => $db_password,
 		'charset' => 'utf8',
