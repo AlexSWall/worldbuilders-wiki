@@ -5,6 +5,7 @@ include .env
 ROOT_DIR=$(shell pwd)
 LOGS_DIR=${ROOT_DIR}/logs
 MYSQL_DUMPS_DIR=${ROOT_DIR}/data/db/dumps
+SETUP_DIR=${ROOT_DIR}
 
 help:
 	@echo ""
@@ -27,8 +28,15 @@ ${MYSQL_DUMPS_DIR}:
 	mkdir -p $@
 
 setup: | ${LOGS_DIR} ${MYSQL_DUMPS_DIR}
-	touch ${LOGS_DIR}/{app,tests}.log
-	chmod 666 ${LOGS_DIR}/{app,tests}.log
+	@touch ${LOGS_DIR}/{app,tests}.log
+	@chmod 666 ${LOGS_DIR}/{app,tests}.log
+	@touch ${ROOT_DIR}/config/etc/nginx/default.conf
+	@docker-compose up -d mysqldb
+	@echo "Sleeping to allow mysql container to set up."
+	@sleep 10
+	@docker exec -i mysql mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" < ${SETUP_DIR}/db.sql
+	@docker-compose down
+	@cp ${SETUP_DIR}/*.config.php ${ROOT_DIR}/config/backend/
 
 clean:
 	@rm -Rf ${LOGS_DIR}
