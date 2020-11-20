@@ -1,5 +1,10 @@
 # Makefile for Docker Nginx PHP Composer MySQL
 
+include .env
+
+.env:
+	touch .env
+
 ROOT_DIR=$(shell pwd)
 LOGS_DIR=${ROOT_DIR}/logs
 MYSQL_DUMPS_DIR=${ROOT_DIR}/data/db/dumps
@@ -31,11 +36,13 @@ setup: | ${LOGS_DIR} ${MYSQL_DUMPS_DIR}
 	@touch ${ROOT_DIR}/config/etc/nginx/default.conf
 	@cp ${SETUP_DIR}/*.config.php ${ROOT_DIR}/config/backend/
 	@cp ${SETUP_DIR}/.env ${ROOT_DIR}
+	@$(MAKE) setup-database
 
+setup-database:
 	@docker-compose up -d mysqldb
 	@echo "Sleeping to allow mysql container to set up."
 	@sleep 10
-	@docker exec -i mysql mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" < ${SETUP_DIR}/db.sql
+	@docker exec -i mysql mysql -u"root" -p"$(MYSQL_ROOT_PASSWORD)" website < ${SETUP_DIR}/db.sql
 	@docker-compose down
 
 clean:

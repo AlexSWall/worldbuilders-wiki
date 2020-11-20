@@ -11,6 +11,7 @@ logs/
 setup/
 
 web/backend/app/WikitextConversion/Grammar.php
+web/backend/composer.lock
 web/backend/vendor
 
 web/frontend/.sass-cache
