@@ -48,6 +48,7 @@ services:
                         npm install > /dev/null &&
                         npm run build > /dev/null &&
                         gem install sass compass > /dev/null &&
+                        echo "Frontend dev setup done" &&
                         ./watch'
                         # tail -F anything'
     mysqldb:
