@@ -51,13 +51,13 @@ services:
                         ./watch'
                         # tail -F anything'
     mysqldb:
-        image: mysql:${MYSQL_VERSION}
-        container_name: ${MYSQL_HOST}
+        image: mysql:8
+        container_name: mysql
         restart: always
         env_file:
             - ".env"
         environment:
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_DATABASE=website
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
             - MYSQL_USER=${MYSQL_USER}
             - MYSQL_PASSWORD=${MYSQL_PASSWORD}
@@ -72,7 +72,7 @@ services:
             - "8080:80"
         environment:
             - PMA_ARBITRARY=1
-            - PMA_HOST=${MYSQL_HOST}
+            - PMA_HOST=mysql
         restart: always
         depends_on:
             - mysqldb

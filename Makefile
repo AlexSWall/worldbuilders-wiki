@@ -1,11 +1,9 @@
 # Makefile for Docker Nginx PHP Composer MySQL
 
-include .env
-
 ROOT_DIR=$(shell pwd)
 LOGS_DIR=${ROOT_DIR}/logs
 MYSQL_DUMPS_DIR=${ROOT_DIR}/data/db/dumps
-SETUP_DIR=${ROOT_DIR}
+SETUP_DIR=${ROOT_DIR}/setup
 
 help:
 	@echo ""
@@ -31,18 +29,25 @@ setup: | ${LOGS_DIR} ${MYSQL_DUMPS_DIR}
 	@touch ${LOGS_DIR}/{app,tests}.log
 	@chmod 666 ${LOGS_DIR}/{app,tests}.log
 	@touch ${ROOT_DIR}/config/etc/nginx/default.conf
+	@cp ${SETUP_DIR}/*.config.php ${ROOT_DIR}/config/backend/
+	@cp ${SETUP_DIR}/.env ${ROOT_DIR}
+
 	@docker-compose up -d mysqldb
 	@echo "Sleeping to allow mysql container to set up."
 	@sleep 10
 	@docker exec -i mysql mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" < ${SETUP_DIR}/db.sql
 	@docker-compose down
-	@cp ${SETUP_DIR}/*.config.php ${ROOT_DIR}/config/backend/
 
 clean:
-	@rm -Rf ${LOGS_DIR}
-	@rm -Rf web/backend/vendor
-	@rm -Rf web/backend/composer.lock
-	@rm -Rf web/frontend/node_modules
+	@rm -rf ${LOGS_DIR}
+	@rm -rf web/backend/vendor
+	@rm -rf web/backend/composer.lock
+	@rm -rf web/frontend/node_modules
+
+shiny: clean
+	@rm -rf data
+	@rm -rf ${ROOT_DIR}/config/backend/*.config.php
+	@rm -rf ${ROOT_DIR}/.env
 
 docker-start:
 	docker-compose up -d
@@ -68,4 +73,4 @@ test:
 resetOwner:
 	@$(shell chown -Rf $(SUDO_USER):$(shell id -g -n $(SUDO_USER)) $(MYSQL_DUMPS_DIR) "$(shell pwd)/etc/ssl" "$(shell pwd)/web/app" 2> /dev/null)
 
-.PHONY: clean test
+.PHONY: setup clean shiny test

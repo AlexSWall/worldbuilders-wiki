@@ -1,3 +1,4 @@
+.env
 
 config/etc/nginx/default.conf
 config/etc/ssl
