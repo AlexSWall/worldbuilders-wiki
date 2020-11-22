@@ -35,7 +35,15 @@ class WikiPage extends DatabaseEncapsulator
 	private $wikiPagePermissionBlocks;
 	
 
-	/* == Creators & Retrievers == */
+	/* == Creators, Retrievers & Deleter == */
+
+	public static function createWikiPage($path, $title)
+	{
+		return self::createModelWithEntries([
+			'Title' => $title,
+			'UrlPath' => $path
+		]);
+	}
 
 	public static function retrieveWikiPageById($id)
 	{
@@ -47,6 +55,10 @@ class WikiPage extends DatabaseEncapsulator
 		return self::retrieveModelWithEntries(['UrlPath' => $urlPath]);
 	}
 
+	public function delete()
+	{
+		$this->delete();
+	}
 
 	/* == Getters & Setters == */
 
@@ -84,6 +96,16 @@ class WikiPage extends DatabaseEncapsulator
 	{
 		$viewableBlocks = $this->getViewableBlocks( $permissionsExpression );
 		return WikiPagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
+	}
+
+	public function setTitle($title)
+	{
+		$this->set('Title', $title);
+	}
+
+	public function setWikiText($wikiText)
+	{
+		$this->set('WikiText', $wikiText);
 	}
 
 	private function setHtml($html)

@@ -16,33 +16,48 @@ class WikiPageController extends Controller
 		);
 	}
 
-	public function getAddWikiPageData()
+	public function createWikiPage($path, $title)
 	{
-		return self::getData('Special:Add_Wiki_Page', 'Add Wiki Page');
+		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
+		if (!is_null($wikiPage))
+		{
+			return 'page already exists';
+		}
+
+		$wikiPage = WikiPage::createWikiPage($path, $title);
+
+		if (is_null($wikiPage))
+		{
+			return 'failed to insert into database';
+		}
+
+		return 'success';
 	}
 
-	public function postAddWikiPage($request, $response)
+	public function modifyWikiPage($path, $title, $contents)
 	{
-		return $response;
+		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
+		if (is_null($wikiPage))
+		{
+			return "page doesn't exist";
+		}
+
+		$wikiPage->setTitle($title);
+		$wikiPage->setWikiText($contents);
+
+		return 'success';
 	}
 
-	public function getEditWikiPageData()
+	public function deleteWikiPage($path)
 	{
-		return self::getData('Special:Edit_Wiki_Page', 'Edit Wiki Page');
-	}
+		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
+		if (is_null($wikiPage))
+		{
+			return "page doesn't exist";
+		}
 
-	public function postEditWikiPage($request, $response)
-	{
-		return $response;
-	}
+		$wikiPage->delete();
 
-	public function getDeleteWikiPageData()
-	{
-		return self::getData('Special:Delete_Wiki_Page', 'Delete Wiki Page');
-	}
-
-	public function postDeleteWikiPage($request, $response)
-	{
-		return $response;
+		return 'success';
 	}
 }

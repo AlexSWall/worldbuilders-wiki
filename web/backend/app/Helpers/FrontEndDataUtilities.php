@@ -52,6 +52,9 @@ class FrontEndDataUtilities
 	}
 
 	/* == Non-Global Functions */
+	/**
+	 * These functions do not pull from global state.
+	 */
 
 	public static function getEntryPointResponse($view, $response, $entryPointName, $args = [])
 	{
@@ -63,7 +66,7 @@ class FrontEndDataUtilities
 	public static function getWikiPageDataFor($urlPath, $title, $view = null, $filePath = null)
 	{
 		if ( !is_null($view) && !is_null($filePath) )
-			$html = $view->fetch("SpecialWikiPages/{$filePath}.html");
+			$html = $view->fetch("special/{$filePath}.html");
 		else
 			$html = '';
 		return self::constructEndpointDataArray($urlPath, $title, $html);

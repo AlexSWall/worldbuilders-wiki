@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\WikiPage;
 use App\Helpers\FrontEndDataUtilities;
+use App\Helpers\DataUtilities;
 
 class WikiController extends Controller
 {
@@ -56,17 +57,70 @@ class WikiController extends Controller
 	{
 		switch (substr($pageName, strlen('Special:')))
 		{
-			case 'Add_Wiki_Page':
-				return $this->WikiPageController->getAddWikiPageData();
-			case 'Edit_Wiki_Page':
-				return $this->WikiPageController->getEditWikiPageData();
-			case 'Delete_Wiki_Page':
-				return $this->WikiPageController->getDeleteWikiPageData();
 			case 'Template_Formatting':
 				return FrontEndDataUtilities::getWikiPageDataFor($pageName, 'Meta: Template Formatting', 
 					$this->view, 'templateformatting');
 			default:
-				return $this->getDatabaseWikiPageData('Page_Not_Found');
+				return $this->getDatabaseWikiPageData('Page_Not_Found', null);
 		}
+	}
+
+	private function modifyWikiContentPostRequest($request, $response, $args)
+	{
+		$parsedBody = $request->getParsedBody();
+		$action = $parsedBody['action'];
+		$pagePath = trim($parsedBody['page_path']);
+		$dataJSON = $parsedBody['data'];
+
+		// -- Anonymous functions --
+
+		$result = function($reason) use ($response)
+		{
+			return $response->withJSON([
+				'result' => $reason
+			]);
+		};
+
+		// -- Validate --
+
+		if (!DataUtilities::is_non_empty_string($action) || !DataUtilities::is_non_empty_string($pagePath))
+			return $result("'action' and 'page_name' must be non-empty strings");
+
+		$data = DataUtilities::decodeJSONArray($dataJSON);
+		if (is_null($data))
+			return $result("'data' must be a JSON object/array");
+
+		// -- Act --
+		switch ($action)
+		{
+			case 'create':
+				$title = $data['title'];
+				if (!is_string($title))
+					return $result("'create' action needs data with 'title' key and string value");
+
+				return $result(WikiPageController::createWikiPage($pagePath, $title));
+
+			case 'modify':
+				// Sets $title and $content
+				foreach (['title', 'content'] as $key)
+				{
+					$$key = $data[$key];
+					if (!is_string($$key))
+						return $result("'modify' action needs data with '" . $key . "' key and string value");
+				}
+
+				return $result(WikiPageController::modifyWikiPage($pagePath, $title, $content));
+
+			case 'delete':
+				return $result(WikiPageController::deleteWikiPage($pagePath));
+
+			default:
+				return $result("action must be one of 'create', 'modify', or 'delete'");
+		}
+
+		// This shouldn't happen
+		return $response->withJSON([
+			'result' => null
+		]);
 	}
 }

@@ -16,6 +16,11 @@ use App\Middleware\AdministratorMiddleware;
  * 	})->setName('home');
  */
 
+/* ------------------ */
+/* Account Management */
+/* ------------------ */
+
+/* Guest */
 $app->group('', function() use ($app)
 {
 	$app->get('/Sign_Up', 'AuthenticationController:getSignup')->setName('auth.signup');
@@ -31,40 +36,61 @@ $app->group('', function() use ($app)
 	$app->post('/Reset_Password', 'PasswordController:postResetPassword');
 })->add(new GuestMiddleware($container));
 
+/* Account Activation /Activate_Acount */
+$app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
+
+/* Authenticated Routes */
 $app->group('', function() use ($app)
 {
 	$app->get('/Sign_Out', 'AuthenticationController:getSignOut')->setName('auth.signout');
 
 	$app->get('/Change_Password', 'PasswordController:getChangePassword')->setName('auth.password.change');
 	$app->post('/Change_Password', 'PasswordController:postChangePassword');
-
-	/* $app->get('/Add_Wiki_Page', 'WikiPageController:getAddWikiPage'); */
-	$app->post('/Add_Wiki_Page', 'WikiPageController:postAddWikiPage');
-
-	/* $app->get('/Edit_Wiki_Page', 'WikiPageController:getEditWikiPage'); */
-	$app->post('/Edit_Wiki_Page', 'WikiPageController:postEditWikiPage');
-
-	/* $app->get('/Delete_Wiki_Page', 'WikiPageController:getDeleteWikiPage'); */
-	$app->post('/Delete_Wiki_Page', 'WikiPageController:postDeleteWikiPage');
-
 })->add(new AuthenticatedMiddleware($container));
+
+
+/* -------------- */
+/* Administration */
+/* -------------- */
 
 $app->group('', function() use ($app)
 {
-	$app->get('/Administration/', 'AdministrationController:index')->setName('admin.home');
-})->add(new AdministratorMiddleware($container));
+	$app->get('/admin/', 'AdministrationController:index')->setName('admin.home');
+})->add(new AdministratorMiddleware($container, false));
 
-$app->get('/Activate_Account', 'ActivationController:attemptActivation')->setName('activate');
 
-/* Wiki routes */
+/* ------ */
+/*  Wiki  */
+/* ------ */
+
+/* Home /#<PageName> */
 $app->get('/', 'WikiController:serveWikiApp')->setName('home');
-$app->get('/w/{pageName}', 'WikiController:serveWikiContentGetRequest');
-   /* ---- */
 
+/* 302: /<PageName> -> /#<PageName> */
 $app->get('/{pageName}', function ($request, $response, $args) {
 	return $response->withStatus(302)->withHeader('Location', '/#' . $args['pageName']);
 });
 
+
+/* -------- */
+/* Wiki API */
+/* -------- */
+
+/* Get Wiki Page Contents /w/<PageName> */
+$app->get('/w/{pageName}', 'WikiController:serveWikiContentGetRequest');
+
+/* Admin Wiki Page API */
+$app->group('', function() use ($app)
+{
+	$app->post('/a/Wiki_Page', 'WikiController:modifyWikiContentPostRequest');
+})->add(new AdministratorMiddleware($container, true));
+
+
+/* ----- */
+/* Other */
+/* ----- */
+
+/* Page Not Found */
 $app->getContainer()['notFoundHandler'] = function($container)
 {
 	return function($request, $response) use ($container)
