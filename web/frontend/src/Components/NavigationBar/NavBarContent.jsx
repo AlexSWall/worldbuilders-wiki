@@ -22,7 +22,6 @@ class NavBarContent extends Component
 						</NavBarDropdown>
 						<NavBarLink href="/#Special:Add_Wiki_Page" text="Add Page" active={false} />
 						<NavBarLink href="/#Special:Edit_Wiki_Page" text="Edit Page" active={false} />
-						<NavBarLink href="/#About" text="About" active={false} />
 					</NavBarList>
 					<NavBarList position="right">
 						<NavBarSearchBar />
