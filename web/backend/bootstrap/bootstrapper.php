@@ -24,6 +24,11 @@ foreach ($config['loggers'] as $logger_ref => $logger_config)
 	$logger_names[$logger_config['logger_name']] = $logger_ref;
 }
 
+$loggers = [];
+foreach ( $logger_names as $logger_name => $logger_ref )
+	$loggers[$logger_name] = \App\Logging\LoggerRegistry::get($logger_ref);
+
+
 $logger = \App\Logging\LoggerRegistry::get(\App\Logging\LoggerRegistry::SETUP_LOGGER);
 
 spl_autoload_register( function( $class_name ) use ($logger, $logger_names, &$setupFinished)
@@ -60,6 +65,8 @@ $container = $app->getContainer();
 /* == Container Items == */
 
 $logger->addInfo('Populating the container.');
+
+$container['loggers'] = $loggers;
 
 $container['HashingUtilities']         = function($container) { return new \App\Helpers\HashingUtilities($container->get('settings')['app']['hash']); };
 $container['randomlib']                = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
