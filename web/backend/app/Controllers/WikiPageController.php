@@ -3,20 +3,25 @@
 namespace App\Controllers;
 
 use App\Helpers\FrontEndDataUtilities;
+use App\Models\WikiPage;
 
 class WikiPageController extends Controller
 {
 	static $logger;
 
-	private static function getData($urlPath, $wikiPageTitle)
+	public static function getWikitext($path)
 	{
-		return array_merge(
-			FrontEndDataUtilities::getWikiPageDataFor($urlPath, $wikiPageTitle),
-			FrontEndDataUtilities::getFormData()
-		);
+		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
+
+		if ($wikiPage === null)
+		{
+			return null;
+		}
+
+		return $wikiPage->getWikiText();
 	}
 
-	public function createWikiPage($path, $title)
+	public static function createWikiPage($path, $title)
 	{
 		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
 		if (!is_null($wikiPage))
@@ -34,7 +39,7 @@ class WikiPageController extends Controller
 		return 'success';
 	}
 
-	public function modifyWikiPage($path, $title, $contents)
+	public static function modifyWikiPage($path, $title, $contents)
 	{
 		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
 		if (is_null($wikiPage))
@@ -48,7 +53,7 @@ class WikiPageController extends Controller
 		return 'success';
 	}
 
-	public function deleteWikiPage($path)
+	public static function deleteWikiPage($path)
 	{
 		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
 		if (is_null($wikiPage))

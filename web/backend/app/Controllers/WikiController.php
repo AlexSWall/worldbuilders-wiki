@@ -65,7 +65,21 @@ class WikiController extends Controller
 		}
 	}
 
-	private function modifyWikiContentPostRequest($request, $response, $args)
+	public function getWikitext($request, $response, $args)
+	{
+		$pagePath = $request->getQueryParam('wikipage');
+		$this->loggers['logger']->addInfo('Received request for wikitext of page ' . $pagePath);
+
+		$wikitext = ($pagePath === null)
+			? null
+			: WikiPageController::getWikiText($pagePath);
+
+			return $response->withJSON([
+				'wikitext' => $wikitext
+			], 200, \JSON_UNESCAPED_UNICODE);
+	}
+
+	public static function modifyWikiContentPostRequest($request, $response, $args)
 	{
 		$parsedBody = $request->getParsedBody();
 		$action = $parsedBody['action'];
