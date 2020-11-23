@@ -3,11 +3,13 @@ import React, { Component } from 'react';
 import NavBarList         from './NavBarList';
 import NavBarDropdown     from './NavBarDropdown';
 import NavBarDropdownItem from './NavBarDropdownItem';
-import NavBarLink       from './NavBarLink';
+import NavBarLink         from './NavBarLink';
 import NavBarSearchBar    from './NavBarSearchBar';
 
+import CreateWikiPageNavBarLink from './Admin/CreateWikiPageNavBarLink';
+
 class NavBarContent extends Component 
-{	
+{
 	render()
 	{
 		const authenticationData = this.props.authenticationData;
@@ -20,8 +22,13 @@ class NavBarContent extends Component
 							<NavBarDropdownItem href="/#The_Valen_Ministry" text="The Valen Ministry" />
 							<NavBarDropdownItem href="/#Dra'akna" text="Dra'akna" />
 						</NavBarDropdown>
-						<NavBarLink href="/#Special:Add_Wiki_Page" text="Add Page" active={false} />
-						<NavBarLink href="/#Special:Edit_Wiki_Page" text="Edit Page" active={false} />
+						{authenticationData.isAuthenticated ? (
+							<React.Fragment>
+								<CreateWikiPageNavBarLink />
+								<NavBarLink onClick={ (_e) => window.location.hash = window.location.hash.split('?')[0] + "?action=edit" } text="Edit Page" active={false} />
+							</React.Fragment>
+							) : (<React.Fragment />)
+						}
 					</NavBarList>
 					<NavBarList position="right">
 						<NavBarSearchBar />

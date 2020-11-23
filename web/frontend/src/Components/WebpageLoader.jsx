@@ -44,12 +44,12 @@ class WebpageLoader extends Component
 				const title = 'Hello!';
 
 				// Set title.
-				document.title = response.wikiPage.title;
+				document.title = title;
 
 				// Set inner React component and its data.
 				this.setState({
-					childComponent: this.props.componentMapper(response.wikiPage.urlPath),
-					webpageData: response.wikiPage
+					childComponent: this.props.componentMapper(webpageData.urlPath),
+					webpageData: webpageData
 				});
 
 				// Move to heading, if there was one.
