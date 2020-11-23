@@ -8,8 +8,6 @@ import WebpageLoader from './Components/WebpageLoader';
 
 import WikiPanel from './Components/WikiPanel';
 import AddWebpage from './Components/Special/Forms/AddWebpage'
-import EditWebpage from './Components/Special/Forms/EditWebpage'
-import DeleteWebpage from './Components/Special/Forms/DeleteWebpage'
 
 class WikiPageApp extends Component
 {
@@ -25,16 +23,11 @@ class WikiPageApp extends Component
 							<div id="mainPanelWrapper">
 								<div id="mainPanel">
 									<WebpageLoader 
-										urlBase='http://192.168.0.200/w/'
-										componentMapper={(urlPath) =>
+										urlBase='/w/'
+										componentMapper={(path) =>
 											{
-												const map = {
-													'Special:Add_Wiki_Page': AddWebpage,
-													'Special:Edit_Wiki_Page': EditWebpage,
-													'Special:Delete_Wiki_Page': DeleteWebpage
-												};
-												if (urlPath in map)
-													return map[urlPath];
+												if (path === 'Special:Add_Wiki_Page')
+													return AddWebpage;
 												else
 													return WikiPanel;
 											}}
