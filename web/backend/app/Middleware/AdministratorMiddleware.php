@@ -17,6 +17,8 @@ class AdministratorMiddleware extends Middleware
 	{
 		if ( !$this->container->auth->isAuthenticated() || !$this->container->auth->getUser()->isAdmin() )
 		{
+			$this->loggers['logger']->addInfo('Failed to authenticate as an admin');
+
 			if ($isApiRoute)
 			{
 				return $response->withJSON([], 401, JSON_UNESCAPED_UNICODE);
@@ -27,6 +29,8 @@ class AdministratorMiddleware extends Middleware
 				return $response->withRedirect($this->container->router->pathFor('home'));
 			}
 		}
+
+		$this->loggers['logger']->addInfo('Authenticated as an admin');
 
 		$response = $next($request, $response);
 		return $response;
