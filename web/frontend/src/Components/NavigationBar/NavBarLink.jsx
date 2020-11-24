@@ -1,22 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
+
 import NavBarItem from './NavBarItem';
 
-class NavBarLink extends Component 
+export default function NavBarLink({ onClick, href, active, text })
 {	
-	render() {
-		const action = (this.props.onClick == null)
-			? { href: this.props.href }
-			: { onClick: this.props.onClick };
+	const action = (onClick == null)
+		? { href: href }
+		: { onClick: onClick };
 
-		return (
-			<NavBarItem>
-				<a className={this.props.active ? 'active' : undefined}
-				{...action}>
-					{this.props.text}
-				</a>
-			</NavBarItem>
-		);
-	}
+	return (
+		<NavBarItem>
+			<a className={ active ? 'active' : undefined }
+			{ ...action }>
+				{ text }
+			</a>
+		</NavBarItem>
+	);
 }
-
-export default NavBarLink;

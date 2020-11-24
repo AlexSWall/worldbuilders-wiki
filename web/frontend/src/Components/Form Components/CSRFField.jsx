@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class CSRFField extends Component 
+export default function CSRFField({ csrfHTML })
 {
-	render() {
-		return (
-			<div dangerouslySetInnerHTML={{ __html: this.props.csrfHTML }} />
-		);
-	}
+	return (
+		<div dangerouslySetInnerHTML={ { __html: csrfHTML } } />
+	);
 }
-
-export default CSRFField;

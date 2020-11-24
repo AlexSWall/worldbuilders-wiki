@@ -1,20 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import NavBarBrand   from './NavigationBar/NavBarBrand';
 import NavBarContent from './NavigationBar/NavBarContent';
 
-class NavigationBar extends Component 
+export default function NavigationBar({ authenticationData })
 {
-	render() {
-		return (
-			<div id="navbarWrapper">
-				<div id="navbar">
-					<NavBarBrand />
-					<NavBarContent authenticationData={this.props.authenticationData}/>
-				</div>
+	return (
+		<div id="navbarWrapper">
+			<div id="navbar">
+				<NavBarBrand />
+				<NavBarContent authenticationData={authenticationData}/>
 			</div>
-		);
-	}
+		</div>
+	);
 }
-
-export default NavigationBar;

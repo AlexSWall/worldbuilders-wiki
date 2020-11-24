@@ -1,35 +1,22 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
-class AuthFormTextEntry extends Component 
+export default function AuthFormTextEntry({ formId, type, labelText, placeholder, oldValue, errors })
 {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.oldValue || ''
-		};
-	}
+	const [value, setValue] = useState(oldValue || '');
 
-	onChange = (event) => {
-		this.setState({value: event.target.value});
-	};
-
-	render() {
-		return (
-			<div className={this.props.errors ? 'form-group is-invalid' : 'form-group'}>
-				<label className='form-label' htmlFor={this.props.formId}>{ this.props.labelText }</label>
-				<input
-					className={this.props.errors ? 'form-control has-error' : 'form-control'}
-					type={this.props.type}
-					name={this.props.formId}
-					id={this.props.formId}
-					value={this.state.value}
-					placeholder={this.props.placeholder}
-					onChange={this.onChange}
-				/>
-				{this.props.errors && <span className='help-block'>{this.props.errors}</span>}
-			</div>
-		);
-	}
+	return (
+		<div className={ errors ? 'form-group is-invalid' : 'form-group' }>
+			<label className='form-label' htmlFor={ formId }>{ labelText }</label>
+			<input
+				className={ errors ? 'form-control has-error' : 'form-control' }
+				type={ type }
+				name={ formId }
+				id={ formId }
+				value={ value }
+				placeholder={ placeholder }
+				onChange={ e => setValue(e.target.value) }
+			/>
+			{ errors && <span className='help-block'>{ errors }</span> }
+		</div>
+	);
 }
-
-export default AuthFormTextEntry;

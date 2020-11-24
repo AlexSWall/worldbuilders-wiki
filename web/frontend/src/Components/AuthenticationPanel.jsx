@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class AuthenticationPanel extends Component 
+export default function AuthenticationPanel({ children })
 {
-	render() {
-		return (
-			<React.Fragment>
-				{this.props.children}
-			</React.Fragment>
-		);
-	}
+	return (
+		<>
+			{ children }
+		</>
+	);
 }
-
-export default AuthenticationPanel;

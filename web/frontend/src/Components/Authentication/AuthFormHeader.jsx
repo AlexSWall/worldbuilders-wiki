@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class AuthFormHeader extends Component 
+export default function AuthFormHeader({ text })
 {
-	render() {
-		return (
-			<div className="card-header">
-				{this.props.text}
-			</div>
-		);
-	}
+	return (
+		<div className="card-header">
+			{ text }
+		</div>
+	);
 }
-
-export default AuthFormHeader;

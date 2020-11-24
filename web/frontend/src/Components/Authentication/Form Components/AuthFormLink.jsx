@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class AuthFormLink extends Component 
+export default function AuthFormLink({ target, text })
 {
-	render() {
-		return (
-			<div className='form-group'>
-				<a href={this.props.target}>{this.props.text}</a>
-			</div>
-		);
-	}
+	return (
+		<div className='form-group'>
+			<a href={ target }>{ text }</a>
+		</div>
+	);
 }
-
-export default AuthFormLink;

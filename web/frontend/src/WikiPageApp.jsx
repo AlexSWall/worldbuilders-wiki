@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import NavigationBar from './Components/NavigationBar';
 import Flash from './Components/Flash';
@@ -7,41 +7,37 @@ import Sidebar from './Components/Sidebar';
 import WebpageLoader from './Components/WebpageLoader';
 
 import WikiPanel from './Components/WikiPanel';
-import AddWebpage from './Components/Special/Forms/AddWebpage'
+import EditWebpage from './Components/Special/Forms/EditWebpage'
 
-class WikiPageApp extends Component
+export default function WikiPageApp({ authenticationData, flash })
 {
-	render()
-	{
-		return (
-			<div id="pageWrapper">
-				<NavigationBar authenticationData={this.props.authenticationData}/>
-				<Flash flash={this.props.flash}/>
-				<main>
-					<div id="contentWrapper">
-						<div id="content">
-							<div id="mainPanelWrapper">
-								<div id="mainPanel">
-									<WebpageLoader 
-										urlBase='/w/'
-										componentMapper={(path) =>
-											{
-												if (path === 'Special:Add_Wiki_Page')
-													return AddWebpage;
-												else
-													return WikiPanel;
-											}}
-									/>
-								</div> {/* mainPanelWrapper */}
-							</div> {/* mainPanel */}
-						</div> {/* content */}
-					</div> {/* contentWrapper */}
-				</main> {/* main */}
-				<Footer />
-				<Sidebar />
-			</div> /* pageWrapper */
-		);
-	}
+	return (
+		<div id="pageWrapper">
+			<NavigationBar authenticationData={authenticationData} />
+			<Flash flash={flash} />
+			<main>
+				<div id="contentWrapper">
+					<div id="content">
+						<div id="mainPanelWrapper">
+							<div id="mainPanel">
+								<WebpageLoader 
+									urlBase='/w/'
+									componentMapper={ (path) =>
+										{
+											if (path === 'Special:Edit_Wiki_Page')
+												return EditWebpage;
+											else
+												return WikiPanel;
+										}
+									}
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+			<Footer />
+			<Sidebar />
+		</div>
+	);
 }
-
-export default WikiPageApp;

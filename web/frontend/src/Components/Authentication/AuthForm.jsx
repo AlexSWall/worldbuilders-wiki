@@ -1,18 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import AuthFormHeader from './AuthFormHeader'
 import AuthFormBody from './AuthFormBody'
 
-class AuthForm extends Component 
+export default function AuthForm({ formProperties })
 {
-	render() {
-		return (
-			<div className="card">
-				<AuthFormHeader text={this.props.formProperties.title} />
-				<AuthFormBody formProperties={this.props.formProperties} />
-			</div>
-		);
-	}
+	return (
+		<div className="card">
+			<AuthFormHeader text={ formProperties.title } />
+			<AuthFormBody formProperties={ formProperties } />
+		</div>
+	);
 }
-
-export default AuthForm;

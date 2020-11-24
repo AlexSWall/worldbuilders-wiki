@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class AuthFormSubmitButton extends Component 
+export default function AuthFormSubmitButton({ text })
 {
-	render() {
-		return (
-			<button type='submit' className='btn btn-default'>{this.props.text}</button>
-		);
-	}
+	return (
+		<button type='submit' className='btn btn-default'>{ text }</button>
+	);
 }
-
-export default AuthFormSubmitButton;

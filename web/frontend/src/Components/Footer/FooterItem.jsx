@@ -1,16 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class FooterItem extends Component 
-{	
-	render() {
-		return (
-			<div id="rightFooterLineItem">
-				<a className="footerLink" href={this.props.href}>
-					{this.props.text}
-				</a>
-			</div>
-		);
-	}
+export default function FooterItem({ href, text })
+{
+	return (
+		<div id="rightFooterLineItem">
+			<a className="footerLink" href={ href }>
+				{ text }
+			</a>
+		</div>
+	);
 }
-
-export default FooterItem;

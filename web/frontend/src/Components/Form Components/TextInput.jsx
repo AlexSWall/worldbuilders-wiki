@@ -1,34 +1,20 @@
-import React, { Component } from 'react';
+import React, {setState} from 'react';
 
-class TextInput extends Component 
+export default function TextInput({ formId, labelText })
 {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: ''
-		};
-	}
+	const [value, setValue] = setState('');
 
-	onChange = (event) => {
-		if ( event.target.value.length <= 30)
-			this.setState({value: event.target.value});
-	};
-
-	render() {
-		return (
-			<div className='form-group'>
-				<label className='form-label' htmlFor={this.props.formId}>{ this.props.labelText }</label>
-				<input
-					className='form-control'
-					type='text'
-					name={this.props.formId}
-					id={this.props.formId}
-					value={this.state.value}
-					onChange={this.onChange}
-				/>
-			</div>
-		);
-	}
+	return (
+		<div className='form-group'>
+			<label className='form-label' htmlFor={ formId }>{ labelText }</label>
+			<input
+				className='form-control'
+				type='text'
+				name={ formId }
+				id={ formId }
+				value={ value }
+				onChange={ (e) => { if ( e.target.value.length <= 30 ) setValue(e.target.value); } }
+			/>
+		</div>
+	);
 }
-
-export default TextInput;

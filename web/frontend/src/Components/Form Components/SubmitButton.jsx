@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class SubmitButton extends Component 
+export default function SubmitButton(props)
 {
-	render() {
-		return (
-			<button type='submit' className='form-submit'>{this.props.text}</button>
-		);
-	}
+	return (
+		<button type='submit' className='form-submit'>{ props.text }</button>
+	);
 }
-
-export default SubmitButton;

@@ -1,20 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class WikiPanel extends Component 
+export default function WikiPanel({ title, html })
 {
-	constructor(props)
-	{
-		super(props);
-	}
-
-	render() {
-		return (
-			<React.Fragment>
-				<h1>{this.props.title}</h1>
-				<div dangerouslySetInnerHTML={ {__html: this.props.html} } />
-			</React.Fragment>
-		);
-	}
+	return (
+		<>
+			<h1>{ title }</h1>
+			<div dangerouslySetInnerHTML={ { __html: html } } />
+		</>
+	);
 }
-
-export default WikiPanel;

@@ -1,63 +1,72 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
-import AuthFormLink from './../Form Components/AuthFormLink';
-import AuthFormCheckBox from './../Form Components/AuthFormCheckBox';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
 import CSRFField from 'Form Components/CSRFField'
 
-class SignUpForm extends Component 
+export default function SignUpForm({ csrfHTML, oldValues, errors })
 {
-	render() {
-		let {formType, csrfHTML, oldValues, errors} = this.props.formProperties;
-		return (
-			<form action='Sign_Up' method='post' autoComplete='off'>
-				<AuthFormTextEntry 
-					formId='preferred_name' 
-					labelText='Preferred Name'
-					type='text'
-					placeholder=''
-					oldValue={oldValues.preferred_name}
-					errors={errors.preferred_name}
-				/>
-				<AuthFormTextEntry 
-					formId='username' 
-					labelText='Username*'
-					type='text'
-					placeholder=''
-					oldValue={oldValues.username}
-					errors={errors.username}
-				/>
-				<AuthFormTextEntry 
-					formId='email' 
-					labelText='Email Address*'
-					type='text'
-					placeholder='you@domain.com'
-					oldValue={oldValues.email}
-					errors={errors.email}
-				/>
-				<AuthFormTextEntry 
-					formId='password' 
-					labelText='Password*'
-					type='password'
-					placeholder=''
-					oldValue={oldValues.password}
-					errors={errors.password}
-				/>
-				<AuthFormTextEntry 
-					formId='password_confirm' 
-					labelText='Confirm Password*'
-					type='password'
-					placeholder=''
-					oldValue={oldValues.password_confirm}
-					errors={errors.password_confirm}
-				/>
-				<AuthFormSubmitButton text='Sign Up' />
+	const {
+		preferred_name: prevPrefName,
+		username: prevUsername,
+		email: prevEmail,
+		password_new: prevPass,
+		password_new_confirm: prevPassConf
+	} = oldValues;
 
-				<CSRFField csrfHTML={csrfHTML}/>
-			</form>
-		);
-	}
+	const {
+		preferred_name: prevPrefNameError,
+		username: prevUsernameError,
+		email: prevEmailError,
+		password_new: prevPassError,
+		password_new_confirm: prevPassConfError
+	} = errors;
+
+	return (
+		<form action='Sign_Up' method='post' autoComplete='off'>
+			<AuthFormTextEntry 
+				formId='preferred_name' 
+				labelText='Preferred Name'
+				type='text'
+				placeholder=''
+				oldValue={ prevPrefName }
+				errors={ prevPrefNameError }
+			/>
+			<AuthFormTextEntry 
+				formId='username' 
+				labelText='Username*'
+				type='text'
+				placeholder=''
+				oldValue={ prevUsername }
+				errors={ prevUsernameError }
+			/>
+			<AuthFormTextEntry 
+				formId='email' 
+				labelText='Email Address*'
+				type='text'
+				placeholder='you@domain.com'
+				oldValue={ prevEmail }
+				errors={ prevEmailError }
+			/>
+			<AuthFormTextEntry 
+				formId='password' 
+				labelText='Password*'
+				type='password'
+				placeholder=''
+				oldValue={ prevPass }
+				errors={ prevPassError }
+			/>
+			<AuthFormTextEntry 
+				formId='password_confirm' 
+				labelText='Confirm Password*'
+				type='password'
+				placeholder=''
+				oldValue={ prevPassConf }
+				errors={ prevPassConfError }
+			/>
+			<AuthFormSubmitButton text='Sign Up' />
+
+			<CSRFField csrfHTML={ csrfHTML }/>
+		</form>
+	);
 }
-
-export default SignUpForm;

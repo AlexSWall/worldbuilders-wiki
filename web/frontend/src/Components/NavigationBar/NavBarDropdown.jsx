@@ -1,17 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class NavBarDropdown extends Component 
+export default function NavBarDropdown({ active, href, text, children })
 {	
-	render() {
-		return (
-			<li className={"navbar-item navbar-dropdown" + (this.props.active ? " active" : "")}>
-				<a className="navbar-dropbtn" href={this.props.href} onClick={() => {return false;}}>{this.props.text}</a>
-				<div className="dropdown-content">
-					{this.props.children}
-				</div>
-			</li>
-		);
-	}
+	return (
+		<li className={ "navbar-item navbar-dropdown" + (active ? " active" : "") }>
+			<a className="navbar-dropbtn" href={ href } onClick={ () => { return false; } }>{ text }</a>
+			<div className="dropdown-content">
+				{children}
+			</div>
+		</li>
+	);
 }
-
-export default NavBarDropdown;

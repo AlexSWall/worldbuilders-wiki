@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class NavBarDropdownItem extends Component 
+export default function NavBarDropdownItem({ href, text })
 {	
-	render() {
-		return (
-			<a href={this.props.href}>{this.props.text}</a>
-		);
-	}
+	return (
+		<a href={ href }>{ text }</a>
+	);
 }
-
-export default NavBarDropdownItem;

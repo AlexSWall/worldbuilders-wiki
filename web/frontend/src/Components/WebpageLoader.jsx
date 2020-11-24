@@ -1,63 +1,35 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
-class WebpageLoader extends Component 
+export default function WebpageLoader({ urlBase, componentMapper }) 
 {
-	constructor(props)
+	const [ChildComponent, setChild] = useState(undefined);
+	const [webpageData, setWebpageData] = useState({});
+
+	// -- Start of 'member' functions --
+
+	const getAndUpdatePageContents = (webpagePath, heading) =>
 	{
-		super(props);
-		this.state = {
-			childComponent: undefined,
-			webpageData: {}
-		}
-
-		window.addEventListener("hashchange", this.onHashChange);
-	}
-
-	componentDidMount()
-	{
-		// After mounting the component, load the content by firing a 'hashchange'
-		// event.
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
-	}
-
-	onHashChange = (_event) =>
-	{
-		const hash = window.location.hash.substring(1);
-		const [webpagePath, heading] = hash.split('#');
-
-		if ( webpagePath === '' )
-			// If there is no hash, set it to 'Home'.
-			// This will result in this function being called again.
-			window.location.hash = 'Home';
-		else
-			// Otherwise, update the contents by fetching the intended contents,
-			// setting the inner component for it, and moving to the heading.
-			this.getAndUpdatePageContents(webpagePath, heading);
-	};
-
-	getAndUpdatePageContents = (webpagePath, heading) =>
-	{
-		fetch(this.props.urlBase + webpagePath)
+		console.log('Fetching ' + urlBase + webpagePath);
+		fetch(urlBase + webpagePath)
 			.then(res => res.json())
 			.then(response => {
 				const webpageData = response.wikiPage;
-				const title = 'Hello!';
 
 				// Set title.
-				document.title = title;
+				document.title = webpageData.title;
 
 				// Set inner React component and its data.
-				this.setState({
-					childComponent: this.props.componentMapper(webpageData.urlPath),
-					webpageData: webpageData
-				});
+				// Determining that I had to use () => in the line below took far
+				// too long. WHY DO YOU DO THIS REACT.
+				setWebpageData(webpageData);
+				setChild(() => componentMapper(webpageData.urlPath));
 
 				// Move to heading, if there was one.
-				this.moveToHeading(heading);
+				moveToHeading(heading);
 			});
 	};
 
-	moveToHeading(heading)
+	const moveToHeading = (heading) =>
 	{
 		if ( heading === '' )
 			return;
@@ -68,12 +40,34 @@ class WebpageLoader extends Component
 			headingElement.scrollIntoView();
 	}
 
-	render() {
-		const ChildComponent = this.state.childComponent
-		if (ChildComponent === undefined)
-			return <i>Fetching and loading content...</i>;
-		return <ChildComponent {...this.state.webpageData} />;
-	}
-}
+	// -- End of 'member' functions --
 
-export default WebpageLoader;
+	// Run after initial mounting of the component...
+	useEffect(() =>
+		{
+			window.addEventListener("hashchange", (_event) =>
+				{
+					const hash = window.location.hash.substring(1);
+					const [webpagePath, heading] = hash.split('#');
+
+					console.log('Hash changed to ' + hash + '.');
+
+					if ( webpagePath === '' )
+						// If there is no hash, set it to 'Home'.
+						// This will result in function being called again.
+						window.location.hash = 'Home';
+					else
+						// Otherwise, update the contents by fetching the intended contents,
+						// setting the inner component for it, and moving to the heading.
+						getAndUpdatePageContents(webpagePath, heading);
+				}
+			);
+
+			// Load the content by firing a 'hashchange'.
+			window.dispatchEvent(new HashChangeEvent("hashchange"));
+		}, []);
+
+	return (ChildComponent === undefined)
+		? ( <i> Fetching and loading content...  </i> )
+		: ( <ChildComponent {...webpageData} /> );
+}

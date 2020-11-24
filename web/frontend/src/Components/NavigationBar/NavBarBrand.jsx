@@ -1,17 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class NavBarBrand extends Component 
+export default function NavBarBrand()
 {
-	render() {
-		return (
-			<div id="navbar-brand-wrapper">
-				<a id="navbar-brand" href="/#Home">
-					My Website
-				</a>
-			</div>
-		);
-	}
+	return (
+		<div id="navbar-brand-wrapper">
+			<a id="navbar-brand" href="/#Home">
+				My Website
+			</a>
+		</div>
+	);
 }
-
-export default NavBarBrand;
-

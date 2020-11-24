@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class NavBarItem extends Component 
+export default function NavBarItem({ children })
 {
-	render() {
-		return (
-			<li className="navbar-item">
-				{this.props.children}
-			</li>
-		);
-	}
+	return (
+		<li className="navbar-item">
+			{ children }
+		</li>
+	);
 }
-
-export default NavBarItem;

@@ -1,24 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class Flash extends Component 
+export default function Flash({ flash })
 {
-	render() {
-		const flash = this.props.flash;
-		return (
-			<React.Fragment>
-				{ flash.info && flash.info.length &&
-					<div class='alert alert-info'>
-						{flash.info[0]}
-					</div>
-				}
-				{ flash.error && flash.error.length &&
-					<div class='alert alert-danger'>
-						{flash.error[0]}
-					</div>
-				}
-			</React.Fragment>
-		);
-	}
+	return (
+		<>
+			{ flash.info && flash.info.length &&
+				<div class='alert alert-info'>
+					{ flash.info[0] }
+				</div>
+			}
+			{ flash.error && flash.error.length &&
+				<div class='alert alert-danger'>
+					{ flash.error[0] }
+				</div>
+			}
+		</>
+	);
 }
-
-export default Flash;

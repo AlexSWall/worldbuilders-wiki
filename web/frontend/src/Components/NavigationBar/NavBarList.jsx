@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class NavBarList extends Component 
+export default function NavBarList({ position, children })
 {	
-	render() {
-		return (
-			<ul className={"navbar-list" + (this.props.position ? ` navbar-list-${this.props.position}` : '')}>
-				{this.props.children}
-			</ul>
-		);
-	}
+	return (
+		<ul className={ "navbar-list" + (position ? ` navbar-list-${ position }` : '') }>
+			{ children }
+		</ul>
+	);
 }
-
-export default NavBarList;

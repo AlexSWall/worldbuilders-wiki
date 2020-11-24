@@ -1,33 +1,21 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
-class TextArea extends Component 
+export default function TextArea({ formId, labelText })
 {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: ''
-		};
-	}
+	const [value, setValue] = useState('');
 
-	onChange = (event) => {
-		this.setState({value: event.target.value});
-	};
-
-	render() {
-		return (
-			<div className='form-group'>
-				<label className='form-label' htmlFor={this.props.formId}>{ this.props.labelText }</label>
-				<textarea
-					className='form-control'
-					type='text'
-					name={this.props.formId}
-					id={this.props.formId}
-					value={this.state.value}
-					onChange={this.onChange}
-				/>
-			</div>
-		);
-	}
+	return (
+		<div className='form-group'>
+			<label className='form-label' htmlFor={ formId }>{ labelText }</label>
+			<textarea
+				className='form-control'
+				type='text'
+				name={ formId }
+				id={ formId }
+				value={ value }
+				onChange={ (e) => setValue(e.target.value) }
+			/>
+		</div>
+	);
 }
 
-export default TextArea;
