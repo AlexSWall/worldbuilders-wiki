@@ -35,7 +35,7 @@ services:
             - "./web/backend:/app"
         command: install
     frontend-dev:
-        image: node:15
+        image: node:14
         container_name: frontend-dev
         working_dir: /app/frontend
         environment:
@@ -44,6 +44,7 @@ services:
             - "./web:/app"
         command: sh -c 'apt-get update > /dev/null &&
                         apt-get install inotify-tools expect ruby-full -y > /dev/null &&
+                        npm install -g npm@7 > /dev/null &&
                         npm install -g webpack webpack-cli wikipeg > /dev/null &&
                         npm install > /dev/null &&
                         npm run build > /dev/null &&
