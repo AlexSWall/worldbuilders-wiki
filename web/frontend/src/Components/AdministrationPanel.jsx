@@ -1,7 +1,11 @@
 import React from 'react';
 
-export default function AdministrationPanel({ authenticationData, children })
+import GlobalsContext from 'GlobalsContext';
+
+export default function AdministrationPanel({ children })
 {
+	const globals = useContext(GlobalsContext);
+
 	return (
 		<div className="card">
 			<div className="card-header">
@@ -11,9 +15,9 @@ export default function AdministrationPanel({ authenticationData, children })
 				<p style={ { marginBottom: '20px' } }>Administrators only.</p>
 				<p><u><b>Authentication Data.</b></u></p>
 				<dl style={ { listStyleType: 'none', marginLeft: '20px' } }>
-					<dd><b>{ authenticationData.isAuthenticated ? 'Is Authenticated. ' : 'Is Not Authenticated! ✗' }</b></dd>
+					<dd><b>{ globals.authData.isAuthenticated ? 'Is Authenticated. ' : 'Is Not Authenticated! ✗' }</b></dd>
 					<dd><b>Preferred Name:</b></dd>
-					<dt style={ { marginLeft: '20px' } }>{ authenticationData.userData.preferredName }</dt>
+					<dt style={ { marginLeft: '20px' } }>{ globals.authData.userData.preferredName }</dt>
 				</dl>
 				{ children }
 			</div>

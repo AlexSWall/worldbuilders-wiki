@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { GlobalsProvider } from 'GlobalsContext';
 import AdministrationApp from './AdministrationApp';
 
-import webpageBaseData from 'webpageBaseData'; /* Imports webpageBaseData variable from index.php. */
+// Import webpageBaseData variable from wiki.index.twig
+import webpageBaseData from 'webpageBaseData';
+
+const globals = {
+	authData: webpageBaseData.authenticationData,
+	flash: webpageBaseData.flash
+};
 
 ReactDOM.render(
-	<AdministrationApp
-		authenticationData={ webpageBaseData.authenticationData }
-		flash={ webpageBaseData.flash }
-	/>,
+	<GlobalsProvider globals={ globals }>
+		<AdministrationApp />
+	</GlobalsProvider>,
 	document.getElementById('root')
 );

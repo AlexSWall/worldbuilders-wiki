@@ -7,13 +7,13 @@ import WikiPageApp from './WikiPageApp';
 // Import webpageBaseData variable from wiki.index.twig
 import webpageBaseData from 'webpageBaseData';
 
-const globalData = {
+const globals = {
 	authData: webpageBaseData.authenticationData,
 	flash: webpageBaseData.flash
 };
 
 ReactDOM.render(
-	<GlobalsProvider data={ globalData }>
+	<GlobalsProvider globals={ globals }>
 		<WikiPageApp />
 	</GlobalsProvider>,
 	document.getElementById('root')

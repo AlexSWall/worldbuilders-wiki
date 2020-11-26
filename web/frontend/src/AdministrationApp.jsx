@@ -4,18 +4,18 @@ import NavigationBar from './Components/NavigationBar';
 import Flash from './Components/Flash';
 import AdministrationPanel from './Components/AdministrationPanel';
 
-export default function AdministrationApp({ authenticationData })
+export default function AdministrationApp()
 {
 	return (
 		<div id="pageWrapper">
-			<NavigationBar authenticationData={ authenticationData } />
-			<Flash flash={ flash } />
+			<NavigationBar />
+			<Flash />
 			<main>
 				<div id="contentWrapper">
 					<div id="content">
 						<div id="mainPanelWrapper">
 							<div id="mainPanel">
-								<AdministrationPanel authenticationData={ authenticationData } />
+								<AdministrationPanel />
 							</div>
 						</div>
 					</div>
