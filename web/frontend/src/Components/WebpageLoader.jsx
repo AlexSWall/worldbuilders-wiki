@@ -19,9 +19,9 @@ export default function WebpageLoader({ urlBase, componentMapper })
 				document.title = webpageData.title;
 
 				// Set inner React component and its data.
+				setWebpageData(webpageData);
 				// Determining that I had to use () => in the line below took far
 				// too long. WHY DO YOU DO THIS REACT.
-				setWebpageData(webpageData);
 				setChild(() => componentMapper(webpageData.urlPath));
 
 				// Move to heading, if there was one.
