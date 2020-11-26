@@ -9,12 +9,12 @@ import WebpageLoader from './Components/WebpageLoader';
 import WikiPanel from './Components/WikiPanel';
 import EditWebpage from './Components/Special/Forms/EditWebpage'
 
-export default function WikiPageApp({ authenticationData, flash })
+export default function WikiPageApp()
 {
 	return (
 		<div id="pageWrapper">
-			<NavigationBar authenticationData={authenticationData} />
-			<Flash flash={flash} />
+			<NavigationBar />
+			<Flash />
 			<main>
 				<div id="contentWrapper">
 					<div id="content">

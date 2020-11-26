@@ -1,19 +1,25 @@
 import React from 'react';
 
-export default function Flash({ flash })
+import { GlobalConsumer } from '../GlobalStore';
+
+export default function Flash()
 {
 	return (
-		<>
-			{ flash.info && flash.info.length &&
-				<div class='alert alert-info'>
-					{ flash.info[0] }
-				</div>
-			}
-			{ flash.error && flash.error.length &&
-				<div class='alert alert-danger'>
-					{ flash.error[0] }
-				</div>
-			}
-		</>
+		<GlobalConsumer>
+			{ globals => (
+				<>
+					{ globals.flash.info && globals.flash.info.length && (
+						<div class='alert alert-info'>
+							{ globals.flash.info[0] }
+						</div>
+					)}
+					{ globals.flash.error && globals.flash.error.length && (
+						<div class='alert alert-danger'>
+							{ globals.flash.error[0] }
+						</div>
+					)}
+				</>
+			)}
+		</GlobalConsumer>
 	);
 }

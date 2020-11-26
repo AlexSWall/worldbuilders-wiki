@@ -1,10 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import WikiPageApp from './WikiPageApp';
+import { GlobalProvider } from './GlobalStore';
 
-import webpageBaseData from 'webpageBaseData'; /* Imports webpageBaseData variable from wiki.intex.twig */
+// Import webpageBaseData variable from wiki.index.twig
+import webpageBaseData from 'webpageBaseData';
 
-ReactDOM.render(<WikiPageApp 
-	authenticationData={webpageBaseData.authenticationData}
-	flash={webpageBaseData.flash}
-/>, document.getElementById('root'));
+const globalData = {
+	authData: webpageBaseData.authenticationData,
+	flash: webpageBaseData.flash
+};
+
+ReactDOM.render(
+	<GlobalProvider data={ globalData }>
+		<WikiPageApp />
+	</GlobalProvider>,
+	document.getElementById('root')
+);
