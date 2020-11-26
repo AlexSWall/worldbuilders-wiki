@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { GlobalsContext } from '../../GlobalStore';
+import GlobalsContext from 'GlobalsContext';
 
 import NavBarList         from './NavBarList';
 import NavBarDropdown     from './NavBarDropdown';

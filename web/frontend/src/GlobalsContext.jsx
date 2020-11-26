@@ -44,17 +44,16 @@ import React, { createContext } from 'react';
 
 // export default GlobalStore;
 
-const { Provider, Consumer } = createContext();
+const GlobalsContext = createContext();
 
-const GlobalProvider = ({ data, children }) =>
+const GlobalsProvider = ({ data, children }) =>
 {
-	// const [state,] = useState(data);
-
 	return (
-		<Provider value={ data }>
+		<GlobalsContext.Provider value={ data }>
 			{ children }
-		</Provider>
+		</GlobalsContext.Provider>
 	);
 }
 
-export { GlobalProvider, Consumer as GlobalConsumer };
+export default GlobalsContext;
+export { GlobalsProvider };

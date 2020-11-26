@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { GlobalsProvider } from 'GlobalsContext';
 import WikiPageApp from './WikiPageApp';
-import { GlobalProvider } from './GlobalStore';
 
 // Import webpageBaseData variable from wiki.index.twig
 import webpageBaseData from 'webpageBaseData';
@@ -13,8 +13,8 @@ const globalData = {
 };
 
 ReactDOM.render(
-	<GlobalProvider data={ globalData }>
+	<GlobalsProvider data={ globalData }>
 		<WikiPageApp />
-	</GlobalProvider>,
+	</GlobalsProvider>,
 	document.getElementById('root')
 );
