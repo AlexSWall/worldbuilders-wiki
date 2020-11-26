@@ -1,8 +1,8 @@
-import React, {setState} from 'react';
+import React, { useState } from 'react';
 
 export default function TextInput({ formId, labelText })
 {
-	const [value, setValue] = setState('');
+	const [value, setValue] = useState('');
 
 	return (
 		<div className='form-group'>
