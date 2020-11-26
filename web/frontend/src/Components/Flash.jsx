@@ -1,25 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { GlobalConsumer } from '../GlobalStore';
+import { GlobalsContext } from '../GlobalStore';
 
 export default function Flash()
 {
+	const globals = useContext(GlobalsContext);
+
 	return (
-		<GlobalConsumer>
-			{ globals => (
-				<>
-					{ globals.flash.info && globals.flash.info.length && (
-						<div class='alert alert-info'>
-							{ globals.flash.info[0] }
-						</div>
-					)}
-					{ globals.flash.error && globals.flash.error.length && (
-						<div class='alert alert-danger'>
-							{ globals.flash.error[0] }
-						</div>
-					)}
-				</>
+		<>
+			{ globals.flash.info && globals.flash.info.length && (
+				<div class='alert alert-info'>
+					{ globals.flash.info[0] }
+				</div>
 			)}
-		</GlobalConsumer>
+			{ globals.flash.error && globals.flash.error.length && (
+				<div class='alert alert-danger'>
+					{ globals.flash.error[0] }
+				</div>
+			)}
+		</>
 	);
 }

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { GlobalConsumer } from '../../GlobalStore';
+import { GlobalsContext } from '../../GlobalStore';
 
 import NavBarList         from './NavBarList';
 import NavBarDropdown     from './NavBarDropdown';
@@ -12,6 +12,8 @@ import CreateWikiPageNavBarLink from './Admin/CreateWikiPageNavBarLink';
 
 export default function NavBarContent()
 {
+	const globals = useContext(GlobalsContext);
+
 	return (
 		<div id="navbar-content-wrapper">
 			<div id="navbar-content">
@@ -21,21 +23,18 @@ export default function NavBarContent()
 						<NavBarDropdownItem href="/#The_Valen_Ministry" text="The Valen Ministry" />
 						<NavBarDropdownItem href="/#Dra'akna" text="Dra'akna" />
 					</NavBarDropdown>
-					<GlobalConsumer>
-						{ globals => (
+						{
 							globals.authData.isAuthenticated ? (
 								<>
 									<CreateWikiPageNavBarLink />
 									<NavBarLink onClick={ (_e) => window.location.hash = window.location.hash.split('?')[0] + "?action=edit" } text="Edit Page" active={ false } />
 								</>
 							) : (<React.Fragment />)
-						) }
-					</GlobalConsumer>
+						}
 				</NavBarList>
 				<NavBarList position="right">
 					<NavBarSearchBar />
-					<GlobalConsumer>
-						{ globals => (
+						{ (
 							globals.authData.isAuthenticated ? (
 								<NavBarDropdown href="#" 
 									text={
@@ -53,7 +52,6 @@ export default function NavBarContent()
 								</React.Fragment>
 							)
 						) }
-					</GlobalConsumer>
 				</NavBarList>
 			</div>
 		</div>
