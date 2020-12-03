@@ -31,6 +31,11 @@ class FrontEndParametersFacade
 		self::setter('isAuthenticated', $value);
 	}
 
+	public static function setCsrfTokens($tokens)
+	{
+		self::setter('csrfTokens', $tokens);
+	}
+
 	public static function setCsrfHtml($html)
 	{
 		self::setter('csrfHTML', $html);
@@ -66,6 +71,11 @@ class FrontEndParametersFacade
 	public static function getIsAuthenticated()
 	{
 		return self::getter('isAuthenticated');
+	}
+
+	public static function getCsrfTokens()
+	{
+		return self::getter('csrfTokens');
 	}
 
 	public static function getCsrfHtml()

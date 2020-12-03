@@ -82,8 +82,8 @@ $app->get('/w/{pageName}', 'WikiController:serveWikiContentGetRequest');
 /* Admin Wiki Page API */
 $app->group('', function() use ($app)
 {
-	$app->get('/a/Wiki_Page', 'WikiController:getWikitext');
-	$app->post('/a/Wiki_Page', 'WikiController:modifyWikiContentPostRequest');
+	$app->get('/a/wiki', 'WikiController:getWikitext');
+	$app->post('/a/wiki', 'WikiController:modifyWikiContentPostRequest');
 })->add(new AdministratorMiddleware($container, true));
 
 

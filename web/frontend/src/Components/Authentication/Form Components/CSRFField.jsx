@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-export default function CSRFField({ csrfHTML })
+import GlobalsContext from 'GlobalsContext';
+
+export default function CSRFField()
 {
+	const globals = useContext(GlobalsContext);
+
 	return (
-		<div dangerouslySetInnerHTML={ { __html: csrfHTML } } />
+		<div dangerouslySetInnerHTML={ { __html: globals.csrfHTML } } />
 	);
 }

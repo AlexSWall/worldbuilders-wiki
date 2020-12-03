@@ -10,7 +10,7 @@ class DataUtilities
 	 */
 	public static function decodeJSONArray($str)
 	{
-		$json = $json_decode($str);
+		$json = json_decode($str);
 		if ($json && $str != $json)
 			return $json;
 		return null;

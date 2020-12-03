@@ -8,6 +8,7 @@ class FrontEndParameters
 {
 	private $baseUrl;
 	private $isAuthenticated;
+	private $csrfTokens;
 	private $csrfHTML;
 	private $previousParameters;
 	private $errors;

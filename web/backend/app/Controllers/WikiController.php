@@ -8,6 +8,8 @@ use App\Helpers\DataUtilities;
 
 class WikiController extends Controller
 {
+	static $logger;
+
 	/* Request with URL of the form  '<BaseURL>/#{pageName}'  */
 	public function serveWikiApp($request, $response)
 	{
@@ -68,7 +70,7 @@ class WikiController extends Controller
 	public function getWikitext($request, $response, $args)
 	{
 		$pagePath = $request->getQueryParam('wikipage');
-		$this->loggers['logger']->addInfo('Received request for wikitext of page ' . $pagePath);
+		self::$logger->addInfo('Received request for wikitext of page ' . $pagePath);
 
 		$wikitext = ($pagePath === null)
 			? null
@@ -79,17 +81,22 @@ class WikiController extends Controller
 			], 200, \JSON_UNESCAPED_UNICODE);
 	}
 
-	public static function modifyWikiContentPostRequest($request, $response, $args)
+	public function modifyWikiContentPostRequest($request, $response)
 	{
 		$parsedBody = $request->getParsedBody();
 		$action = $parsedBody['action'];
 		$pagePath = trim($parsedBody['page_path']);
-		$dataJSON = $parsedBody['data'];
+		$data = $parsedBody['data'];
+
+		self::$logger->addInfo('Received post request to modify wiki content for ' . $pagePath);
+		self::$logger->addInfo('Action: ' . $action . '; Page Path: ' . $pagePath . '; Data: ' . $dataJSON);
 
 		// -- Anonymous functions --
 
 		$result = function($reason) use ($response)
 		{
+			self::$logger->addInfo('Result of action: ' . $reason);
+
 			return $response->withJSON([
 				'result' => $reason
 			]);
@@ -97,12 +104,13 @@ class WikiController extends Controller
 
 		// -- Validate --
 
-		if (!DataUtilities::is_non_empty_string($action) || !DataUtilities::is_non_empty_string($pagePath))
+		if (!DataUtilities::isNonEmptyString($action) || !DataUtilities::isNonEmptyString($pagePath))
 			return $result("'action' and 'page_name' must be non-empty strings");
 
-		$data = DataUtilities::decodeJSONArray($dataJSON);
-		if (is_null($data))
+		if (!is_array($data))
 			return $result("'data' must be a JSON object/array");
+
+		self::$logger->addInfo('Data array: ' . json_encode($data));
 
 		// -- Act --
 		switch ($action)

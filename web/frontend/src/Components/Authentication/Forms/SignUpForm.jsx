@@ -4,7 +4,7 @@ import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
 import CSRFField from 'Form Components/CSRFField'
 
-export default function SignUpForm({ csrfHTML, oldValues, errors })
+export default function SignUpForm({ oldValues, errors })
 {
 	const {
 		preferred_name: prevPrefName,
@@ -66,7 +66,7 @@ export default function SignUpForm({ csrfHTML, oldValues, errors })
 			/>
 			<AuthFormSubmitButton text='Sign Up' />
 
-			<CSRFField csrfHTML={ csrfHTML }/>
+			<CSRFField />
 		</form>
 	);
 }

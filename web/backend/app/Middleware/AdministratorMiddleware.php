@@ -15,9 +15,11 @@ class AdministratorMiddleware extends Middleware
 
 	public function __invoke($request, $response, $next)
 	{
+		$logger = $this->loggers['logger'];
+
 		if ( !$this->container->auth->isAuthenticated() || !$this->container->auth->getUser()->isAdmin() )
 		{
-			$this->loggers['logger']->addInfo('Failed to authenticate as an admin');
+			$logger->addInfo('Failed to authenticate as an admin');
 
 			if ($isApiRoute)
 			{
@@ -30,7 +32,7 @@ class AdministratorMiddleware extends Middleware
 			}
 		}
 
-		$this->loggers['logger']->addInfo('Authenticated as an admin');
+		$logger->addInfo('Authenticated as an admin');
 
 		$response = $next($request, $response);
 		return $response;

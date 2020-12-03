@@ -51,7 +51,6 @@ export default function Modal({ isOpen, setOpen, children })
 
 	const handleOutsideClick = useCallback( e =>
 		{
-			console.log(modalBackground);
 			if ( modalBackground.current.contains(e.target) )
 				setOpen(false);
 		},

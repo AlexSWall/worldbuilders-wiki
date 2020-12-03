@@ -17,22 +17,12 @@ class FrontEndDataUtilities
 	public static function getBaseData()
 	{
 		$user = FrontEndParametersFacade::getUserData();
-		if ( is_null($user) )
-			$userDetailsData = [];
-		else
-		{
-			$userDetails = $user->getUserDetails();
-			$userDetailsData = [
-				'preferredName' => $userDetails->getPreferredName()
-			];
-		}
 
 		return [
-			'baseUrl' => FrontEndParametersFacade::getBaseUrl(),
-			'authenticationData' => [ 
-				'isAuthenticated' => FrontEndParametersFacade::getIsAuthenticated(),
-				'userData' => $userDetailsData
-			],
+			'preferredName' => ($user === null) ? null : $user->getUserDetails()->getPreferredName(),
+			'isAuthenticated' => FrontEndParametersFacade::getIsAuthenticated(),
+			'csrfTokens' => FrontEndParametersFacade::getCsrfTokens(),
+			'csrfHTML' => FrontEndParametersFacade::getCsrfHtml(),
 			'flash' => FrontEndParametersFacade::getFlash()
 		];
 	}

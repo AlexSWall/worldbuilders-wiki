@@ -11,6 +11,8 @@ use App\Permissions\WikiPagePermissionBlock;
 
 class WikiPage extends DatabaseEncapsulator
 {
+	static $logger;
+
 	/* == Required Abstract Methods == */
 
 	protected static function getTableName()
@@ -26,6 +28,9 @@ class WikiPage extends DatabaseEncapsulator
 	protected static function getDefaults()
 	{
 		return [
+			'Title' => 'Page Title',
+			'WikiText' => 'Content goes here...',
+			'Html' => ''
 		];
 	}
 
@@ -39,9 +44,11 @@ class WikiPage extends DatabaseEncapsulator
 
 	public static function createWikiPage($path, $title)
 	{
+		self::$logger->addInfo('Creating WikiPage with title \'' . $title . '\' and path \'' . $path);
+
 		return self::createModelWithEntries([
 			'Title' => $title,
-			'UrlPath' => $path
+			'UrlPath' => $path,
 		]);
 	}
 

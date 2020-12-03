@@ -39,10 +39,10 @@ module.exports = {
 	},
 	mode: 'development',
 	externals: {
-		webpageBaseData: 'webpageBaseData'
+		globalsData: 'globalsData'
 	},
 	watchOptions: {
-		poll: true,
+		poll: 1000,
 		ignored: /node_modules/
 	}
 };

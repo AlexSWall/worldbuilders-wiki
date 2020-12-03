@@ -4,7 +4,7 @@ import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
 import CSRFField from 'Form Components/CSRFField'
 
-export default function ChangePasswordForm({ csrfHTML, oldValues, errors })
+export default function ChangePasswordForm({ oldValues, errors })
 {
 	const {
 		password_old: prevOldPass,
@@ -46,7 +46,7 @@ export default function ChangePasswordForm({ csrfHTML, oldValues, errors })
 			/>
 			<AuthFormSubmitButton text='Change Password' />
 
-			<CSRFField csrfHTML={ csrfHTML }/>
+			<CSRFField />
 		</form>
 	);
 }

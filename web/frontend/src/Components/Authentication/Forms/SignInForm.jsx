@@ -6,7 +6,7 @@ import AuthFormCheckBox from './../Form Components/AuthFormCheckBox';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
 import CSRFField from 'Form Components/CSRFField'
 
-export default function SignInForm({ csrfHTML, oldValues, errors })
+export default function SignInForm({ oldValues, errors })
 {
 	const {
 		identity: prevIdentity,
@@ -46,7 +46,7 @@ export default function SignInForm({ csrfHTML, oldValues, errors })
 			/>
 			<AuthFormSubmitButton text='Sign In' />
 
-			<CSRFField csrfHTML={ csrfHTML }/>
+			<CSRFField />
 		</form>
 	);
 }

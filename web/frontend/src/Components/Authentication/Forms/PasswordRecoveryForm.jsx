@@ -4,7 +4,7 @@ import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
 import CSRFField from 'Form Components/CSRFField'
 
-export default function PasswordRecoveryForm({ csrfHTML, oldValues, errors })
+export default function PasswordRecoveryForm({ oldValues, errors })
 {
 	const { email: prevEmail } = oldValues;
 	const { email: prevEmailError } = errors;
@@ -21,7 +21,7 @@ export default function PasswordRecoveryForm({ csrfHTML, oldValues, errors })
 			/>
 			<AuthFormSubmitButton text='Send Recovery Email' />
 
-			<CSRFField csrfHTML={ csrfHTML }/>
+			<CSRFField />
 		</form>
 	);
 }

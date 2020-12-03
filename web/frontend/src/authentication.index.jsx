@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 import { GlobalsProvider } from 'GlobalsContext';
 import AuthenticationApp from './AuthenticationApp';
 
-// Import webpageBaseData variable from wiki.index.twig
-import webpageBaseData from 'webpageBaseData';
+// Import globalsData variable from within script in the HTML.
+import globalsData from 'globalsData';
 
 ReactDOM.render(
 	<GlobalsProvider>
 		<AuthenticationApp
-			formProperties={ webpageBaseData.formProperties }
+			formProperties={ globalsData.formProperties }
 		/>
 	</GlobalsProvider>,
 	document.getElementById('root')

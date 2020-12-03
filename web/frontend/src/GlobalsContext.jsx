@@ -1,19 +1,14 @@
 import React, { createContext } from 'react';
 
-// Import webpageBaseData variable from wiki.index.twig
-import webpageBaseData from 'webpageBaseData';
-
-const globals = {
-	authData: webpageBaseData.authenticationData,
-	flash: webpageBaseData.flash
-};
+// Import globalsData variable from within script in the HTML.
+import globalsData from 'globalsData';
 
 const GlobalsContext = createContext();
 
 const GlobalsProvider = ({ extraGlobals={}, children }) =>
 {
 	return (
-		<GlobalsContext.Provider value={ { ...globals, ...extraGlobals } }>
+		<GlobalsContext.Provider value={ { ...globalsData, ...extraGlobals } }>
 			{ children }
 		</GlobalsContext.Provider>
 	);

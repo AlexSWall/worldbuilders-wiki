@@ -6,8 +6,11 @@
 		<title>Administration Panel</title>
 
 		<script type="text/javascript">
-			const webpageBaseData = {
-				authenticationData: {{ ( authenticationData | json_encode | raw ) }},
+			const globalsData = {
+				preferredName: {{ ( preferredName | json_encode | raw ) }},
+				isAuthenticated: {{ ( isAuthenticated | json_encode | raw ) }},
+				csrfTokens: {{ ( csrfTokens | json_encode | raw ) }},
+				csrfHTML: {{ ( csrfHTML | json_encode | raw ) }},
 				flash: {{ ( flash | json_encode | raw ) }}
 			};
 		</script>

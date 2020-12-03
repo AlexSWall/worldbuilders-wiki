@@ -24,7 +24,7 @@ export default function NavBarContent()
 						<NavBarDropdownItem href="/#Dra'akna" text="Dra'akna" />
 					</NavBarDropdown>
 						{
-							globals.authData.isAuthenticated ? (
+							globals.isAuthenticated ? (
 								<>
 									<CreateWikiPageNavBarLink />
 									<NavBarLink onClick={ (_e) => window.location.hash = window.location.hash.split('?')[0] + "?action=edit" } text="Edit Page" active={ false } />
@@ -35,11 +35,11 @@ export default function NavBarContent()
 				<NavBarList position="right">
 					<NavBarSearchBar />
 						{ (
-							globals.authData.isAuthenticated ? (
+							globals.isAuthenticated ? (
 								<NavBarDropdown href="#" 
 									text={
-										(globals.authData.userData.preferredName)
-										? globals.authData.userData.preferredName 
+										(globals.preferredName)
+										? globals.preferredName 
 										: 'Account'
 									} active={ false }>
 									<NavBarDropdownItem href="/Change_Password" text="Change Password" />

@@ -3,11 +3,10 @@ import React, { useState } from 'react';
 import NavBarLink from '../NavBarLink';
 
 import Modal from '../../Modal';
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import CSRFField from '../../Form Components/CSRFField';
 
-export default function CreateWikiPageNavBarLink({ csrfHTML })
+import WikiPageCreationForm from './WikiPageCreationForm'
+
+export default function CreateWikiPageNavBarLink()
 {
 	const [isModalOpen, setModalOpen] = useState(false);
 
@@ -20,12 +19,7 @@ export default function CreateWikiPageNavBarLink({ csrfHTML })
 			/>
 
 			<Modal isOpen={ isModalOpen } setOpen = { setModalOpen }>
-				<form action='/a/Wiki_Page' method='post' autoComplete='off'>
-					<TextInput formId='page_name' labelText='Page Name' />
-					<SubmitButton text='Create Page' />
-					<button type="button" onClick={ () => setModalOpen(false) }>Close Modal</button>
-					<CSRFField csrfHTML={ csrfHTML }/>
-				</form>
+				<WikiPageCreationForm closeModal={ () => setModalOpen(false) }/>
 			</Modal>
 		</>
 	);

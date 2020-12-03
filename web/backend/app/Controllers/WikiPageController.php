@@ -26,6 +26,8 @@ class WikiPageController extends Controller
 		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
 		if (!is_null($wikiPage))
 		{
+			self::$logger->addInfo('Page already exists');
+
 			return 'page already exists';
 		}
 
@@ -33,6 +35,8 @@ class WikiPageController extends Controller
 
 		if (is_null($wikiPage))
 		{
+			self::$logger->addInfo('Database command to create new WikiPage failed');
+
 			return 'failed to insert into database';
 		}
 
