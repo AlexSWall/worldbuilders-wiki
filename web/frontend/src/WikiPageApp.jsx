@@ -4,10 +4,7 @@ import NavigationBar from './Components/NavigationBar';
 import Flash from './Components/Flash';
 import Footer from './Components/Footer';
 import Sidebar from './Components/Sidebar';
-import WebpageLoader from './Components/WebpageLoader';
-
-import WikiPanel from './Components/WikiPanel';
-import EditWebpage from './Components/Special/Forms/EditWebpage'
+import WikiPageLoader from './Components/WikiPageLoader';
 
 export default function WikiPageApp()
 {
@@ -20,17 +17,7 @@ export default function WikiPageApp()
 					<div id="content">
 						<div id="mainPanelWrapper">
 							<div id="mainPanel">
-								<WebpageLoader 
-									urlBase='/w/'
-									componentMapper={ (path) =>
-										{
-											if (path === 'Special:Edit_Wiki_Page')
-												return EditWebpage;
-											else
-												return WikiPanel;
-										}
-									}
-								/>
+								<WikiPageLoader urlBase='/w/' />
 							</div>
 						</div>
 					</div>

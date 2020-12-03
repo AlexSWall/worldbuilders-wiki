@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
 
-export default function WebpageLoader({ urlBase, componentMapper }) 
+import WikiPanel from './WikiPanel';
+
+export default function WikiPageLoader({ urlBase }) 
 {
-	const [ChildComponent, setChild] = useState(undefined);
-	const [webpageData, setWebpageData] = useState({});
+	const [wikiPageData, setWikiPageData] = useState({});
 
 	// -- Start of 'member' functions --
 
-	const getAndUpdatePageContents = (webpagePath, heading) =>
+	const getAndUpdatePageContents = (wikiPagePath, heading) =>
 	{
-		console.log('Fetching ' + urlBase + webpagePath);
-		fetch(urlBase + webpagePath)
+		fetch(urlBase + wikiPagePath)
 			.then(res => res.json())
 			.then(response => {
-				const webpageData = response.wikiPage;
+				const wikiPageData = response.wikiPage;
 
 				// Set title.
-				document.title = webpageData.title;
+				document.title = wikiPageData.title;
 
 				// Set inner React component and its data.
-				setWebpageData(webpageData);
-				// Determining that I had to use () => in the line below took far
-				// too long. WHY DO YOU DO THIS REACT.
-				setChild(() => componentMapper(webpageData.urlPath));
+				setWikiPageData(wikiPageData);
 
 				// Move to heading, if there was one.
 				moveToHeading(heading);
@@ -48,18 +45,16 @@ export default function WebpageLoader({ urlBase, componentMapper })
 			window.addEventListener("hashchange", (_event) =>
 				{
 					const hash = window.location.hash.substring(1);
-					const [webpagePath, heading] = hash.split('#');
+					const [wikiPagePath, heading] = hash.split('#');
 
-					console.log('Hash changed to ' + hash + '.');
-
-					if ( webpagePath === '' )
+					if ( wikiPagePath === '' )
 						// If there is no hash, set it to 'Home'.
 						// This will result in function being called again.
 						window.location.hash = 'Home';
 					else
 						// Otherwise, update the contents by fetching the intended contents,
 						// setting the inner component for it, and moving to the heading.
-						getAndUpdatePageContents(webpagePath, heading);
+						getAndUpdatePageContents(wikiPagePath, heading);
 				}
 			);
 
@@ -67,7 +62,7 @@ export default function WebpageLoader({ urlBase, componentMapper })
 			window.dispatchEvent(new HashChangeEvent("hashchange"));
 		}, []);
 
-	return (ChildComponent === undefined)
+	return (Object.keys(wikiPageData).length === 0)
 		? ( <i> Fetching and loading content...  </i> )
-		: ( <ChildComponent {...webpageData} /> );
+		: ( <WikiPanel {...wikiPageData} /> );
 }
