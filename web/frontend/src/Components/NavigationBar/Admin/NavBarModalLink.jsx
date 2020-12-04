@@ -4,9 +4,7 @@ import NavBarLink from '../NavBarLink';
 
 import Modal from '../../Modal';
 
-import WikiPageCreationForm from './WikiPageCreationForm'
-
-export default function CreateWikiPageNavBarLink()
+export default function NavBarModalLink({ linkText, ChildComponent })
 {
 	const [isModalOpen, setModalOpen] = useState(false);
 
@@ -14,12 +12,12 @@ export default function CreateWikiPageNavBarLink()
 		<>
 			<NavBarLink
 				onClick={ () => setModalOpen(true) }
-				text="Add Page"
+				text={ linkText }
 				active={ false }
 			/>
 
 			<Modal isOpen={ isModalOpen } setOpen = { setModalOpen }>
-				<WikiPageCreationForm closeModal={ () => setModalOpen(false) }/>
+				<ChildComponent closeModal={ () => setModalOpen(false) }/>
 			</Modal>
 		</>
 	);

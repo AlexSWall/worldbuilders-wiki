@@ -8,7 +8,9 @@ import NavBarDropdownItem from './NavBarDropdownItem';
 import NavBarLink         from './NavBarLink';
 import NavBarSearchBar    from './NavBarSearchBar';
 
-import CreateWikiPageNavBarLink from './Admin/CreateWikiPageNavBarLink';
+import NavBarModalLink from './Admin/NavBarModalLink';
+import WikiPageCreationForm from './Admin/WikiPageCreationForm';
+import WikiPageEditForm from './Admin/WikiPageEditForm';
 
 export default function NavBarContent()
 {
@@ -26,8 +28,8 @@ export default function NavBarContent()
 						{
 							globals.isAuthenticated ? (
 								<>
-									<CreateWikiPageNavBarLink />
-									<NavBarLink onClick={ (_e) => window.location.hash = window.location.hash.split('?')[0] + "?action=edit" } text="Edit Page" active={ false } />
+									<NavBarModalLink linkText='Add Page' ChildComponent={ WikiPageCreationForm }/>
+									<NavBarModalLink linkText='Edit Page' ChildComponent={ WikiPageEditForm }/>
 								</>
 							) : (<React.Fragment />)
 						}

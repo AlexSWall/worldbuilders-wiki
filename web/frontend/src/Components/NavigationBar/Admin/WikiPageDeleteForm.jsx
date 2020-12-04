@@ -15,7 +15,7 @@ const schema = Yup.object().shape({
 		.required('Required')
 });
 
-export default function WikiPageCreationForm({ closeModal })
+export default function WikiPageEditForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
