@@ -21,10 +21,10 @@ export default function NavBarContent()
 		<div id="navbar-content-wrapper">
 			<div id="navbar-content">
 				<NavBarList>
-					<NavBarDropdown href="/#Locations" text="Locations" active={ false }>
-						<NavBarDropdownItem href="/#Guthan" text="The Kingdom of Guthan" />
-						<NavBarDropdownItem href="/#The_Valen_Ministry" text="The Valen Ministry" />
-						<NavBarDropdownItem href="/#Dra'akna" text="Dra'akna" />
+					<NavBarDropdown href="/#locations" text="locations" active={ false }>
+						<NavBarDropdownItem href="/#kingdom-of-guthan" text="The Kingdom of Guthan" />
+						<NavBarDropdownItem href="/#the-valen-ministry" text="The Valen Ministry" />
+						<NavBarDropdownItem href="/#draakna" text="Dra'akna" />
 					</NavBarDropdown>
 						{
 							globals.isAuthenticated ? (
