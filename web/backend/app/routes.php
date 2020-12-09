@@ -67,8 +67,8 @@ $app->group('', function() use ($app)
 $app->get('/', 'WikiController:serveWikiApp')->setName('home');
 
 /* 302: /<PageName> -> /#<PageName> */
-$app->get('/{pageName}', function ($request, $response, $args) {
-	return $response->withStatus(302)->withHeader('Location', '/#' . $args['pageName']);
+$app->get('/{wikipage}', function ($request, $response, $args) {
+	return $response->withStatus(302)->withHeader('Location', '/#' . $args['wikipage']);
 });
 
 
@@ -77,13 +77,13 @@ $app->get('/{pageName}', function ($request, $response, $args) {
 /* -------- */
 
 /* Get Wiki Page Contents /w/<PageName> */
-$app->get('/w/{pageName}', 'WikiController:serveWikiContentGetRequest');
+$app->get('/w/{wikipage:.*}', 'WikiController:serveWikiContentGetRequest');
 
 /* Admin Wiki Page API */
 $app->group('', function() use ($app)
 {
-	$app->get('/a/wiki', 'WikiController:getWikitext');
-	$app->post('/a/wiki', 'WikiController:modifyWikiContentPostRequest');
+	$app->get('/a/wiki', 'WikiController:serveWikitext');
+	$app->post('/a/wiki', 'WikiController:serveModifyWikiContentPostRequest');
 })->add(new AdministratorMiddleware($container, true));
 
 
@@ -92,10 +92,10 @@ $app->group('', function() use ($app)
 /* ----- */
 
 /* Page Not Found */
-$app->getContainer()['notFoundHandler'] = function($container)
-{
-	return function($request, $response) use ($container)
-	{
-		return (new App\Controllers\NotFoundController($container))->dealWithRequest($request, $response);
-	};
-};
+/* $app->getContainer()['notFoundHandler'] = function($container) */
+/* { */
+/* 	return function($request, $response) use ($container) */
+/* 	{ */
+/* 		return (new App\Controllers\NotFoundController($container))->dealWithRequest($request, $response); */
+/* 	}; */
+/* }; */

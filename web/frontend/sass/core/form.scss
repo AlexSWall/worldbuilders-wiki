@@ -1,0 +1,102 @@
+.form {
+	.form-group {
+		margin-top: 15px;
+		margin-bottom: 15px;
+
+		.form-label {
+			display: block;
+			margin-bottom: 5px;
+
+			font-weight: normal;
+		}
+
+		.form-control {
+			display: block;
+			padding: 6px 12px;;
+			font-size: 14px;
+			line-height: 1.42857;
+			background-color: rgb(255, 255, 255);
+			background-image: none;
+			border: 1px solid rgb(204, 204, 204);
+			border-radius: 4px;
+			box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset;
+			transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+
+			.form-textarea {
+				display: inline-block;
+			}
+		}
+
+		.form-control:focus {
+			border-color: rgb(102, 175, 233);
+			outline: 0px;
+			box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, rgba(102, 175, 233, 0.6) 0px 0px 8px;
+		}
+
+		.form-control-has-error {
+			border-color: rgb(179, 27, 27);
+			outline: 0px;
+			box-shadow: rgba(179, 27, 27, 0.3) 0px 0px 3px;
+		}
+
+		.form-error {
+			font-size: 80%;
+			color: #c40000;
+			word-break: break-word;
+		}
+	}
+
+	.form-submit {
+		display: block;
+		font-weight: 400;
+		color: rgb(33, 37, 41);
+		text-align: center;
+		user-select: none;
+		background-color: white;
+		border: 1px solid #555555;
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+		line-height: 1.5;
+		border-radius: 0.25rem;
+		transition: color 0.15s ease-in-out 0s, background-color 0.15s ease-in-out 0s, border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+
+		border-radius: 0px;
+		margin: 15px auto;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		overflow: visible;
+		text-transform: none;
+	}
+
+	.form-submit:hover {
+		color: rgb(33, 37, 41);
+		text-decoration: none;
+
+		border-color: rgb(102, 175, 233);
+		outline: 0px;
+		box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset, rgba(102, 175, 233, 0.6) 0px 0px 8px;
+	}
+
+	.form-submit:focus {
+		outline: -webkit-focus-ring-color auto 5px;
+		outline: 0px;
+		box-shadow: rgba(0, 123, 255, 0.25) 0px 0px 0px 0.2rem;
+	}
+
+	.form-submit:disabled {
+		opacity: 0.65;
+	}
+
+	.form-submit:not(:disabled) {
+		cursor: pointer;
+	}
+
+	.form-label-error {
+		display: block;
+		margin: 5px auto;
+
+		font-weight: normal;
+		color: #c40000;
+	}
+}

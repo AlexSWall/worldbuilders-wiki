@@ -7,6 +7,7 @@ use App\Permissions\WikiPagePermissionBlock;
 
 class WikiPagePermissionBlockQueries
 {
+	static $logger;
 
 	public static function getWikiPagePermissionBlocks( $wikiPageId ): array
 	{

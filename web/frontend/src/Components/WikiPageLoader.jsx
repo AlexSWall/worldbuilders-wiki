@@ -8,12 +8,52 @@ export default function WikiPageLoader({ urlBase })
 
 	// -- Start of 'member' functions --
 
-	const getAndUpdatePageContents = (wikiPagePath, heading) =>
+	const fetchAndUpdatePageContents = (wikiPagePath, heading) =>
 	{
 		fetch(urlBase + wikiPagePath)
-			.then(res => res.json())
-			.then(response => {
-				const wikiPageData = response.wikiPage;
+			.then(async response => {
+
+				if (!response.ok)
+					console.log('Error: Received status code ' + response.status + ' in response to POST request');
+
+				// Ensure data is JSON
+				const contentType = response.headers.get("content-type");
+				if (!contentType || contentType.indexOf("application/json") === -1)
+				{
+					try
+					{
+						data = await response.text();
+						console.log('Error (text): ' + text);
+					}
+					catch(e)
+					{
+						console.log('Error, and then error on handling: ' + e);
+					}
+					return
+				}
+
+				// Ensure JSON data parses
+				let data;
+				try {
+					data = await response.json();
+				} catch(e) {
+					console.log('Error response, and then JSON in body failed to parse: ' + e);
+					return;
+				}
+
+				const wikiPageData = data.wikiPage;
+
+				// Ensure JSON has wikiPageData key
+				if (wikiPageData === null)
+				{
+					if (data.error)
+						console.log('Error response: ' + data.error);
+					else
+						console.log('Error response and JSON has no error key: ' + e);
+					return;
+				}
+
+				// -- Successfully got data --
 
 				// Set title.
 				document.title = wikiPageData.title;
@@ -23,12 +63,16 @@ export default function WikiPageLoader({ urlBase })
 
 				// Move to heading, if there was one.
 				moveToHeading(heading);
+
+			}).catch( error => {
+				console.log('Failed to make POST request...')
+				console.log(error);
 			});
 	};
 
 	const moveToHeading = (heading) =>
 	{
-		if ( heading === '' )
+		if ( !heading || heading === '' )
 			return;
 
 		const headingElement = document.getElementById(heading);
@@ -47,14 +91,16 @@ export default function WikiPageLoader({ urlBase })
 					const hash = window.location.hash.substring(1);
 					const [wikiPagePath, heading] = hash.split('#');
 
-					if ( wikiPagePath === '' )
-						// If there is no hash, set it to 'Home'.
-						// This will result in function being called again.
-						window.location.hash = 'Home';
-					else
-						// Otherwise, update the contents by fetching the intended contents,
-						// setting the inner component for it, and moving to the heading.
-						getAndUpdatePageContents(wikiPagePath, heading);
+					fetchAndUpdatePageContents(wikiPagePath, heading);
+
+					// if ( wikiPagePath === '' )
+					// 	// If there is no hash, set it to 'Home'.
+					// 	// This will result in function being called again.
+					// 	window.location.hash = 'Home';
+					// else
+					// 	// Otherwise, update the contents by fetching the intended contents,
+					// 	// setting the inner component for it, and moving to the heading.
+					// 	fetchAndUpdatePageContents(wikiPagePath, heading);
 				}
 			);
 

@@ -1,0 +1,77 @@
+#modal-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, .7);
+	z-index: 1000;
+}
+
+#modal-pane {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #FFF;
+	z-index: 1000;
+
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 11pt;
+	line-height: 1.4;
+
+	#modal-x-button {
+		position: absolute;
+		cursor: pointer;
+		z-index: 1001;
+
+		top: -10px;
+		right: -10px;
+
+		box-sizing: border-box;
+		width: 20px;
+		height: 20px;
+
+		border-width: 3px;
+		border-style: solid;
+		border-color: #605F61;
+		border-radius: 100%;
+
+		background: -webkit-linear-gradient(-45deg, transparent 0%, transparent 46%, white 46%,  white 56%,transparent 56%, transparent 100%), -webkit-linear-gradient(45deg, transparent 0%, transparent 46%, white 46%,  white 56%,transparent 56%, transparent 100%);
+		background-color: #605F61;
+	}
+}
+
+
+.card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	overflow-wrap: break-word;
+	background-color: rgb(255, 255, 255);
+	background-clip: border-box;
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	border-radius: 0.25rem;
+
+	.card-header {
+		padding: 0.75rem 1.25rem;
+		margin-bottom: 0px;
+		background-color: rgba(0, 0, 0, 0.03);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+		font-size: 120%;
+	}
+
+	.card-header:first-child {
+		border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0px 0px;
+	}
+
+	.card-body {
+		flex: 1 1 auto;
+		padding: 0 1.25rem 0 1.25rem;
+	}
+}

@@ -2,7 +2,7 @@ import React from 'react';
 
 import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
-import CSRFField from 'Form Components/CSRFField'
+import CSRFField from './../Form Components/CSRFField'
 
 export default function SignUpForm({ oldValues, errors })
 {

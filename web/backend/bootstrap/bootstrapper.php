@@ -79,8 +79,26 @@ $container['PasswordController']       = function($container) { return new \App\
 $container['ActivationController']     = function($container) { return new \App\Controllers\Auth\ActivationController($container); };
 $container['WikiController']           = function($container) { return new \App\Controllers\WikiController($container); };
 $container['WikiPageController']       = function($container) { return new \App\Controllers\WikiPageController($container); };
-$container['csrf']                     = function($container) { return new \Slim\Csrf\Guard; };
 $container['flash']                    = function($container) { return new \Slim\Flash\Messages; };
+
+
+$container['csrf'] = function($container)
+{
+	$guard = new \Slim\Csrf\Guard();
+	// $guard = new \Slim\Csrf\Guard(new \Slim\Psr7\Factory\ResponseFactory());
+
+	// One CSRF token per session.
+	// TODO: Ensure this is invalidated on login.
+	$guard->setPersistentTokenMode(true);
+
+	$guard->setFailureCallable(function ($request, $response, $next) {
+		return $response->withJson([
+			'error' => 'Failed CSRF check'
+		], 400);
+	});
+
+	return $guard;
+};
 
 
 $container['view'] = function($container)

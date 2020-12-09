@@ -6,35 +6,45 @@ use App\Permissions\WikiPagePermissionBlock;
 
 class HTML5Builder
 {
-	private $currentPermissionsExpression;
+	static $logger;
+
 	private $htmlBlocks;
+
+	// Transient variables used for processing.
+	private $currentPermissionsExpression;
 	private $html;
 
-	public function __construct()
+	/**
+	 * Builds the $htmlBlocks member variable.
+	 *
+	 * Builds up the $htmlBlocks member variable by iterating through the
+	 * supplied tokens and creating `WikiTextPermissionBlock`s for each
+	 * permission block in the WikiText.
+	 */
+	public function build( array $tokens ): void
 	{
+		self::$logger->addInfo('Building HTML blocks from Wikitext tokens');
+
+		// Ensure member variables are cleared
 		$this->initialise();
+
+		// Process all tokens, building up permission blocks.
+		foreach ( $tokens as $token )
+			$this->processToken($token);
+
+		// Finished iterating through tokens; if there is any HTML left to add to
+		// a permission block, add it now.
+		if ($this->html !== '')
+			$this->addHtmlBlock( $this->currentPermissionsExpression, $this->html );
+
+		self::$logger->addInfo('Finished building HTML block');
 	}
 
-	public function initialise(): void
-	{
-		$this->currentPermissionsExpression = '';
-		$this->htmlBlocks = array();
-		$this->html = '';
-	}
-
-	private function conclude(): void
-	{
-		$this->addHtmlBlock( $this->currentPermissionsExpression, $this->html );
-	}
+	// == Getters ==
 
 	public function getHtmlBlocks(): array
 	{
 		return $this->htmlBlocks;
-	}
-
-	private function addHtmlBlock( string $permissionsExpression, string $html ): void
-	{
-		$this->htmlBlocks[] = new WikiPagePermissionBlock( $permissionsExpression, $html );
 	}
 
 	public function getHtml(): string
@@ -45,22 +55,13 @@ class HTML5Builder
 		return $entireHtml;
 	}
 
-	public function add( $tokens ): void
-	{
-		foreach ( $tokens as $token )
-            $this->processToken($token);
-	}
+	// == Processing ==
 
-	public function build( $tokens ): void
+	private function initialise(): void
 	{
-		$this->add( $tokens );
-		$this->conclude();
-	}
-
-	public function buildAndGetHtmlBlocks( $tokens ): array
-	{
-		$this->build( $tokens );
-		return $this->getHtmlBlocks();
+		$this->currentPermissionsExpression = '';
+		$this->htmlBlocks = array();
+		$this->html = '';
 	}
 
 	private function processToken( object $token ): void
@@ -68,20 +69,25 @@ class HTML5Builder
 		assert( is_a($token, 'App\WikitextConversion\Tokens\BaseToken') );
 
 		if ( is_a($token, 'App\WikitextConversion\Tokens\MetaToken') )
-			$this->handleMetaToken($token);
+			switch ( $token->getName() )
+			{
+				case 'permissions-specifier':
+					// About to start new WikiPagePermissionBlock, so add the contents
+					// up to now to a WikiPagePermissionBlock and begin a new one.
+					$this->addHtmlBlock($this->currentPermissionsExpression, $this->html);
+
+					// Now begin collecting HTML for next block by setting member variables.
+					$this->currentPermissionsExpression = $token->getAttribute('RPN Permissions Expression');
+					$this->html = '';
+
+					break;
+			}
 		else
     		$this->html .= $token->toHTML();
 	}
 
-	private function handleMetaToken( object $token ): void
+	private function addHtmlBlock( string $permissionsExpression, string $html ): void
 	{
-		switch ( $token->getName() )
-		{
-			case 'permissions-specifier':
-				$this->addHtmlBlock($this->currentPermissionsExpression, $this->html);
-				$this->currentPermissionsExpression = $token->getAttribute('RPN Permissions Expression');
-				$this->html = '';
-				break;
-		}
+		$this->htmlBlocks[] = new WikiPagePermissionBlock( $permissionsExpression, $html );
 	}
 }

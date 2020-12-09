@@ -4,7 +4,7 @@ import AuthFormTextEntry from './../Form Components/AuthFormTextEntry';
 import AuthFormLink from './../Form Components/AuthFormLink';
 import AuthFormCheckBox from './../Form Components/AuthFormCheckBox';
 import AuthFormSubmitButton from './../Form Components/AuthFormSubmitButton';
-import CSRFField from 'Form Components/CSRFField'
+import CSRFField from './../Form Components/CSRFField'
 
 export default function SignInForm({ oldValues, errors })
 {

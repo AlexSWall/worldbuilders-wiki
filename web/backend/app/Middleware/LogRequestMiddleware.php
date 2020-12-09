@@ -32,7 +32,7 @@ class LogRequestMiddleware extends Middleware
 			return [];
 
 		foreach ($restParams as $key => $value)
-			if ( stristr($value, 'password') )
+			if ( is_string($value) && stristr($value, 'password') )
 				$restParams[$key] = '<REDACTED>';
 		return $restParams;
 	}
