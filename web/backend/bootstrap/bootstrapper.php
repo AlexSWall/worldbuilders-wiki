@@ -71,7 +71,6 @@ $container['loggers'] = $loggers;
 $container['HashingUtilities']         = function($container) { return new \App\Helpers\HashingUtilities($container->get('settings')['app']['hash']); };
 $container['randomlib']                = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
 $container['auth']                     = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashingUtilities, $container->randomlib); };
-$container['validator']                = function($container) { return new \App\Validation\Validator; };
 $container['HomeController']           = function($container) { return new \App\Controllers\HomeController($container); };
 $container['AuthenticationController'] = function($container) { return new \App\Controllers\Auth\AuthenticationController($container); };
 $container['AdministrationController'] = function($container) { return new \App\Controllers\Auth\AdministrationController($container); };
