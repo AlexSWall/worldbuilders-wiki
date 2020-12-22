@@ -26,12 +26,16 @@ class Validator
 
 		foreach( $validationArray as $field => [ $rules, $value ] )
 		{
+			assert(is_iterable($rules), 'Validation array rules must be an iterable of callables');
+
 			self::$logger->addInfo('Trying validation rules for ' . $field);
 
 			foreach( $rules as $rule )
 			{
+				assert(is_callable($rule), 'Rules in validation array must be callable');
+
 				$errorString = $rule($value);
-				if ( empty($errorString) )
+				if ( $errorString !== null )
 				{
 					// Validation error found for field; set it as the first
 					// validation error and finish attempting validation for this
