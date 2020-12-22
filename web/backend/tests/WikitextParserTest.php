@@ -26,9 +26,14 @@ final class WikitextParserTests extends TestCase
 		);
 	}
 
-	private function wikitextConversionTester($wikitextToConvert, $expected): void
+	private function wikitextConversionTester($wikitext, $expected): void
 	{
-		$this->assertSame( $expected, ( new WikitextConverter() )->convertWikitextToHtml( $wikitextToConvert ) );
+		$this->assertSame( $expected, ( new WikitextConverter($wikitext) )->getHtml() );
+	}
+
+	private function wikitextConversionRegexTester($wikitext, $expectedRegex): void
+	{
+		$this->assertRegExp( $expectedRegex, ( new WikitextConverter($wikitext) )->getHtml() );
 	}
 
 	/* == Headers == */
@@ -94,22 +99,22 @@ final class WikitextParserTests extends TestCase
 
 	public function testSimpleWikilinkConversion(): void
 	{
-		$this->wikitextConversionTester("[[Place]]", "<p><a href='/#Place'>Place</a></p>");
+		$this->wikitextConversionTester("[[Place]]", "<p><a href='/#place'>Place</a></p>");
 	}
 
 	public function testSimpleWikilinkConversion2(): void
 	{
-		$this->wikitextConversionTester("[[  Place with Spaces   ]]", "<p><a href='/#Place_With_Spaces'>Place with Spaces</a></p>");
+		$this->wikitextConversionTester("[[  Place with Spaces   ]]", "<p><a href='/#place-with-spaces'>Place with Spaces</a></p>");
 	}
 
 	public function testTextWikilinkConversion(): void
 	{
-		$this->wikitextConversionTester("[[Place|text]]", "<p><a href='/#Place'>text</a></p>");
+		$this->wikitextConversionTester("[[Place|text]]", "<p><a href='/#place'>text</a></p>");
 	}
 
 	public function testTextWikilinkConversion2(): void
 	{
-		$this->wikitextConversionTester("[[ Place link  |  some text ]]  ", "<p><a href='/#Place_Link'>some text</a></p>");
+		$this->wikitextConversionTester("[[ Place link  |  some text ]]  ", "<p><a href='/#place-link'>some text</a></p>");
 	}
 
 	/* == Images == */
@@ -122,12 +127,12 @@ final class WikitextParserTests extends TestCase
 
 	public function testImageWithDimensionsConversion(): void
 	{
-		$this->wikitextConversionTester("[[Image:image.jpg|200,100]]", "<p><img src='/images/wiki-images/image.jpg' width='200' height='100'></p>");
+		$this->wikitextConversionRegexTester("[[Image:image.jpg|200,100]]", "@<p><img src='/images/wiki-images/image.jpg' width='200' height='100' style='[^>]+'></p>@");
 	}
 
 	public function testImageWithDimensionsAndSpacingConversion(): void
 	{
-		$this->wikitextConversionTester("[[   Image: image.jpg    | 200,    100 ]]", "<p><img src='/images/wiki-images/image.jpg' width='200' height='100'></p>");
+		$this->wikitextConversionRegexTester("[[   Image: image.jpg    | 200,    100 ]]", "@<p><img src='/images/wiki-images/image.jpg' width='200' height='100' style='[^>]+'></p>@");
 	}
 
 	/* == Lists == */
@@ -187,7 +192,7 @@ final class WikitextParserTests extends TestCase
 	{
 		$this->wikitextConversionTester(
 			" Intro  \n== Heading ===\n[[P2L1]]\n[[ P2 | L2 ]]\n== Heading  2==\n\n\n '''P''3L''1''' \n ====Sub Heading===\nend",
-			"<p>Intro</p>\n<h2>Heading</h2>\n<p><a href='/#P2L1'>P2L1</a>\n<a href='/#P2'>L2</a></p>\n<h2>Heading  2</h2>\n\n\n<p><b>P<i>3L</i>1</b></p>\n<h3>Sub Heading</h3>\n<p>end</p>"
+			"<p>Intro</p>\n<h2>Heading</h2>\n<p><a href='/#p2l1'>P2L1</a>\n<a href='/#p2'>L2</a></p>\n<h2>Heading  2</h2>\n\n\n<p><b>P<i>3L</i>1</b></p>\n<h3>Sub Heading</h3>\n<p>end</p>"
 		);
 	}
 

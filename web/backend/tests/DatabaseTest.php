@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 use App\Utilities\ArrayBasedSet;
 use App\Models\SpecialisedQueries\CharacterPermissionsQueries;
-use App\Models\SpecialisedQueries\WebpagePermissionBlockQueries;
-use App\Permissions\WebpagePermissionBlock;
+use App\Models\SpecialisedQueries\WikiPagePermissionBlockQueries;
+use App\Permissions\WikiPagePermissionBlock;
 
 final class DatabaseTests extends TestCase
 {
@@ -54,31 +54,31 @@ final class DatabaseTests extends TestCase
 	}
 
 
-	/* == Webpage Permission Blocks == */
+	/* == WikiPage Permission Blocks == */
 
-	public function testCanGetWebpagePermissionBlocks(): void
+	public function testCanGetWikiPagePermissionBlocks(): void
 	{
-		$webpagePermissionBlocks = WebpagePermissionBlockQueries::getWebpagePermissionBlocks(1);
-		$this->assertSame( count($webpagePermissionBlocks), 1 );
-		$this->assertTrue( method_exists( $webpagePermissionBlocks[0], 'getPermissionsExpression' ) );
-		$this->assertTrue( method_exists( $webpagePermissionBlocks[0], 'getHtml' ) );
+		$wikiPagePermissionBlocks = WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks(1);
+		$this->assertSame( count($wikiPagePermissionBlocks), 1 );
+		$this->assertTrue( method_exists( $wikiPagePermissionBlocks[0], 'getPermissionsExpression' ) );
+		$this->assertTrue( method_exists( $wikiPagePermissionBlocks[0], 'getHtml' ) );
 	}
 
-	public function testCanClearWebpagePermissionBlocks(): void
+	public function testCanClearWikiPagePermissionBlocks(): void
 	{
-		WebpagePermissionBlockQueries::clearPermissionBlocksForWebpage(1);
-		$webpagePermissionBlocks = WebpagePermissionBlockQueries::getWebpagePermissionBlocks(1);
-		$this->assertSame( count($webpagePermissionBlocks), 0 );
+		WikiPagePermissionBlockQueries::clearPermissionBlocksForWikiPage(1);
+		$wikiPagePermissionBlocks = WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks(1);
+		$this->assertSame( count($wikiPagePermissionBlocks), 0 );
 	}
 
-	public function testCanSetWebpagePermissionBlocks(): void
+	public function testCanSetWikiPagePermissionBlocks(): void
 	{
 		$blocksToSet = [
-			new WebpagePermissionBlock('', '<p>Some text.</p>\n\n'),
-			new WebpagePermissionBlock('is_alive', '<h2>Header</h2>\n\n<p>Text.</p>')
+			new WikiPagePermissionBlock('', '<p>Some text.</p>\n\n'),
+			new WikiPagePermissionBlock('is_alive', '<h2>Header</h2>\n\n<p>Text.</p>')
 		];
-		WebpagePermissionBlockQueries::setPermissionBlocksForWebpage( 1, $blocksToSet );
-		$newBlocks = WebpagePermissionBlockQueries::getWebpagePermissionBlocks(1);
+		WikiPagePermissionBlockQueries::setPermissionBlocksForWikiPage( 1, $blocksToSet );
+		$newBlocks = WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks(1);
 		$this->assertSame( count($newBlocks), 2 );
 		$this->assertTrue( method_exists( $newBlocks[1], 'getPermissionsExpression' ) );
 		$this->assertTrue( method_exists( $newBlocks[1], 'getHtml' ) );

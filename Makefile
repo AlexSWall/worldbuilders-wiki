@@ -74,8 +74,7 @@ mysql-restore:
 	@docker exec -i $(shell docker-compose ps -q mysqldb) mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" website < $(MYSQL_DUMPS_DIR)/db.sql
 
 test:
-	@docker-compose exec -T php ./app/vendor/bin/phpunit --colors=always --configuration ./app/
-	@make resetOwner
+	@docker-compose exec -T php ./backend/vendor/bin/phpunit --colors=always ./backend/tests
 
 resetOwner:
 	@$(shell chown -Rf $(SUDO_USER):$(shell id -g -n $(SUDO_USER)) $(MYSQL_DUMPS_DIR) "$(shell pwd)/etc/ssl" "$(shell pwd)/web/app" 2> /dev/null)

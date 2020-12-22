@@ -1,9 +1,7 @@
 <?php
 
-define('BASE_PATH', dirname(__DIR__));
+$config = require '/config/backend/tests.config.php';
 
-$config = require BASE_PATH . '/config/tests.config.php';
-
-$app = require BASE_PATH . '/bootstrap/bootstrapper.php';
+$app = require dirname(__DIR__) . '/bootstrap/bootstrapper.php';
 
 return $app;

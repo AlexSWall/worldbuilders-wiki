@@ -29,13 +29,19 @@ class TestDatabaseResetter
 			'UserDetails',
 			'UserPermissions',
 			'Users',
-			'WebpagePermissionBlocks',
-			'Webpages',
+			'WikiPagePermissionBlocks',
+			'WikiPages',
 			'WikiPermissions'
 		];
 
 		foreach ( $tables as $table )
-			DB::table($table)->delete();
+			try
+			{
+				DB::table($table)->delete();
+			}
+			catch (\Exception $e)
+			{
+			}
 	}
 
 	public function populate()
@@ -90,19 +96,17 @@ class TestDatabaseResetter
 			'PermissionId' => 1
 		]);
 
-		DB::table('Webpages')->insert([
-			'WebpageId' => 1,
-			'WebpageName' => 'Page_One',
-			'WebpageTitle' => 'Page One',
-			'WebpageTemplate' => 'First paragraph.\n\n== Heading 1 ==\n\nSecond paragraph.',
-			'WebpageHTML' => '<p>First paragraph.</p>\n\n<h2>Heading 1</h2>\n\n<p>Second paragraph.</p>',
-			'isAdminOnly' => 0,
-			'isGlobal' => 0
+		DB::table('WikiPages')->insert([
+			'WikiPageId' => 1,
+			'Title' => 'Page One',
+			'UrlPath' => 'Page_One',
+			'WikiText' => 'First paragraph.\n\n== Heading 1 ==\n\nSecond paragraph.',
+			'Html' => '<p>First paragraph.</p>\n\n<h2>Heading 1</h2>\n\n<p>Second paragraph.</p>',
 		]);
 
-		DB::table('WebpagePermissionBlocks')->insert([
+		DB::table('WikiPagePermissionBlocks')->insert([
 			'BlockId' => 1,
-			'WebpageId' => 1,
+			'WikiPageId' => 1,
 			'PermissionsExpression' => '',
 			'BlockPosition' => '0',
 			'HTML' => '<p>First paragraph.</p>\n\n<h2>Heading 1</h2>\n\n<p>Second paragraph.</p>'
