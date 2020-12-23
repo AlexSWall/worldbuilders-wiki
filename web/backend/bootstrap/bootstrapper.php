@@ -163,11 +163,8 @@ $container['mailer'] = function($container)
 
 $logger->addInfo('Adding middleware.');
 
-$app->add(new \App\Middleware\ValidationErrorsMiddleware($container));
-$app->add(new \App\Middleware\OldInputMiddleware($container));
 $app->add(new \App\Middleware\RememberMeMiddleware($container));
 $app->add(new \App\Middleware\CsrfMiddleware($container));
-
 $app->add($container->csrf);
 $app->add(new \App\Middleware\LogRequestMiddleware($container));
 
