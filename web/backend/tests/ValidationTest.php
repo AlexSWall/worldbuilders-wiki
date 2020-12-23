@@ -73,23 +73,24 @@ final class ValidationTests extends TestCase
 		$this->assertSame(['email4', 'email5', 'email6'], array_keys($errors));
 	}
 
-	public function testPasswordValidation() : void
+	public function testCheckPasswordValidation() : void
 	{
+		# Hash of the string 'password'
+		$passwordHash = '$2y$10$f/NOOGcbFDczGIzzGYoJ1ORLJnMHztuV.LbTpTkmxUhQ22eGgXtNK';
+
 		$errors = Validator::validate([
-			'password1' => [ Rules::passwordRules(), 'password'  ],
-			'password2' => [ Rules::passwordRules(), 'Testing 1 ! ; "'  ],
-			'password3' => [ Rules::passwordRules(), 'password123@!'  ]
+			'password' => [ Rules::passwordCorrectRules($passwordHash), 'password'  ],
 		]);
 
 		$this->assertEmpty($errors, print_r($errors, true) . ' should be empty but isn\'t');
 
 		$errors = Validator::validate([
-			'password4' => [ Rules::passwordRules(), ''  ],
-			'password5' => [ Rules::passwordRules(), 'pass'  ],
-			'password6' => [ Rules::passwordRules(), 'passwordpasswordpasswordpasswordpassword'  ]
+			'password1' => [ Rules::passwordCorrectRules($passwordHash), ''  ],
+			'password2' => [ Rules::passwordCorrectRules($passwordHash), 'pass'  ],
+			'password3' => [ Rules::passwordCorrectRules($passwordHash), 'passwordpasswordpasswordpasswordpassword'  ]
 		]);
 
-		$this->assertSame(['password4', 'password5', 'password6'], array_keys($errors));
+		$this->assertSame(['password1', 'password2', 'password3'], array_keys($errors));
 	}
 
 	private function addJohnSmithUser() : void
