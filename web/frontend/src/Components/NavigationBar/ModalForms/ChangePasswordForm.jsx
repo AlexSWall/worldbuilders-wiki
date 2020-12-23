@@ -94,7 +94,7 @@ export default function ChangePasswordForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Sign In
+						Change Password
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
