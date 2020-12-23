@@ -369,9 +369,9 @@ class AuthenticationController extends Controller
 		self::$logger->addInfo('Attempting to activate account');
 
 		// Convenience function for creating response
-		$makeResponse = function($messageType, $message)
+		$makeResponse = function($messageType, $message) use ($response)
 		{
-			self::$logger->addInfo("Responding with {$$messageType} flash message: {$message}");
+			self::$logger->addInfo("Responding with {$messageType} flash message: {$message}");
 			$this->flash->addMessage($messageType, $message);
 			return $response->withRedirect($this->router->pathFor('home'));
 		};
@@ -390,7 +390,7 @@ class AuthenticationController extends Controller
 		$user = User::retrieveInactiveUserByEmail($email);
 
 		if ( ! $user )
-			return $makeResponse('error', "User with email '{$email}' could not be found");
+			return $makeResponse('error', "Inactivate user with email '{$email}' could not be found");
 
 		self::$logger->addInfo('Account retrieved; checking identifier');
 
