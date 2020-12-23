@@ -9,10 +9,10 @@ assert(isset($config));
 if ( ! defined('BASE_PATH') )
 	define('BASE_PATH', dirname(__DIR__));
 
-require BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
+require_once BASE_PATH . '/vendor/autoload.php'; /* Load dependencies with composer */
 
-require BASE_PATH . '/app/Logging/LoggerRegistry.php';
-require BASE_PATH . '/app/Logging/Logger.php';
+require_once BASE_PATH . '/app/Logging/LoggerRegistry.php';
+require_once BASE_PATH . '/app/Logging/Logger.php';
 
 /* == Set up logging == */
 
@@ -177,11 +177,13 @@ require BASE_PATH . '/app/routes.php';
 
 /* == Set up Globals == */
 
-\App\Globals\FrontEndParametersFacade::createNewFrontEndParametersInstance();
-\App\Globals\FrontEndParametersFacade::setIsAuthenticated($container->auth->isAuthenticated());
-\App\Globals\FrontEndParametersFacade::setUserData($container->auth->getUserSafely());
-\App\Globals\FrontEndParametersFacade::setBaseUrl($container->get('settings')['app']['url']);
-\App\Globals\FrontEndParametersFacade::setFlash($container->flash);
+use App\Globals\FrontEndParametersFacade;
+
+FrontEndParametersFacade::createNewFrontEndParametersInstance();
+FrontEndParametersFacade::setIsAuthenticated($container->auth->isAuthenticated());
+FrontEndParametersFacade::setUserData($container->auth->getUserSafely());
+FrontEndParametersFacade::setBaseUrl($container->get('settings')['app']['url']);
+FrontEndParametersFacade::setFlash($container->flash);
 
 /* == Miscellaneous == */
 
