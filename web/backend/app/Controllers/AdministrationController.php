@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Auth;
+namespace App\Controllers;
 
 use App\Controllers\Controller;
 use App\Helpers\FrontEndDataUtilities;
