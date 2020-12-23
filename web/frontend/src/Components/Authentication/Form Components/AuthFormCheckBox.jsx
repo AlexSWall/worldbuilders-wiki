@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function AuthFormCheckBox({ formId, text })
+export default function CheckBox({ formId, text })
 {
 	return (
 		<div className='form-group form-check'>

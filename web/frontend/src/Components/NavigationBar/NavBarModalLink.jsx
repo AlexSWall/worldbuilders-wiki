@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import NavBarLink from '../NavBarLink';
+import NavBarLink from './NavBarLink';
 
-import Modal from '../../Modal';
+import Modal from '../Modal';
 
 export default function NavBarModalLink({ linkText, ChildComponent })
 {

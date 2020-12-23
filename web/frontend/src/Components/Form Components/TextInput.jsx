@@ -2,13 +2,14 @@ import React from 'react';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function TextInput({ formId, labelText, width, autoComplete, hasError, setFieldTouched, handleChange })
+export default function TextInput({ formId, labelText, type, width, autoComplete, hasError, setFieldTouched, handleChange })
 {
 	return (
 		<div className='form-group'>
 			<label className='form-label' style={ { width: width } } htmlFor={ formId }> { labelText } </label>
 			<Field name={ formId }
 				className={ (hasError ? 'form-control-has-error ' : '') + 'form-control' }
+				type={ type || 'text' }
 				autoComplete={ autoComplete || 'on' }
 				style={ { width: width } }
 				onChange={ e => {
