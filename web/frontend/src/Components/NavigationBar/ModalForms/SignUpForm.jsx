@@ -69,8 +69,6 @@ export default function SignUpForm({ closeModal })
 					{
 						setSubmitting(false);
 						closeModal();
-
-						location.reload();
 					}
 					else
 					{
