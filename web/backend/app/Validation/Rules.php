@@ -114,7 +114,7 @@ class Rules
 
 		return function( string $input ) use ( $passwordHash, $failureString ) : ?string
 		{
-			if ( password_verify( $input, $passwordHash ) )
+			if ( ! password_verify( $input, $passwordHash ) )
 				return $failureString;
 			return null;
 		};
