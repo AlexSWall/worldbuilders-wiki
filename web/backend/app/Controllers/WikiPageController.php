@@ -61,11 +61,11 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
 		{
-			return ResponseUtilities::respondWithError(self::$logger, $response, $errorCode, $error);
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
 		if ($path === null)
-			respondWithError(400, 'WikiPage path not supplied.');
+			$errorResponse(400, 'WikiPage path not supplied.');
 
 		self::$logger->addInfo('Checking whether WikiPage exists...');
 
@@ -88,9 +88,7 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
 		{
-			$x = ResponseUtilities::respondWithError(self::$logger, $response, $errorCode, $error);
-			self::$logger->addInfo((string) $x);
-			return $x;
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
 		self::$logger->addInfo('Checking whether WikiPage exists...');
@@ -116,7 +114,7 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
 		{
-			return ResponseUtilities::respondWithError(self::$logger, $response, $errorCode, $error);
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
 		self::$logger->addInfo('Retrieving WikiPage...');
@@ -148,7 +146,7 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
 		{
-			return ResponseUtilities::respondWithError(self::$logger, $response, $errorCode, $error);
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
 		self::$logger->addInfo('Retrieving WikiPage...');

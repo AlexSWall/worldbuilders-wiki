@@ -54,7 +54,7 @@ class WikiController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
 		{
-			return ResponseUtilities::respondWithError(self::$logger, $response, $errorCode, $error);
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
 		// -- Validate --
