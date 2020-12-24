@@ -7,6 +7,7 @@ import Modal from '../Modal';
 export default function NavBarModalLink({ linkText, ChildComponent })
 {
 	const [isModalOpen, setModalOpen] = useState(false);
+	const [ModalComponent, setModalComponent] = useState(() => ChildComponent);
 
 	return (
 		<>
@@ -17,7 +18,7 @@ export default function NavBarModalLink({ linkText, ChildComponent })
 			/>
 
 			<Modal isOpen={ isModalOpen } setOpen = { setModalOpen }>
-				<ChildComponent closeModal={ () => setModalOpen(false) }/>
+				<ModalComponent closeModal={ () => setModalOpen(false) } setModalComponent={ setModalComponent } />
 			</Modal>
 		</>
 	);

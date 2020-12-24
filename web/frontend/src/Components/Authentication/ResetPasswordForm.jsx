@@ -5,15 +5,11 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import ErrorLabel from '../../Form Components/ErrorLabel';
+import TextInput from '../Form Components/TextInput';
+import SubmitButton from '../Form Components/SubmitButton';
+import ErrorLabel from '../Form Components/ErrorLabel';
 
 const schema = Yup.object().shape({
-	password_old: Yup.string()
-		.min(1, 'Required')
-		.min(6, 'Must be at least 6 characters long')
-		.max(30, 'Cannot be over 30 characters long'),
 	password_new: Yup.string()
 		.min(1, 'Required')
 		.min(6, 'Must be at least 6 characters long')
@@ -24,16 +20,19 @@ const schema = Yup.object().shape({
 		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
 });
 
-export default function ChangePasswordForm({ closeModal })
+export default function ResetPasswordForm()
 {
 	const globals = useContext(GlobalsContext);
 
 	const [submissionError, setSubmissionError] = useState(null);
 
+	const urlParams = new URLSearchParams(window.location.search);
+	const email = urlParams.get('email');
+	const identifier = urlParams.get('identifier');
+
 	return (
 		<Formik
 			initialValues={ {
-				password_old: '',
 				password_new: '',
 				password_new_confirm: ''
 			} }
@@ -47,9 +46,10 @@ export default function ChangePasswordForm({ closeModal })
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'change password',
+						action: 'reset password',
 						data: {
-							password_old: values.password_old,
+							email: email,
+							identifier: identifier,
 							password_new: values.password_new,
 						},
 					}, globals.csrfTokens))
@@ -93,20 +93,10 @@ export default function ChangePasswordForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Change Password
+						Reset Password
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
-							<TextInput
-								formId='password_old'
-								labelText='Old Password'
-								type='password'
-								width={ 250 }
-								hasError={ touched.password_old && errors.password_old }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
 							<TextInput
 								formId='password_new'
 								labelText='New Password'
@@ -127,7 +117,7 @@ export default function ChangePasswordForm({ closeModal })
 								handleChange={ handleChange }
 							/>
 
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 3) }> Change Password </SubmitButton>
+							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 2) }> Reset Password </SubmitButton>
 
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)

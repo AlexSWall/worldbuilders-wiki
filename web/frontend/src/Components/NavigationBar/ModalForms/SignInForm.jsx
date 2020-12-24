@@ -10,6 +10,8 @@ import SubmitButton from '../../Form Components/SubmitButton';
 import ErrorLabel from '../../Form Components/ErrorLabel';
 import CheckBox from '../../Form Components/CheckBox';
 
+import AccountRecoveryForm from './AccountRecoveryForm';
+
 const schema = Yup.object().shape({
 	identity: Yup.string()
 		.min(1, 'Required'),
@@ -18,7 +20,7 @@ const schema = Yup.object().shape({
 	rememberMe: Yup.boolean()
 });
 
-export default function SignInForm({ closeModal })
+export default function SignInForm({ closeModal, setModalComponent })
 {
 	const globals = useContext(GlobalsContext);
 
@@ -114,7 +116,18 @@ export default function SignInForm({ closeModal })
 							/>
 
 							<div className='form-group'>
-								<label className='form-label' style={ { width: 250 } } > { 'Don\'t have an account? ' } <a href='#'>Sign up.</a> </label>
+								<label className='form-label' style={ { width: 250 } } >
+									<a href='#' onClick={ () => {
+										setModalComponent(() => AccountRecoveryForm);
+									} }>Forgotten your password?</a>
+								</label>
+							</div>
+
+							<div className='form-group'>
+								<label className='form-label' style={ { width: 250 } } >
+									{ 'Don\'t have an account? ' }
+									<a href='#'>Sign up.</a>
+								</label>
 							</div>
 
 							<CheckBox

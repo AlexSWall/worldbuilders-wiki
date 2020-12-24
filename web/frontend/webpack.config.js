@@ -6,7 +6,7 @@ new webpack.HotModuleReplacementPlugin();
 module.exports = {
 	entry: {
 		'wiki': ['@babel/polyfill', './src/wiki.index.jsx'],
-		'authentication': ['@babel/polyfill', './src/authentication.index.jsx'],
+		'reset-password': ['@babel/polyfill', './src/reset-password.index.jsx'],
 		'administration': ['@babel/polyfill', './src/administration.index.jsx']
 	},
 	output: {
