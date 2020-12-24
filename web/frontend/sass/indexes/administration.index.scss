@@ -1,1 +1,38 @@
-@import '../administration/administration.scss';
+@import '../core/navigation-bar.scss';
+
+body {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+}
+
+#pageWrapper {
+}
+
+main {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 11pt;
+	z-index: 0;
+	line-height: 1.4;
+}
+
+#contentWrapper {
+	min-height: 100vh;
+}
+
+#content {
+	padding-top: 42px; /* 42 = 14 + 14 + 14 (navbar a links) */;
+	padding-bottom: 50px;
+}
+
+#mainPanelWrapper {
+}
+
+#mainPanel {
+	/* In case the width of the screen is <= 860px, max-width and left-right padding is used. */
+	max-width: 1200px;
+	padding-right: 30px; 
+	padding-left: 30px;
+	margin: 0 auto; /* Centres: Automatic margin left-right, no margin up-down. */
+	padding-top: 30px;
+	padding-bottom: 20px;
+}

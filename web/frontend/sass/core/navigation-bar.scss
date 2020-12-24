@@ -1,3 +1,7 @@
+@import 'modal.scss';
+@import 'card.scss';
+@import 'form.scss';
+
 #navbarWrapper {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	z-index: 1;
@@ -12,187 +16,175 @@
 	text-decoration: none;
 	background-color: #111;
 	opacity: 0.95;
-}
 
-#navbar {
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;
-	height: 42px; /* 14 + 14 + 14 (navbar a) */
-	position: relative;
-	opacity: 1.0;
-	
-	line-height: 1;
-}
+	#navbar {
+		margin-left: auto;
+		margin-right: auto;
+		width: 90%;
+		height: 42px; /* 14 + 14 + 14 (navbar a) */
+		position: relative;
+		opacity: 1.0;
+		line-height: 1;
 
-#navbar-brand-wrapper {
-	left: 0;
-	bottom: 0;
-	display: block;
-	padding: 9px 16px 10px 16px;
-	float: left;
-}
+		#navbar-brand-wrapper {
+			left: 0;
+			bottom: 0;
+			display: block;
+			padding: 9px 16px 10px 16px;
+			float: left;
 
-/* Font colours */
-#navbar-brand, .navbar-item > a {
-	color: #888;
+			#navbar-brand {
+				color: #888;
+				font-size: 20px;
+			}
+		}
+
+		#navbar-content-wrapper {
+			float: left;
+			width: 80%;
+			right: 0;
+			bottom: 0;
+			display: block;
+
+			/* navbar-content would be here */
+		}
+	}
 }
 
 #navbar-brand:hover, #navbar-brand:focus, .navbar-item > a:hover.active, .navbar-item > a:hover:not(.active) {
 	color: #eee;
 }
-/* ------ */
-
-#navbar-brand
-{
-	font-size: 20px;
-}
-
-#navbar-content-wrapper {
-	float: left;
-	width: 80%;
-	right: 0;
-	bottom: 0;
-	display: block;
-}
 
 #navbar-content {
-}
+	/* == NavBar Lists == */
+	.navbar-list, .navbar-list-right {
+		list-style-type: none;
 
-.navbar-list, .navbar-list-right {
-	list-style-type: none;
-}
+		.navbar-item {
+			float: left;
 
-.navbar-list-right {
-	float: right;
-}
+			a {
+				display: block;
+				color: #888;
+				font-size: 14px;
+				padding-top: 14px;
+				padding-bottom: 14px;
+				padding-left: 16px;
+				padding-right: 16px;
+				text-decoration: none;
+				cursor: pointer;
+			}
+		}
 
-.navbar-item {
-	float: left;
-}
+		.navbar-item:last-child {
+			border-bottom: none;
+		}
 
-.navbar-item:last-child {
-	border-bottom: none;
-}
+		.navbar-dropdown {
+			.navbar-dropbtn {
+				display: inline-block;
+				text-align: center;
+				padding: 14px 16px;
+				text-decoration: none;
+			}
 
-.navbar-item > a {
-	display: block;
-	font-size: 14px;
-	padding-top: 14px;
-	padding-bottom: 14px;
-	padding-left: 16px;
-	padding-right: 16px;
-	text-decoration: none;
-	cursor: pointer;
-}
+			.dropdown-content {
+				display: none;
+				position: fixed;
+				font-size: 14px;
+				color: #888;
+				background-color: #fafafa;
+				min-width: 100px;
+				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+				padding-top: 1px;
+				margin-left: -1px;
+				margin-bottom: -1px;
+			}
 
-.navbar-item > a.active {
-}
+			.dropdown-content-leftwards {
+				left:auto;
+				right:0;
+				margin-right:-10px;
+			}
 
-.navbar-dropdown .navbar-dropbtn {
-	display: inline-block;
-	text-align: center;
-	padding: 14px 16px;
-	text-decoration: none;
-}
+			.navbar-dropdown-item > a {
+				padding: 9px 12px;
+				text-decoration: none;
+				display: block;
+				text-align: left;
+			}
 
-.navbar-dropdown:hover .dropdown-content {
-	display: block;
-}
+			.navbar-dropdown-item:hover {
+				background-color: #eaeaea;
+			}
+		}
 
-.navbar-dropdown:hover:not(.active) a {
-}
+		.navbar-dropdown:hover {
+			.dropdown-content {
+				display: block;
+			}
+		}
+	}
 
-.navbar-dropdown:hover {
-}
+	.navbar-list-right {
+		float: right;
+	}
 
-.navbar-dropdown .dropdown-content {
-	display: none;
-	position: fixed;
-	font-size: 14px;
-	color: #888;
-	background-color: #fafafa;
-	min-width: 100px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-	padding-top: 1px;
-	margin-left: -1px;
-	margin-bottom: -1px;
-}
+	/* == Search Bar == */
+	.searchbar-wrapper {
+		width: 220px;
+		padding-top: 6px;
+		padding-bottom: 5px;
+		padding-left: 20px;
+		padding-right: 20px;
 
-.navbar-dropdown .dropdown-content-leftwards {
-	left:auto;
-	right:0;
-	margin-right:-10px;
-}
+		.searchbar {
+			width: 100%;
+			position: relative;
+			display: flex;
 
-.navbar-dropdown .dropdown-content > a {
-	padding: 9px 12px;
-	text-decoration: none;
-	display: block;
-	text-align: left;
-}
+			.searchbar-input {
+				width: 100%;
+				border: 1px solid #2d2d2d;
+				border-right: none;
+				padding-top: 8px;
+				padding-bottom: 4px;
+				padding-left: 8px;
+				height: 17px;
+				outline: none;
+				color: #aaa;
+				font-family: Helvetica, Arial, sans-serif;
+				background: #121212;
+				font-size: 14px;
+			}
 
-.navbar-dropdown .dropdown-content > a:hover {
-	background-color: #eaeaea;
-}
+			.searchbar-input:focus {
+			}
 
+			.searchbar-button {
+				width: 40px;
+				height: 31px;
+				border: 1px solid #2d2d2d;
+				background: #2d2d2d;
+				text-align: center;
+				color: #666;
+				border-radius: 0 2px 2px 0;
+				cursor: pointer;
+				font-size: 20px;
+			}
 
-/* == Search Bar == */
+			// .fa {
+			// 	display: inline-block;
+			// 	font: normal normal normal 14px/1 FontAwesome;
+			// 	font-size: inherit;
+			// 	text-rendering: auto;
+			// 	-webkit-font-smoothing: antialiased;
+			// 	-moz-osx-font-smoothing: grayscale
+			// }
 
-.searchbar-wrapper {
-	width: 220px;
-	padding-top: 6px;
-	padding-bottom: 5px;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-
-.searchbar {
-	width: 100%;
-	position: relative;
-	display: flex;
-}
-
-.searchbar-input {
-	width: 100%;
-	border: 1px solid #2d2d2d;
-	border-right: none;
-	padding-top: 8px;
-	padding-bottom: 4px;
-	padding-left: 8px;
-	height: 17px;
-	outline: none;
-	color: #aaa;
-	font-family: Helvetica, Arial, sans-serif;
-	background: #121212;
-	font-size: 14px;
-}
-
-.fa {
-	display: inline-block;
-	font: normal normal normal 14px/1 FontAwesome;
-	font-size: inherit;
-	text-rendering: auto;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale
-}
-
-.fa-search:before {
-	content: "\f002"
-}
-
-.searchbar-input:focus {
-	
-}
-
-.searchbar-button {
-	width: 40px;
-	height: 31px;
-	border: 1px solid #2d2d2d;
-	background: #2d2d2d;
-	text-align: center;
-	color: #666;
-	border-radius: 0 2px 2px 0;
-	cursor: pointer;
-	font-size: 20px;
+			// .fa-search:before {
+			// 	content: "\f002"
+			// }
+		}
+	}
 }
