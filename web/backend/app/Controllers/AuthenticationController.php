@@ -120,8 +120,8 @@ class AuthenticationController extends Controller
 					'password_new' => $nonEmptyStringCheck
 				]];
 
-			case 'request password reset':
-				return [ 'requestPasswordReset', [
+			case 'request password reset email':
+				return [ 'requestPasswordResetEmail', [
 					'email' => $nonEmptyStringCheck,
 				]];
 
@@ -202,7 +202,7 @@ class AuthenticationController extends Controller
 
 		self::$debug_logger->addInfo('Checking that user exists...');
 
-		if ( !$this->auth->checkUserExists($identity) )
+		if ( ! $this->auth->checkUserExists($identity) )
 			return $errorResponse(401, 'Identity not in use');
 
 		self::$debug_logger->addInfo('User exists, checking they\'re activated...');
@@ -277,7 +277,7 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function requestPasswordReset($response, $email)
+	private function requestPasswordResetEmail($response, $email)
 	{
 		self::$logger->addInfo('Attempting to send reset password email');
 
@@ -325,7 +325,7 @@ class AuthenticationController extends Controller
 		self::$logger->addInfo('Attempting to send reset password email');
 
 		// Convenience wrapper for error response
-		$errorResponse = function($errorCode, $error, $extraErrorData) use ($response)
+		$errorResponse = function($errorCode, $error, $extraErrorData = []) use ($response)
 		{
 			return ResponseUtilities::respondWithError($response, $errorCode, $error, $extraErrorData);
 		};
@@ -338,14 +338,14 @@ class AuthenticationController extends Controller
 			return $errorResponse(400, 'Failed to find user');
 
 		if ( ! $user->getPasswordRecoveryHash() )
-			return $errorResponse(400, 'User does not have password recovery hash');
+			return $errorResponse(400, 'Password recovery identifier expired');
+
+		$hashedIdentifier = $this->HashingUtilities->hash($identifier);
 
 		if ( ! $this->HashingUtilities->checkHash( $user->getPasswordRecoveryHash(), $hashedIdentifier ) )
 			return $errorResponse(400, 'Incorrect password recovery hash supplied');
 
 		self::$logger->addInfo('Successfully authenticated with password recovery hash, validating new password');
-
-		$hashedIdentifier = $this->HashingUtilities->hash($identifier);
 
 		$errors = Validator::validate([
 			'password_new' => [ Rules::passwordRules(), $newPassword ]

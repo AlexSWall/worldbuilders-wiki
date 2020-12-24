@@ -46,7 +46,8 @@ $app->group('', function() use ($app)
 $app->get('/auth/activate-account', 'AuthenticationController:serveActivationAttempt')
 	 ->setName('activate-account');
 
-$app->get('/auth/reset-password', 'PasswordController:serveResetPasswordGetRequest');
+$app->get('/auth/reset-password', 'AuthenticationController:serveResetPasswordGetRequest')
+    ->setName('reset-password');;
 
 // -- POST Requests --
 $app->post('/auth/', 'AuthenticationController:servePostRequest');
