@@ -10,9 +10,6 @@ use App\Globals\FrontEndParametersFacade;
 class FrontEndDataUtilities
 {
 	/* == Getters for Structured Globally-Set Data == */
-	/**
-	 * These functions all pull from global state.
-	 */
 
 	public static function getBaseData()
 	{
@@ -25,20 +22,6 @@ class FrontEndDataUtilities
 			'csrfHTML' => FrontEndParametersFacade::getCsrfHtml(),
 			'flash' => FrontEndParametersFacade::getFlash()
 		];
-	}
-
-	public static function getFormData()
-	{
-		return [ 
-			'csrfHTML'  => FrontEndParametersFacade::getCsrfHtml(),
-			'oldValues' => FrontEndParametersFacade::getPreviousParameters(),
-			'errors'    => FrontEndParametersFacade::getErrors()
-		];
-	}
-
-	public static function getCSRFData()
-	{
-		return [ 'csrfHTML' => FrontEndParametersFacade::getCsrfHtml() ];
 	}
 
 	/* == Non-Global Functions */

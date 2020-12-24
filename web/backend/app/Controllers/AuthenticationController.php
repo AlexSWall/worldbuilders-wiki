@@ -5,9 +5,9 @@ namespace App\Controllers;
 use App\Controllers\Controller;
 
 use App\Models\User;
-use App\Helpers\FormUtilities;
 use App\Helpers\DataUtilities;
 use App\Helpers\ResponseUtilities;
+use App\Helpers\FrontEndDataUtilities;
 use App\Validation\Validator;
 use App\Validation\Rules;
 
@@ -412,8 +412,6 @@ class AuthenticationController extends Controller
 	{
 		self::$logger->addInfo('Serving reset password page');
 
-		return FormUtilities::getForm($this->view, $response, [
-			'formType' => 'Reset Password',
-		]);
+		return FrontEndDataUtilities::getEntryPointResponse( $this->view, $response, 'reset-password');
 	}
 }
