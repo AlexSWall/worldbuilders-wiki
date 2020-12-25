@@ -19,7 +19,6 @@ class FrontEndDataUtilities
 			'preferredName' => ($user === null) ? null : $user->getUserDetails()->getPreferredName(),
 			'isAuthenticated' => FrontEndParametersFacade::getIsAuthenticated(),
 			'csrfTokens' => FrontEndParametersFacade::getCsrfTokens(),
-			'csrfHTML' => FrontEndParametersFacade::getCsrfHtml(),
 			'flash' => FrontEndParametersFacade::getFlash()
 		];
 	}

@@ -36,11 +36,6 @@ class FrontEndParametersFacade
 		self::setter('csrfTokens', $tokens);
 	}
 
-	public static function setCsrfHtml($html)
-	{
-		self::setter('csrfHTML', $html);
-	}
-
 	public static function setPreviousParameters($params)
 	{
 		self::setter('previousParameters', $params);
@@ -76,11 +71,6 @@ class FrontEndParametersFacade
 	public static function getCsrfTokens()
 	{
 		return self::getter('csrfTokens');
-	}
-
-	public static function getCsrfHtml()
-	{
-		return self::getter('csrfHTML');
 	}
 
 	public static function getPreviousParameters()
