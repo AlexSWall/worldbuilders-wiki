@@ -7,10 +7,10 @@ export default function NavigationBar()
 {
 	return (
 		<div id="navbarWrapper">
-			<div id="navbar">
+			<nav id="navbar">
 				<NavBarBrand />
 				<NavBarContent />
-			</div>
+			</nav>
 		</div>
 	);
 }
