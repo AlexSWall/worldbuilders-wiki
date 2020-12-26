@@ -5,33 +5,22 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import ErrorLabel from '../../Form Components/ErrorLabel';
+import TextInput from '../Form_Components/TextInput';
+import SubmitButton from '../Form_Components/SubmitButton';
+import ErrorLabel from '../Form_Components/ErrorLabel';
+import CheckBox from '../Form_Components/CheckBox';
+
+import AccountRecoveryForm from './AccountRecoveryForm';
 
 const schema = Yup.object().shape({
-	preferred_name: Yup.string()
-		.matches(/[a-zA-Z ]*/, 'Must only contain letters and spaces')
-		.max(30, 'Cannot be over 20 characters long'),
-	username: Yup.string()
-		.matches(/[a-zA-Z0-9]*/, 'Must only contain letters and numbers')
-		.min(1, 'Required')
-		.min(4, 'Must be at least 4 characters long')
-		.max(20, 'Cannot be over 20 characters long'),
-	email: Yup.string()
-		.min(1, 'Required')
-		.email(),
+	identity: Yup.string()
+		.min(1, 'Required'),
 	password: Yup.string()
-		.min(1, 'Required')
-		.min(6, 'Must be at least 6 characters long')
-		.max(30, 'Cannot be over 30 characters long'),
-	password_confirm: Yup.string()
-		.min(1, 'Required')
-		.min(6, 'Must be at least 6 characters long')
-		.oneOf([Yup.ref('password'), null], "Passwords do not match")
+		.min(1, 'Required'),
+	rememberMe: Yup.boolean()
 });
 
-export default function SignUpForm({ closeModal })
+export default function SignInForm({ closeModal, setModalComponent })
 {
 	const globals = useContext(GlobalsContext);
 
@@ -40,11 +29,9 @@ export default function SignUpForm({ closeModal })
 	return (
 		<Formik
 			initialValues={ {
-				preferred_name: '',
-				username: '',
-				email: '',
+				identity: '',
 				password: '',
-				password_confirm: ''
+				rememberMe: false
 			} }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
@@ -56,12 +43,11 @@ export default function SignUpForm({ closeModal })
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'sign up',
+						action: 'sign in',
 						data: {
-							username: values.username,
-							email: values.email,
+							identity: values.identity,
 							password: values.password,
-							preferred_name: values.preferred_name
+							rememberMe: values.rememberMe
 						},
 					}, globals.csrfTokens))
 				}).then(async res => {
@@ -69,6 +55,8 @@ export default function SignUpForm({ closeModal })
 					{
 						setSubmitting(false);
 						closeModal();
+
+						location.reload();
 					}
 					else
 					{
@@ -109,28 +97,10 @@ export default function SignUpForm({ closeModal })
 					<div className='card-body'>
 						<Form className='form'>
 							<TextInput
-								formId='preferred_name'
-								labelText='Preferred Name'
+								formId='identity'
+								labelText='Username or Email'
 								width={ 250 }
-								hasError={ touched.preferred_name && errors.preferred_name }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<TextInput
-								formId='username'
-								labelText='Username'
-								width={ 250 }
-								hasError={ touched.username && errors.username }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<TextInput
-								formId='email'
-								labelText='Email'
-								width={ 250 }
-								hasError={ touched.email && errors.email }
+								hasError={ touched.identity && errors.identity }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
@@ -145,17 +115,27 @@ export default function SignUpForm({ closeModal })
 								handleChange={ handleChange }
 							/>
 
-							<TextInput
-								formId='password_confirm'
-								labelText='Confirm Password'
-								type='password'
-								width={ 250 }
-								hasError={ touched.password_confirm && errors.password_confirm }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
+							<div className='form-group'>
+								<label className='form-label' style={ { width: 250 } } >
+									<a href='#' onClick={ () => {
+										setModalComponent(() => AccountRecoveryForm);
+									} }>Forgotten your password?</a>
+								</label>
+							</div>
+
+							<div className='form-group'>
+								<label className='form-label' style={ { width: 250 } } >
+									{ 'Don\'t have an account? ' }
+									<a href='#'>Sign up.</a>
+								</label>
+							</div>
+
+							<CheckBox
+								formId='rememberMe'
+								labelText='Keep me signed in'
 							/>
 
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 5) }> Sign Up </SubmitButton>
+							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && 'identity' in touched && 'password' in touched) }> Sign In </SubmitButton>
 
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)

@@ -5,29 +5,43 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import ErrorLabel from '../../Form Components/ErrorLabel';
+import TextInput from '../Form_Components/TextInput';
+import TextArea from '../Form_Components/TextArea';
+import SubmitButton from '../Form_Components/SubmitButton';
+import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
-	page_path: Yup.string()
-		.required('Required')
-		.matches(/^([a-z][a-z-]*)?[a-z]$/, 'Lowercase characters and interior hyphens only'),
 	title: Yup.string()
-		.required('Required')
+		.required('Required'),
+	wikitext: Yup.string()
 });
 
-export default function WikiPageCreationForm({ closeModal })
+export default function WikiPageModificationForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
+	const [wikitext, setWikitext] = useState(null);
 	const [submissionError, setSubmissionError] = useState(null);
 
-	return (
-		<Formik
-			initialValues={ { page_path: '', title: '' } }
+	const title = document.title;
+
+	const hash = window.location.hash.substring(1);
+	const [wikiPagePath,] = hash.split('#');
+
+	fetch('/a/wiki?wikipage=' + wikiPagePath, {
+		headers: {
+			'Accept': 'application/json',
+		}
+	}) .then(res => res.json())
+		.then(res => setWikitext(res.wikitext));
+
+	return (wikitext === null)
+		? ( <i> Fetching and loading content...  </i> )
+		: ( <Formik
+			initialValues={ { title: title, wikitext: wikitext } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting }) => {
+				console.log('Submitting...')
 				fetch('/a/wiki', {
 					method: 'post',
 					headers: {
@@ -35,9 +49,12 @@ export default function WikiPageCreationForm({ closeModal })
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'create',
-						page_path: values.page_path,
-						data: { title: values.title },
+						action: 'modify',
+						page_path: wikiPagePath,
+						data: {
+							title: values.title,
+							content: values.wikitext
+						},
 					}, globals.csrfTokens))
 				}).then(async res => {
 					if (res.ok)
@@ -45,7 +62,6 @@ export default function WikiPageCreationForm({ closeModal })
 						setSubmitting(false);
 						closeModal();
 
-						window.location.hash = '#' + values.page_path;
 						location.reload();
 					}
 					else
@@ -75,20 +91,10 @@ export default function WikiPageCreationForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Create a Wiki Page
+						Edit this Wiki Page
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
-							<TextInput
-								formId='page_path'
-								labelText='WikiPage Path/ID'
-								width={ 250 }
-								autoComplete='off'
-								hasError={ touched.page_path && errors.page_path }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
 							<TextInput
 								formId='title'
 								labelText='WikiPage Title'
@@ -99,8 +105,17 @@ export default function WikiPageCreationForm({ closeModal })
 								handleChange={ handleChange }
 							/>
 
-							<SubmitButton disabled={ Object.keys(errors).length != Object.keys(touched).length - 2 } />
+							<TextArea
+								formId='wikitext'
+								labelText='Wikitext'
+								size={ { width: 250, height: 150 } }
+								hasError={ touched.wikitext && errors.wikitext }
+								setFieldTouched={ setFieldTouched }
+								handleChange={ handleChange }
+							/>
 
+							<SubmitButton disabled={ Object.keys(errors).length > 0 } />
+							
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
 								: null }

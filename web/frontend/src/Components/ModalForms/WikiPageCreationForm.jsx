@@ -5,28 +5,27 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import ErrorLabel from '../../Form Components/ErrorLabel';
+import TextInput from '../Form_Components/TextInput';
+import SubmitButton from '../Form_Components/SubmitButton';
+import ErrorLabel from '../Form_Components/ErrorLabel';
 
-export default function WikiPageDeletionForm({ closeModal })
+const schema = Yup.object().shape({
+	page_path: Yup.string()
+		.required('Required')
+		.matches(/^([a-z][a-z-]*)?[a-z]$/, 'Lowercase characters and interior hyphens only'),
+	title: Yup.string()
+		.required('Required')
+});
+
+export default function WikiPageCreationForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
 	const [submissionError, setSubmissionError] = useState(null);
 
-	const pagePath = window.location.hash.substring(1).split('#')[0];
-
-	const schema = Yup.object().shape({
-		page_path: Yup.string()
-		.required('Required')
-		.matches(/[a-z][a-z-]*[a-z]/, 'Must be only lowercase, optionally with hyphens within')
-		.matches(pagePath, 'Must match \'' + pagePath + '\'')
-	});
-
 	return (
 		<Formik
-			initialValues={ { page_path: '' } }
+			initialValues={ { page_path: '', title: '' } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting }) => {
 				fetch('/a/wiki', {
@@ -36,9 +35,9 @@ export default function WikiPageDeletionForm({ closeModal })
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'delete',
+						action: 'create',
 						page_path: values.page_path,
-						data: {},
+						data: { title: values.title },
 					}, globals.csrfTokens))
 				}).then(async res => {
 					if (res.ok)
@@ -46,25 +45,24 @@ export default function WikiPageDeletionForm({ closeModal })
 						setSubmitting(false);
 						closeModal();
 
-						window.location.hash = '#';
+						window.location.hash = '#' + values.page_path;
+						location.reload();
 					}
 					else
 					{
 						console.log('Error: Received status code ' + res.status + ' in response to POST request');
 
 						const contentType = res.headers.get("content-type");
-						console.log(res);
 
 						if (contentType && contentType.indexOf("application/json") !== -1) {
 							res.json().then(data => {
-								console.log(data);
-								console.log('Error: ' + data.error);
 								setSubmissionError(data.error);
+								console.log('Error: ' + data.error);
 							});
 						} else {
 							res.text().then(text => {
-								console.log('Error (text): ' + text);
 								setSubmissionError(text);
+								console.log('Error (text): ' + text);
 							});
 						}
 					}
@@ -77,13 +75,13 @@ export default function WikiPageDeletionForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Delete this Wiki Page
+						Create a Wiki Page
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
 							<TextInput
 								formId='page_path'
-								labelText={'Please enter this page\'s path/ID to confirm.'}
+								labelText='WikiPage Path/ID'
 								width={ 250 }
 								autoComplete='off'
 								hasError={ touched.page_path && errors.page_path }
@@ -91,7 +89,17 @@ export default function WikiPageDeletionForm({ closeModal })
 								handleChange={ handleChange }
 							/>
 
-							<SubmitButton disabled={ Object.keys(errors).length != Object.keys(touched).length - 1 } />
+							<TextInput
+								formId='title'
+								labelText='WikiPage Title'
+								width={ 250 }
+								autoComplete='off'
+								hasError={ touched.title && errors.title }
+								setFieldTouched={ setFieldTouched }
+								handleChange={ handleChange }
+							/>
+
+							<SubmitButton disabled={ Object.keys(errors).length != Object.keys(touched).length - 2 } />
 
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)

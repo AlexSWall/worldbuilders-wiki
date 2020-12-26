@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 
 import Modal from '../Modal';
 
-// <NavBarDropdownItem linkText='Change Password' ModalComponent={ ChangePasswordForm } />
-// <NavBarDropdownItem onClick={ () => signOut(globals.csrfTokens) } text="Sign Out" />
-
 export default function NavBarDropdownItem({ text, href, onClick, ModalComponent })
 {
 	if ( ModalComponent )

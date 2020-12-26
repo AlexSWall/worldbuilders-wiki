@@ -5,22 +5,26 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import ErrorLabel from '../../Form Components/ErrorLabel';
-import CheckBox from '../../Form Components/CheckBox';
-
-import AccountRecoveryForm from './AccountRecoveryForm';
+import TextInput from '../Form_Components/TextInput';
+import SubmitButton from '../Form_Components/SubmitButton';
+import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
-	identity: Yup.string()
-		.min(1, 'Required'),
-	password: Yup.string()
-		.min(1, 'Required'),
-	rememberMe: Yup.boolean()
+	password_old: Yup.string()
+		.min(1, 'Required')
+		.min(6, 'Must be at least 6 characters long')
+		.max(30, 'Cannot be over 30 characters long'),
+	password_new: Yup.string()
+		.min(1, 'Required')
+		.min(6, 'Must be at least 6 characters long')
+		.max(30, 'Cannot be over 30 characters long'),
+	password_new_confirm: Yup.string()
+		.min(1, 'Required')
+		.min(6, 'Must be at least 6 characters long')
+		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
 });
 
-export default function SignInForm({ closeModal, setModalComponent })
+export default function ChangePasswordForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
@@ -29,9 +33,9 @@ export default function SignInForm({ closeModal, setModalComponent })
 	return (
 		<Formik
 			initialValues={ {
-				identity: '',
-				password: '',
-				rememberMe: false
+				password_old: '',
+				password_new: '',
+				password_new_confirm: ''
 			} }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
@@ -43,11 +47,10 @@ export default function SignInForm({ closeModal, setModalComponent })
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'sign in',
+						action: 'change password',
 						data: {
-							identity: values.identity,
-							password: values.password,
-							rememberMe: values.rememberMe
+							password_old: values.password_old,
+							password_new: values.password_new,
 						},
 					}, globals.csrfTokens))
 				}).then(async res => {
@@ -55,8 +58,6 @@ export default function SignInForm({ closeModal, setModalComponent })
 					{
 						setSubmitting(false);
 						closeModal();
-
-						location.reload();
 					}
 					else
 					{
@@ -92,50 +93,41 @@ export default function SignInForm({ closeModal, setModalComponent })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Sign In
+						Change Password
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
 							<TextInput
-								formId='identity'
-								labelText='Username or Email'
+								formId='password_old'
+								labelText='Old Password'
+								type='password'
 								width={ 250 }
-								hasError={ touched.identity && errors.identity }
+								hasError={ touched.password_old && errors.password_old }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
 
 							<TextInput
-								formId='password'
-								labelText='Password'
+								formId='password_new'
+								labelText='New Password'
 								type='password'
 								width={ 250 }
-								hasError={ touched.password && errors.password }
+								hasError={ touched.password_new && errors.password_new }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
 
-							<div className='form-group'>
-								<label className='form-label' style={ { width: 250 } } >
-									<a href='#' onClick={ () => {
-										setModalComponent(() => AccountRecoveryForm);
-									} }>Forgotten your password?</a>
-								</label>
-							</div>
-
-							<div className='form-group'>
-								<label className='form-label' style={ { width: 250 } } >
-									{ 'Don\'t have an account? ' }
-									<a href='#'>Sign up.</a>
-								</label>
-							</div>
-
-							<CheckBox
-								formId='rememberMe'
-								labelText='Keep me signed in'
+							<TextInput
+								formId='password_new_confirm'
+								labelText='Confirm New Password'
+								type='password'
+								width={ 250 }
+								hasError={ touched.password_new_confirm && errors.password_new_confirm }
+								setFieldTouched={ setFieldTouched }
+								handleChange={ handleChange }
 							/>
 
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && 'identity' in touched && 'password' in touched) }> Sign In </SubmitButton>
+							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 3) }> Change Password </SubmitButton>
 
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)

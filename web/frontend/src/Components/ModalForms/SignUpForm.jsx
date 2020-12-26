@@ -10,31 +10,41 @@ import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
-	password_new: Yup.string()
+	preferred_name: Yup.string()
+		.matches(/[a-zA-Z ]*/, 'Must only contain letters and spaces')
+		.max(30, 'Cannot be over 20 characters long'),
+	username: Yup.string()
+		.matches(/[a-zA-Z0-9]*/, 'Must only contain letters and numbers')
+		.min(1, 'Required')
+		.min(4, 'Must be at least 4 characters long')
+		.max(20, 'Cannot be over 20 characters long'),
+	email: Yup.string()
+		.min(1, 'Required')
+		.email(),
+	password: Yup.string()
 		.min(1, 'Required')
 		.min(6, 'Must be at least 6 characters long')
 		.max(30, 'Cannot be over 30 characters long'),
-	password_new_confirm: Yup.string()
+	password_confirm: Yup.string()
 		.min(1, 'Required')
 		.min(6, 'Must be at least 6 characters long')
-		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
+		.oneOf([Yup.ref('password'), null], "Passwords do not match")
 });
 
-export default function ResetPasswordForm()
+export default function SignUpForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
 	const [submissionError, setSubmissionError] = useState(null);
 
-	const urlParams = new URLSearchParams(window.location.search);
-	const email = urlParams.get('email');
-	const identifier = urlParams.get('identifier');
-
 	return (
 		<Formik
 			initialValues={ {
-				password_new: '',
-				password_new_confirm: ''
+				preferred_name: '',
+				username: '',
+				email: '',
+				password: '',
+				password_confirm: ''
 			} }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
@@ -46,11 +56,12 @@ export default function ResetPasswordForm()
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'reset password',
+						action: 'sign up',
 						data: {
-							email: email,
-							identifier: identifier,
-							password_new: values.password_new,
+							username: values.username,
+							email: values.email,
+							password: values.password,
+							preferred_name: values.preferred_name
 						},
 					}, globals.csrfTokens))
 				}).then(async res => {
@@ -93,31 +104,58 @@ export default function ResetPasswordForm()
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Reset Password
+						Sign In
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
 							<TextInput
-								formId='password_new'
-								labelText='New Password'
-								type='password'
+								formId='preferred_name'
+								labelText='Preferred Name'
 								width={ 250 }
-								hasError={ touched.password_new && errors.password_new }
+								hasError={ touched.preferred_name && errors.preferred_name }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
 
 							<TextInput
-								formId='password_new_confirm'
-								labelText='Confirm New Password'
-								type='password'
+								formId='username'
+								labelText='Username'
 								width={ 250 }
-								hasError={ touched.password_new_confirm && errors.password_new_confirm }
+								hasError={ touched.username && errors.username }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
 
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 2) }> Reset Password </SubmitButton>
+							<TextInput
+								formId='email'
+								labelText='Email'
+								width={ 250 }
+								hasError={ touched.email && errors.email }
+								setFieldTouched={ setFieldTouched }
+								handleChange={ handleChange }
+							/>
+
+							<TextInput
+								formId='password'
+								labelText='Password'
+								type='password'
+								width={ 250 }
+								hasError={ touched.password && errors.password }
+								setFieldTouched={ setFieldTouched }
+								handleChange={ handleChange }
+							/>
+
+							<TextInput
+								formId='password_confirm'
+								labelText='Confirm Password'
+								type='password'
+								width={ 250 }
+								hasError={ touched.password_confirm && errors.password_confirm }
+								setFieldTouched={ setFieldTouched }
+								handleChange={ handleChange }
+							/>
+
+							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 5) }> Sign Up </SubmitButton>
 
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)

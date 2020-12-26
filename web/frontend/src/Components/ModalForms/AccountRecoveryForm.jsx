@@ -5,26 +5,17 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../../Form Components/TextInput';
-import SubmitButton from '../../Form Components/SubmitButton';
-import ErrorLabel from '../../Form Components/ErrorLabel';
+import TextInput from '../Form_Components/TextInput';
+import SubmitButton from '../Form_Components/SubmitButton';
+import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
-	password_old: Yup.string()
+	email: Yup.string()
 		.min(1, 'Required')
-		.min(6, 'Must be at least 6 characters long')
-		.max(30, 'Cannot be over 30 characters long'),
-	password_new: Yup.string()
-		.min(1, 'Required')
-		.min(6, 'Must be at least 6 characters long')
-		.max(30, 'Cannot be over 30 characters long'),
-	password_new_confirm: Yup.string()
-		.min(1, 'Required')
-		.min(6, 'Must be at least 6 characters long')
-		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
+		.email()
 });
 
-export default function ChangePasswordForm({ closeModal })
+export default function AccountRecoveryForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
@@ -33,9 +24,7 @@ export default function ChangePasswordForm({ closeModal })
 	return (
 		<Formik
 			initialValues={ {
-				password_old: '',
-				password_new: '',
-				password_new_confirm: ''
+				email: '',
 			} }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
@@ -47,10 +36,9 @@ export default function ChangePasswordForm({ closeModal })
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(Object.assign({}, {
-						action: 'change password',
+						action: 'request password reset email',
 						data: {
-							password_old: values.password_old,
-							password_new: values.password_new,
+							email: values.email
 						},
 					}, globals.csrfTokens))
 				}).then(async res => {
@@ -93,41 +81,20 @@ export default function ChangePasswordForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Change Password
+						Account Recovery
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
 							<TextInput
-								formId='password_old'
-								labelText='Old Password'
-								type='password'
+								formId='email'
+								labelText='Email'
 								width={ 250 }
-								hasError={ touched.password_old && errors.password_old }
+								hasError={ touched.email && errors.email }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
 
-							<TextInput
-								formId='password_new'
-								labelText='New Password'
-								type='password'
-								width={ 250 }
-								hasError={ touched.password_new && errors.password_new }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<TextInput
-								formId='password_new_confirm'
-								labelText='Confirm New Password'
-								type='password'
-								width={ 250 }
-								hasError={ touched.password_new_confirm && errors.password_new_confirm }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 3) }> Change Password </SubmitButton>
+							<SubmitButton disabled={ ! (Object.keys(errors).length == 0 && 'email' in touched ) }> Send Account Recovery Email </SubmitButton>
 
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
