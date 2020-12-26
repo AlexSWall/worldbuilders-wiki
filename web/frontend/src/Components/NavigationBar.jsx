@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 
 import GlobalsContext from 'GlobalsContext';
 
-import NavBarDropdown     from './NavigationBar/NavBarDropdown';
-import NavBarDropdownItem from './NavigationBar/NavBarDropdownItem';
-import NavBarModalLink    from './NavigationBar/NavBarModalLink';
-import NavBarSearchBar    from './NavigationBar/NavBarSearchBar';
+import DropdownList from './NavigationBar/DropdownList';
+import DropdownItem from './NavigationBar/DropdownItem';
+import Item         from './NavigationBar/Item';
+import SearchBar    from './NavigationBar/SearchBar';
 
 import SignInForm               from './ModalForms/SignInForm';
 import SignUpForm               from './ModalForms/SignUpForm';
@@ -29,40 +29,58 @@ export default function NavigationBar()
 				<div id="navbar-content-wrapper">
 					<div id="navbar-content">
 						<ul className="navbar-list">
-							<NavBarDropdown href="/#locations" text="Locations" active={ false }>
-								<NavBarDropdownItem href="/#kingdom-of-guthan" text="The Kingdom of Guthan" />
-								<NavBarDropdownItem href="/#the-valen-ministry" text="The Valen Ministry" />
-								<NavBarDropdownItem href="/#draakna" text="Dra'akna" />
-							</NavBarDropdown>
-								{
-									globals.isAuthenticated ? (
-										<>
-											<NavBarModalLink linkText='Add Page' ChildComponent={ WikiPageCreationForm }/>
-											<NavBarModalLink linkText='Edit Page' ChildComponent={ WikiPageModificationForm }/>
-											<NavBarModalLink linkText='Delete Page' ChildComponent={ WikiPageDeletionForm }/>
-										</>
-									) : (<React.Fragment />)
-								}
+							<Item text='Wiki Navigation' href='javascript:void(0);'>
+								<DropdownList>
+									<DropdownItem text='Cosmology'>
+										<DropdownList>
+											<DropdownItem text='Grand History' />
+											<DropdownItem text='Deities and Religion' />
+											<DropdownItem text='The Planes' />
+											<DropdownItem text='Magic and Natural Sciences' />
+										</DropdownList>
+									</DropdownItem>
+									<DropdownItem text='Locations'>
+										<DropdownList>
+											<DropdownItem text="Tal'Dorei" />
+											<DropdownItem text='Wildemount' />
+											<DropdownItem text='Outer Planes' />
+										</DropdownList>
+									</DropdownItem>
+									<DropdownItem text='Miscellaneous'>
+										<DropdownList>
+											<DropdownItem text='Misconceptions' />
+										</DropdownList>
+									</DropdownItem>
+									<DropdownItem text='Random Page' onClick={ () => {
+										return false;
+									} }/>
+								</DropdownList>
+							</Item>
+							{
+								globals.isAuthenticated ? (
+									<>
+										<Item text='Add Page' ModalComponent={ WikiPageCreationForm } />
+										<Item text='Edit Page' ModalComponent={ WikiPageModificationForm } />
+										<Item text='Delete Page' ModalComponent={ WikiPageDeletionForm } />
+									</>
+								) : (<React.Fragment />)
+							}
 						</ul>
 						<ul className="navbar-list navbar-list-right">
-							<NavBarSearchBar />
+							<SearchBar />
 							{
 								globals.isAuthenticated
 								? (
-									<NavBarDropdown href="#"
-										text={
-											(globals.preferredName)
-											? globals.preferredName
-											: 'Account' }
-										active={ false }
-									>
-										<NavBarDropdownItem text='Change Password' ModalComponent={ ChangePasswordForm } />
-										<NavBarDropdownItem onClick={ () => signOut(globals.csrfTokens) } text="Sign Out" />
-									</NavBarDropdown>
+									<Item text={ globals.preferredName || 'Account' } href={ false }>
+										<DropdownList>
+											<DropdownItem text='Change Password' ModalComponent={ ChangePasswordForm } />
+											<DropdownItem text='Sign Out' onClick={ () => signOut(globals.csrfTokens) } />
+										</DropdownList>
+									</Item>
 								) : (
 									<>
-										<NavBarModalLink linkText='Sign up' ChildComponent={ SignUpForm }/>
-										<NavBarModalLink linkText='Sign in' ChildComponent={ SignInForm }/>
+										<Item text='Sign up' ModalComponent={ SignUpForm } />
+										<Item text='Sign in' ModalComponent={ SignInForm } />
 									</>
 								)
 							}
