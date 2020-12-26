@@ -41,6 +41,12 @@
 		border:1px solid black;
 		background: #f8f1eb;
 
+		a:link, a:visited, a:hover, a:active {
+			color: #000090;
+			background-color: transparent;
+			text-decoration: none;
+		}
+
 		/* For ToC */
 		a.anchor {
 			color: black;
