@@ -11,7 +11,7 @@ import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
 	email: Yup.string()
-		.min(1, 'Required')
+		.required('Required')
 		.email()
 });
 

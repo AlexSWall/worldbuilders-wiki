@@ -14,9 +14,9 @@ import AccountRecoveryForm from './AccountRecoveryForm';
 
 const schema = Yup.object().shape({
 	identity: Yup.string()
-		.min(1, 'Required'),
+		.required('Required'),
 	password: Yup.string()
-		.min(1, 'Required'),
+		.required('Required'),
 	rememberMe: Yup.boolean()
 });
 

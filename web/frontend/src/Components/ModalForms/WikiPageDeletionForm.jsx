@@ -20,8 +20,8 @@ export default function WikiPageDeletionForm({ closeModal })
 	const schema = Yup.object().shape({
 		page_path: Yup.string()
 		.required('Required')
-		.matches(/[a-z][a-z-]*[a-z]/, 'Must be only lowercase, optionally with hyphens within')
-		.matches(pagePath, 'Must match \'' + pagePath + '\'')
+		.matches(/^\/?#?([a-z][a-z-]*)?[a-z]?$/, 'Must be only lowercase, optionally with hyphens within')
+		.matches(new RegExp('^/?#?' + pagePath + '$', "g"), 'Must match \'' + pagePath + '\'')
 	});
 
 	return (

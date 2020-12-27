@@ -11,15 +11,15 @@ import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
 	password_old: Yup.string()
-		.min(1, 'Required')
+		.required('Required')
 		.min(6, 'Must be at least 6 characters long')
 		.max(30, 'Cannot be over 30 characters long'),
 	password_new: Yup.string()
-		.min(1, 'Required')
+		.required('Required')
 		.min(6, 'Must be at least 6 characters long')
 		.max(30, 'Cannot be over 30 characters long'),
 	password_new_confirm: Yup.string()
-		.min(1, 'Required')
+		.required('Required')
 		.min(6, 'Must be at least 6 characters long')
 		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
 });

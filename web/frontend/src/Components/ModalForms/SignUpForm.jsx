@@ -14,19 +14,19 @@ const schema = Yup.object().shape({
 		.matches(/[a-zA-Z ]*/, 'Must only contain letters and spaces')
 		.max(30, 'Cannot be over 20 characters long'),
 	username: Yup.string()
-		.matches(/[a-zA-Z0-9]*/, 'Must only contain letters and numbers')
-		.min(1, 'Required')
+		.required('Required')
+		.matches(/^[a-zA-Z0-9]+$/, 'Must only contain letters and numbers')
 		.min(4, 'Must be at least 4 characters long')
 		.max(20, 'Cannot be over 20 characters long'),
 	email: Yup.string()
-		.min(1, 'Required')
-		.email(),
+		.required('Required')
+		.email('Email must be valid'),
 	password: Yup.string()
-		.min(1, 'Required')
+		.required('Required')
 		.min(6, 'Must be at least 6 characters long')
 		.max(30, 'Cannot be over 30 characters long'),
 	password_confirm: Yup.string()
-		.min(1, 'Required')
+		.required('Required')
 		.min(6, 'Must be at least 6 characters long')
 		.oneOf([Yup.ref('password'), null], "Passwords do not match")
 });
