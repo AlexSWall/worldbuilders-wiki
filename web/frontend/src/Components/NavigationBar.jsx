@@ -29,7 +29,7 @@ export default function NavigationBar()
 				<div id="navbar-content-wrapper">
 					<div id="navbar-content">
 						<ul className="navbar-list">
-							<Item text='Wiki Navigation' href='javascript:void(0);'>
+							<Item text='Wiki Navigation' href={ false }>
 								<DropdownList>
 									<DropdownItem text='Cosmology'>
 										<DropdownList>

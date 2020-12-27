@@ -28,7 +28,7 @@ export default function Item({ text, href, onClick, ModalComponent, type='navbar
 	else if ( href ) 
 		return getItemComponent( type, text, { href: href }, children );
 	else if ( href === false )
-		return getItemComponent( type, text, { href: 'javascript:void(0);' }, children );
+		return getItemComponent( type, text, { onClick: () => { return false; } }, children );
 	else
 	{
 		href = '/#' + text.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
