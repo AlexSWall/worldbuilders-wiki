@@ -46,7 +46,6 @@ export default function WikiPageCreationForm({ closeModal })
 						closeModal();
 
 						window.location.hash = '#' + values.page_path;
-						location.reload();
 					}
 					else
 					{

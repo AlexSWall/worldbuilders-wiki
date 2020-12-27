@@ -62,7 +62,7 @@ export default function WikiPageModificationForm({ closeModal })
 						setSubmitting(false);
 						closeModal();
 
-						location.reload();
+						window.dispatchEvent(new HashChangeEvent("hashchange"));
 					}
 					else
 					{
