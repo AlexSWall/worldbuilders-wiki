@@ -74,7 +74,7 @@ export default function WikiPageCreationForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Create a Wiki Page
+						Create Wiki Page
 					</div>
 					<div className='card-body'>
 						<Form className='form'>

@@ -77,13 +77,13 @@ export default function WikiPageDeletionForm({ closeModal })
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Delete this Wiki Page
+						Delete Wiki Page
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
 							<TextInput
 								formId='page_path'
-								labelText={'Please enter this page\'s path/ID to confirm.'}
+								labelText={'Enter page hash to confirm'}
 								width={ 250 }
 								autoComplete='off'
 								hasError={ touched.page_path && errors.page_path }
