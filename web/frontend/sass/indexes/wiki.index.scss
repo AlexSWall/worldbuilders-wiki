@@ -39,7 +39,8 @@
 		padding-bottom: 20px;
 
 		border:1px solid black;
-		background: #f8f1eb;
+		box-shadow: 2px 3px 20px black, 0 0 125px #8f5922 inset;
+		background: #fffef0;
 
 		a:link, a:visited, a:hover, a:active {
 			color: #000090;
@@ -204,7 +205,6 @@
 			text-align: center;
 			max-width: 100%;
 			display: block;
-
 		}
 	}
 }
