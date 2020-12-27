@@ -88,7 +88,7 @@ export default function WikiPageModificationForm({ closeModal })
 				});
 			} }
 		>
-			{ ({ touched, setFieldTouched, handleChange, errors }) => (
+			{ ({ touched, setFieldTouched, handleChange, initialValues, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
 						Edit Wiki Page
@@ -103,6 +103,7 @@ export default function WikiPageModificationForm({ closeModal })
 								hasError={ touched.title && errors.title }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
+								initialValue={ initialValues.title }
 							/>
 
 							<TextArea
@@ -112,6 +113,7 @@ export default function WikiPageModificationForm({ closeModal })
 								hasError={ touched.wikitext && errors.wikitext }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
+								initialValue={ initialValues.wikitext }
 							/>
 
 							<SubmitButton disabled={ Object.keys(errors).length > 0 } />
