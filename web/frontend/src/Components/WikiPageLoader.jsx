@@ -92,15 +92,6 @@ export default function WikiPageLoader({ urlBase })
 					const [wikiPagePath, heading] = hash.split('#');
 
 					fetchAndUpdatePageContents(wikiPagePath, heading);
-
-					// if ( wikiPagePath === '' )
-					// 	// If there is no hash, set it to 'Home'.
-					// 	// This will result in function being called again.
-					// 	window.location.hash = 'Home';
-					// else
-					// 	// Otherwise, update the contents by fetching the intended contents,
-					// 	// setting the inner component for it, and moving to the heading.
-					// 	fetchAndUpdatePageContents(wikiPagePath, heading);
 				}
 			);
 
