@@ -40,7 +40,7 @@ function getItemComponent( type, text, action, children, extraComponent=undefine
 {
 	return (
 		<li className={ type + '-item' }>
-			<a className={ type + '-link' }
+			<a className={ type + '-link underline-right' }
 			{ ...action }>
 				{ text }
 			</a>
