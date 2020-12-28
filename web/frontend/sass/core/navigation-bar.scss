@@ -15,7 +15,7 @@
 	text-align: center;
 	text-decoration: none;
 	background-color: #111;
-	opacity: 0.95;
+	opacity: 0.98;
 
 	#navbar {
 		display: block;
@@ -56,219 +56,198 @@
 }
 
 
-#navbar-content-wrapper #navbar-content {
-	/* == NavBar Lists == */
-	@at-root .navbar-list, .navbar-list-right {
-		list-style-type: none;
+/* == Navigation Bar Items List == */
 
-		@at-root .navbar-item {
-			position: relative;
-			float: left;
-			margin-right: 1px;
+.navbar-list, .navbar-list-right {
+	list-style-type: none;
 
-			&:last-child {
-				border-bottom: none;
-			}
+	@at-root .navbar-item {
+		position: relative;
+		float: left;
+		margin-right: 1px;
 
-			> a {
-				display: block;
-				color: #888;
-				font-size: 14px;
-				padding-top: 14px;
-				padding-bottom: 14px;
-				padding-left: 16px;
-				padding-right: 16px;
-				text-decoration: none;
-				cursor: pointer;
-
-				&:hover.active, &:hover:not(.active) {
-					color: #eee;
-				}
-			}
+		&:last-child {
+			border-bottom: none;
 		}
 
-		@at-root .navbar-dropdown
-		{
-			.navbar-dropbtn {
-				display: inline-block;
-				text-align: center;
-				padding: 14px 16px;
-				text-decoration: none;
-			}
+		> a {
+			display: block;
+			color: #888;
+			font-size: 14px;
+			padding-top: 14px;
+			padding-bottom: 14px;
+			padding-left: 16px;
+			padding-right: 16px;
+			text-decoration: none;
+			cursor: pointer;
 
-			.dropdown-content {
-				display: none;
-				position: fixed;
-				font-size: 14px;
-				color: #888;
-				background-color: #fafafa;
-				min-width: 100px;
-				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-				padding-top: 1px;
-				margin-left: -1px;
-				margin-bottom: -1px;
-			}
-
-			&:hover .dropdown-content {
-				display: block;
-			}
-
-			.dropdown-content-leftwards {
-				left:auto;
-				right:0;
-				margin-right:-10px;
-			}
-
-			.navbar-dropdown-item {
-				padding: 9px 12px;
-				text-decoration: none;
-				display: block;
-				text-align: left;
-
-				&:hover {
-					background-color: #eaeaea;
-				}
+			&:hover.active, &:hover:not(.active) {
+				color: #eee;
 			}
 		}
 	}
+}
 
-	@at-root .navbar-list-right {
-		float: right;
-	}
+.navbar-list-right {
+	float: right;
+}
 
-	/* == Search Bar == */
-	@at-root .searchbar-wrapper {
-		width: 220px;
-		padding-top: 6px;
-		padding-bottom: 5px;
-		padding-left: 20px;
-		padding-right: 20px;
 
-		.searchbar {
+/* == Navigation Bar Search == */
+
+.searchbar-wrapper {
+	width: 220px;
+	padding-top: 6px;
+	padding-bottom: 5px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	.searchbar {
+		width: 100%;
+		position: relative;
+		display: flex;
+
+		.searchbar-input {
 			width: 100%;
-			position: relative;
-			display: flex;
+			border: 1px solid #2d2d2d;
+			border-right: none;
+			padding-top: 8px;
+			padding-bottom: 4px;
+			padding-left: 8px;
+			height: 17px;
+			outline: none;
+			color: #aaa;
+			font-family: Helvetica, Arial, sans-serif;
+			background: #121212;
+			font-size: 14px;
 
-			.searchbar-input {
-				width: 100%;
-				border: 1px solid #2d2d2d;
-				border-right: none;
-				padding-top: 8px;
-				padding-bottom: 4px;
-				padding-left: 8px;
-				height: 17px;
-				outline: none;
-				color: #aaa;
-				font-family: Helvetica, Arial, sans-serif;
-				background: #121212;
-				font-size: 14px;
-
-				&:focus {
-				}
+			&:focus {
 			}
-
-			.searchbar-button {
-				width: 40px;
-				height: 31px;
-				border: 1px solid #2d2d2d;
-				background: #2d2d2d;
-				text-align: center;
-				color: #666;
-				border-radius: 0 2px 2px 0;
-				cursor: pointer;
-				font-size: 20px;
-			}
-
-			// .fa {
-			// 	display: inline-block;
-			// 	font: normal normal normal 14px/1 FontAwesome;
-			// 	font-size: inherit;
-			// 	text-rendering: auto;
-			// 	-webkit-font-smoothing: antialiased;
-			// 	-moz-osx-font-smoothing: grayscale
-			// }
-
-			// .fa-search:before {
-			// 	content: "\f002"
-			// }
 		}
+
+		.searchbar-button {
+			width: 40px;
+			height: 31px;
+			border: 1px solid #2d2d2d;
+			background: #2d2d2d;
+			text-align: center;
+			color: #666;
+			border-radius: 0 2px 2px 0;
+			cursor: pointer;
+			font-size: 20px;
+		}
+
+		// .fa {
+		// 	display: inline-block;
+		// 	font: normal normal normal 14px/1 FontAwesome;
+		// 	font-size: inherit;
+		// 	text-rendering: auto;
+		// 	-webkit-font-smoothing: antialiased;
+		// 	-moz-osx-font-smoothing: grayscale
+		// }
+
+		// .fa-search:before {
+		// 	content: "\f002"
+		// }
 	}
 }
 
 
 /* == Navigation Bar Dropdowns == */
 
-.navbar-item:hover > .dropdown-list {
-  /* Display dropdown on hover */
-	left: auto;
-	min-width: 100%;
-}
+.navbar-item {
+	// Default dropdown-list style
+	& .dropdown-list {
+		position: absolute;
+		list-style: none;
+		white-space: nowrap;
+		min-width: 100%;
+		margin: 0;
+		padding: 0;
 
-.dropdown-list {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+		// Hide dropdown list by default
+		left: -99999em;
+	}
 
-	position: absolute;
-	white-space: nowrap;
-	z-index: 1;
-	left: -99999em;
-}
+	// Base dropdown CSS
+	& > .dropdown-list {
+		// Add top border to distance dropdown from navbar
+		border-top: 3px solid #111;
+	}
 
-.dropdown-item {
-	position: relative;
-}
-
-.dropdown-link {
-	display: block;
-	background: #111;
-	color: #888;
-	font-size: 14px;
-	text-decoration: none;
-	padding: .8em 1.8em;
-	position: relative;
-	border-top: 1px solid #888;
-
-	&:hover.active, &:hover:not(.active) {
-		/* Highlight link on hover */
-		color: #CEE;
+	// Unhide base dropdown on navbar item hover
+	&:hover > .dropdown-list {
+		// (Center)
+		left: 50%;
+		transform: translateX(-50%);
 	}
 }
 
-.dropdown-item:hover > .dropdown-link {
-  /* Highlight link on hover */
-	color: #CEE;
-}
+.dropdown-list > .dropdown-item {
+	position: relative;
 
-/* -- Sub-Menus -- */
+	// Dropdown links
+	> .dropdown-link {
+		display: block;
+		background: #111;
+		color: #888;
+		font-size: 14px;
+		text-decoration: none;
+		padding: .8em 1.8em .8em 1.8em;
+		position: relative;
 
-.dropdown-item:hover > .dropdown-list {
-  /* Display sub-menu on hover */
-	left: 100%;
-	top: 0px;
-}
+		&:hover.active, &:hover:not(.active) {
+			// Highlight link on hover
+			color: #CEE;
+		}
+	}
 
-.dropdown-item > .dropdown-list {
-  /* Horizontal gap between sub-menus */
-	border-left: 1px solid #888;
-}
+  // Highlight link on hover
+	&:hover > .dropdown-link {
+		color: #CEE;
+	}
 
-.dropdown-link:first-child:nth-last-child(2):before {
-  /* Arrows for showing sub-menus */
-	content: "";
-	position: absolute;
-	height: 0;
-	width: 0;
-	border: 5px solid transparent;
-	top: 50%;
-	right: 5px;
-	border-left-color: #aaa;
-	margin-top: -5px
-}
+  // Unhide sub-menu (if any) on hover
+	&:hover > .dropdown-list {
+		left: 100%; // (This moves list from left: -99999em)
+		top: 0px;
+	}
 
-.dropdown-item:hover > .dropdown-link:first-child:nth-last-child(2):before {
-  /* In-use sub-menu arrows */
-	border: 5px solid transparent;
-	right: 10px;
-	border-right-color: #cee;
+	// Draw arrows for dropdown items with two children (i.e. first == 2nd last)
+	// (and put it before the .dropdown-link)
+	> .dropdown-link:first-child:nth-last-child(2):before {
+		content: "";
+		position: absolute;
+		height: 0;
+		width: 0;
+		top: 50%;
+		margin-top: -5px;
+		right: 5px;
+		border: 5px solid transparent;
+		border-left-color: #aaa;
+	}
+
+	// Reverse arrows and change their colour when hovering over their dropdown item
+	&:hover > .dropdown-link:first-child:nth-last-child(2):before {
+		border: 5px solid transparent;
+		right: 10px;
+		border-right-color: #cee;
+	}
+
+	// -- Sub-menus --
+	// Add border spacing on left for sub-menus
+	> .dropdown-list > .dropdown-item {
+
+		// Transparent left border by default
+		border-left: 3px solid transparent;
+
+		// Normal colour for top item of sub-menu
+		&:first-child {
+			border-left: 3px solid #111;
+
+			& > .dropdown-link {
+				border-left: 3px solid #111;
+			}
+		}
+	}
 }
