@@ -5,12 +5,6 @@
 
 #pageWrapper {
 	main {
-		font-family: Adamina,Georgia,Cambria,"Times New Roman",Times,serif;
-		font-size: 16rem;
-		color: black;
-		z-index: 0;
-		line-height: 1.4;
-
 		#contentWrapper {
 			min-height: 100vh;
 
@@ -30,6 +24,12 @@
 
 #mainPanelWrapper {
 	#mainPanel {
+		font-family: Adamina,Georgia,Cambria,"Times New Roman",Times,serif;
+		font-size: 16rem;
+		line-height: 1.6;
+		color: black;
+		z-index: 0;
+
 		/* In case the width of the screen is <= 860rem, max-width and left-right padding is used. */
 		max-width: 800rem;
 		padding-right: 45rem; 
@@ -111,24 +111,52 @@
 
 		p {
 			display: block;
-			margin-top: 1em;
-			margin-bottom: 1em;
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
 			margin-left: 0;
 			margin-right: 0;
+		}
+
+		ul, ol {
+			display: block;
+			margin-top: 4rem;
+			margin-left: 15rem;
+			margin-right: 0;
+			margin-bottom: 2rem;
+			padding-left: 0;
+
+			li {
+				margin-bottom: 2rem;
+			}
 		}
 
 		ul {
-			display: block;
-			list-style-type: square;
-			margin-top: 1em;
-			margin-bottom: 1em;
-			margin-left: 0;
-			margin-right: 0;
-			padding-left: 40rem;
+			list-style-type: none;
+
+			li {
+				// Allow absolute bulletpoint to be placed relative to list item
+				position: relative;
+
+				padding-left: 10rem;
+			}
+
+			li::before {
+				content: '\2022'; // Bulletpoint unicode
+				font-size: 20rem; // Increase size by 25%
+
+				padding-right: 8rem;
+
+				position: absolute; // Position absolutely relative to li
+				left: -4rem; // Move to the left
+				// Centre vertically (li line height = 22.4, bulletpoint height = 28,
+				// so 28 - 22.4 = 5.6 = 2.8 * 2):
+				margin-top: -2.8rem;
+			}
 		}
 
-		li {
-			display: list-item;
+		ol {
+			list-style-type: decimal;
+				padding-left: 10rem;
 		}
 
 		q {
