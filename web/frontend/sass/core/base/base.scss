@@ -27,6 +27,11 @@ b {
 
 /* == Add website fundamentals == */
 
+:root {
+	// 1rem = 1px
+	font-size: 6.25%;
+}
+
 html {
 	overflow: scroll;
 	overflow-x: hidden;
@@ -43,7 +48,7 @@ html::-webkit-scrollbar {
 
 body {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-size: 14rem;
 
 	#pageWrapper {
 	}

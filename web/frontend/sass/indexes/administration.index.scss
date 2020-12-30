@@ -2,7 +2,7 @@
 
 body {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-size: 14rem;
 }
 
 #pageWrapper {
@@ -20,19 +20,19 @@ main {
 }
 
 #content {
-	padding-top: 42px; /* 42 = 14 + 14 + 14 (navbar a links) */;
-	padding-bottom: 50px;
+	padding-top: 42rem; /* 42 = 14 + 14 + 14 (navbar a links) */;
+	padding-bottom: 50rem;
 }
 
 #mainPanelWrapper {
 }
 
 #mainPanel {
-	/* In case the width of the screen is <= 860px, max-width and left-right padding is used. */
-	max-width: 1200px;
-	padding-right: 30px; 
-	padding-left: 30px;
+	/* In case the width of the screen is <= 860rem, max-width and left-right padding is used. */
+	max-width: 1200rem;
+	padding-right: 30rem; 
+	padding-left: 30rem;
 	margin: 0 auto; /* Centres: Automatic margin left-right, no margin up-down. */
-	padding-top: 30px;
-	padding-bottom: 20px;
+	padding-top: 30rem;
+	padding-bottom: 20rem;
 }

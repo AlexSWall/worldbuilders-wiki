@@ -16,9 +16,9 @@
 	background-color: #FFF;
 	z-index: 1000;
 
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+	border-radius: 5rem;
+	-moz-border-radius: 5rem;
+	-webkit-border-radius: 5rem;
 
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 11pt;
@@ -29,14 +29,14 @@
 		cursor: pointer;
 		z-index: 1001;
 
-		top: -10px;
-		right: -10px;
+		top: -10rem;
+		right: -10rem;
 
 		box-sizing: border-box;
-		width: 20px;
-		height: 20px;
+		width: 20rem;
+		height: 20rem;
 
-		border-width: 3px;
+		border-width: 3rem;
 		border-style: solid;
 		border-color: #605F61;
 		border-radius: 100%;

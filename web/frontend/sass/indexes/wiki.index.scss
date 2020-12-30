@@ -15,11 +15,11 @@
 			min-height: 100vh;
 
 			#content {
-				padding-top: 42px; /* 42 = 14 + 14 + 14 (navbar a links) */;
-				padding-bottom: 50px;
+				padding-top: 42rem; /* 42 = 14 + 14 + 14 (navbar a links) */;
+				padding-bottom: 50rem;
 
 				#mainPanelWrapper {
-					padding-top: 30px;
+					padding-top: 30rem;
 
 					// mainPanel below
 				}
@@ -30,16 +30,16 @@
 
 #mainPanelWrapper {
 	#mainPanel {
-		/* In case the width of the screen is <= 860px, max-width and left-right padding is used. */
-		max-width: 800px;
-		padding-right: 45px; 
-		padding-left: 45px;
+		/* In case the width of the screen is <= 860rem, max-width and left-right padding is used. */
+		max-width: 800rem;
+		padding-right: 45rem; 
+		padding-left: 45rem;
 		margin: 0 auto; /* Centres: Automatic margin left-right, no margin up-down. */
-		padding-top: 20px;
-		padding-bottom: 20px;
+		padding-top: 20rem;
+		padding-bottom: 20rem;
 
-		border:1px solid black;
-		box-shadow: 2px 3px 20px black, 0 0 125px #8f5922 inset;
+		border:1rem solid black;
+		box-shadow: 2rem 3rem 20rem black, 0 0 125rem #8f5922 inset;
 		background: #fffef0;
 
 		a:link, a:visited, a:hover, a:active {
@@ -61,8 +61,8 @@
 			display: block;
 			position: relative;
 			width: 0;
-			height: 30px;
-			margin-top: -30px;
+			height: 30rem;
+			margin-top: -30rem;
 		}
 
 		h1, h2, h3, h4, h5, h6
@@ -124,7 +124,7 @@
 			margin-bottom: 1em;
 			margin-left: 0;
 			margin-right: 0;
-			padding-left: 40px;
+			padding-left: 40rem;
 		}
 
 		li {
@@ -162,9 +162,9 @@
 
 		.quoteref {
 			display: block;
-			padding-right: 30px;
+			padding-right: 30rem;
 			text-align: right;
-			font-size: 13px;
+			font-size: 13rem;
 			font-style: italic;
 			color: #84775c;
 		}
@@ -172,33 +172,33 @@
 		/* == Forms == */
 
 		.form-group {
-			margin-top: 10px;
-			margin-bottom: 10px;
+			margin-top: 10rem;
+			margin-bottom: 10rem;
 		}
 
 		.form-label {
 			text-decoration: underline;
-			margin-top: 3px;
-			margin-bottom: 3px;
+			margin-top: 3rem;
+			margin-bottom: 3rem;
 		}
 
 		.form-control {
 			display: block;
-			margin-top: 3px;
-			margin-bottom: 3px;
+			margin-top: 3rem;
+			margin-bottom: 3rem;
 		}
 
 		form textarea {
-			width: 700px;
-			max-width: 700px;
-			height: 400px;
-			max-height: 1000px;
+			width: 700rem;
+			max-width: 700rem;
+			height: 400rem;
+			max-height: 1000rem;
 		}
 
 		.form-submit {
 			display: block;
-			margin-top: 3px;
-			margin-bottom: 3px;
+			margin-top: 3rem;
+			margin-bottom: 3rem;
 		}
 
 		div > .image {

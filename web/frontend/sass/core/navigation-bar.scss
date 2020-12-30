@@ -31,19 +31,19 @@
 		margin-left: auto;
 		margin-right: auto;
 		width: 90%;
-		height: 42px; /* 14 + 14 + 14 (navbar a) */
+		height: 42rem; /* 14 + 14 + 14 (navbar a) */
 		opacity: 1.0;
 		line-height: 1;
 
 		#navbar-brand-wrapper {
 			left: 0;
 			bottom: 0;
-			padding: 9px 16px 10px 16px;
+			padding: 9rem 16rem 10rem 16rem;
 			float: left;
 
 			#navbar-brand {
 				color: #888;
-				font-size: 20px;
+				font-size: 20rem;
 
 				&:hover, &:focus {
 					// Highlight link on hover
@@ -75,7 +75,7 @@
 	@at-root .navbar-item {
 		position: relative;
 		float: left;
-		margin-right: 1px;
+		margin-right: 1rem;
 
 		&:last-child {
 			border-bottom: none;
@@ -83,10 +83,10 @@
 
 		> a {
 			display: block;
-			font-size: 14px;
-			padding: 14px 16px 14px 16px;
+			font-size: 14rem;
+			padding: 14rem 16rem 14rem 16rem;
 			color: #888;
-			font-size: 14px;
+			font-size: 14rem;
 			text-decoration: none;
 
 			&:hover, &:focus {
@@ -107,11 +107,11 @@
 /* == Navigation Bar Search == */
 
 .searchbar-wrapper {
-	width: 220px;
-	padding-top: 6px;
-	padding-bottom: 5px;
-	padding-left: 20px;
-	padding-right: 20px;
+	width: 220rem;
+	padding-top: 6rem;
+	padding-bottom: 5rem;
+	padding-left: 20rem;
+	padding-right: 20rem;
 
 	.searchbar {
 		width: 100%;
@@ -120,37 +120,37 @@
 
 		.searchbar-input {
 			width: 100%;
-			border: 1px solid #2d2d2d;
+			border: 1rem solid #2d2d2d;
 			border-right: none;
-			padding-top: 8px;
-			padding-bottom: 4px;
-			padding-left: 8px;
-			height: 17px;
+			padding-top: 8rem;
+			padding-bottom: 4rem;
+			padding-left: 8rem;
+			height: 17rem;
 			outline: none;
 			color: #aaa;
 			font-family: Helvetica, Arial, sans-serif;
 			background: #121212;
-			font-size: 14px;
+			font-size: 14rem;
 
 			&:focus {
 			}
 		}
 
 		.searchbar-button {
-			width: 40px;
-			height: 31px;
-			border: 1px solid #2d2d2d;
+			width: 40rem;
+			height: 31rem;
+			border: 1rem solid #2d2d2d;
 			background: #2d2d2d;
 			text-align: center;
 			color: #666;
-			border-radius: 0 2px 2px 0;
+			border-radius: 0 2rem 2rem 0;
 			cursor: pointer;
-			font-size: 20px;
+			font-size: 20rem;
 		}
 
 		// .fa {
 		// 	display: inline-block;
-		// 	font: normal normal normal 14px/1 FontAwesome;
+		// 	font: normal normal normal 14rem/1 FontAwesome;
 		// 	font-size: inherit;
 		// 	text-rendering: auto;
 		// 	-webkit-font-smoothing: antialiased;
@@ -183,7 +183,7 @@
 	// Base dropdown CSS
 	& > .dropdown-list {
 		// Add top border to distance dropdown from navbar
-		border-top: 3px solid #111;
+		border-top: 3rem solid #111;
 
 		// Take time to disappear
 		transition: 0s 0.6s;
@@ -207,11 +207,11 @@
 		display: block;
 		background: #111;
 		color: #888;
-		font-size: 14px;
+		font-size: 14rem;
 		text-decoration: none;
 		padding: .8em 1.8em .8em 1.8em;
 		position: relative;
-		border-bottom: 1px solid #221;
+		border-bottom: 1rem solid #221;
 
 		&:hover, &:focus {
 			// Highlight link on hover
@@ -236,7 +236,7 @@
 		transition-delay: 0s;
 		// (Appear to top right)
 		left: 100%; // (This moves list from left: -99999em)
-		top: 0px;
+		top: 0rem;
 	}
 
 	// Draw arrows for dropdown items with two children (i.e. first == 2nd last)
@@ -247,16 +247,16 @@
 		height: 0;
 		width: 0;
 		top: 50%;
-		margin-top: -5px;
-		right: 5px;
-		border: 5px solid transparent;
+		margin-top: -5rem;
+		right: 5rem;
+		border: 5rem solid transparent;
 		border-left-color: #aaa;
 	}
 
 	// Reverse arrows and change their colour when hovering over their dropdown item
 	&:hover > .dropdown-link:first-child:nth-last-child(2):before {
-		border: 5px solid transparent;
-		right: 10px;
+		border: 5rem solid transparent;
+		right: 10rem;
 		border-right-color: #cee;
 	}
 
@@ -265,14 +265,14 @@
 	> .dropdown-list > .dropdown-item {
 
 		// Transparent left border by default
-		border-left: 3px solid transparent;
+		border-left: 3rem solid transparent;
 
 		// Normal colour for top item of sub-menu
 		&:first-child {
-			border-left: 3px solid #111;
+			border-left: 3rem solid #111;
 
 			& > .dropdown-link {
-				border-left: 3px solid #111;
+				border-left: 3rem solid #111;
 			}
 		}
 	}
@@ -301,8 +301,8 @@
 		position: absolute;
 		z-index: -1;
 		content: "";
-		width: 3px;
-		height: 3px;
+		width: 3rem;
+		height: 3rem;
 		left: 0;
 		bottom: 0;
 	}
