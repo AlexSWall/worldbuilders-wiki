@@ -11,20 +11,20 @@ export default function Footer()
 					<div id="leftFooterContent">
 						<div id="leftFooterLine">
 							<div id="leftFooterLineItem">
-								Alex's World's D<small>&</small>D Wiki
+								The Weavemajj Campaign Setting
 							</div>
 							<div id="leftFooterLineItem">
-								Dungeons & Dragons is property of Wizards of the Coast LLC. © 2019 Wizards.
+								Dungeons & Dragons is property of Wizards of the Coast LLC.
 							</div>
 						</div>
 					</div>
 					<div id="rightFooterContent">
 						<div id="rightFooterLine">
-							<FooterItem href="/#About" text="About" />
-							<FooterItem href="/#Privacy_Policy" text="Privacy Policy" />
-							<FooterItem href="/#Terms_of_Service" text="Terms of Service" />
-							<FooterItem href="/#Contact" text="Contact" />
-							<FooterItem href="/#Bugs" text="Known Bugs" />
+							<FooterItem href="/#about" text="About" />
+							<FooterItem href="/#privacy-policy" text="Privacy Policy" />
+							<FooterItem href="/#terms-of-service" text="Terms of Service" />
+							<FooterItem href="/#contact-and-feedback" text="Contact & Feedback" />
+							<FooterItem href="/#bugs" text="Known Bugs" />
 						</div>
 					</div>
 				</div>

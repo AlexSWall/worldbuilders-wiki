@@ -23,7 +23,7 @@ export default function NavigationBar()
 			<nav id="navbar">
 				<div id="navbar-brand-wrapper">
 					<a id="navbar-brand" href="/#">
-						My Website
+						The Weavemajj Wiki
 					</a>
 				</div>
 				<div id="navbar-content-wrapper">
