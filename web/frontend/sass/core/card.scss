@@ -7,11 +7,11 @@
 	background-color: rgb(255, 255, 255);
 	background-clip: border-box;
 	border: 1rem solid rgba(0, 0, 0, 0.4);
-	border-radius: 0.25rem;
+	border-radius: 4rem;
 
 	.card-header {
-		padding: 0.75rem 1.25rem;
-		margin-bottom: 0rem;
+		padding: 12rem 20rem;
+		margin-bottom: 0;
 		background-color: rgba(0, 0, 0, 0.03);
 		border-bottom: 1rem solid rgba(0, 0, 0, 0.125);
 		font-size: 120%;
@@ -19,11 +19,11 @@
 	}
 
 	.card-header:first-child {
-		border-radius: calc(0.25rem - 1rem) calc(0.25rem - 1rem) 0rem 0rem;
+		border-radius: calc(4rem - 16rem) calc(4rem - 16rem) 0rem 0rem;
 	}
 
 	.card-body {
 		flex: 1 1 auto;
-		padding: 0 1.25rem 0 1.25rem;
+		padding: 0 20rem 0 20rem;
 	}
 }
