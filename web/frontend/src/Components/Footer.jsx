@@ -1,34 +1,23 @@
 import React from 'react';
 
-import FooterItem from './Footer/FooterItem';
+import FooterLink from './Footer/FooterLink';
 
 export default function Footer() 
 {
 	return (
-		<div id="footerWrapper">
-			<footer>
-				<div id="footerContent">
-					<div id="leftFooterContent">
-						<div id="leftFooterLine">
-							<div id="leftFooterLineItem">
-								The Weavemajj Campaign Setting
-							</div>
-							<div id="leftFooterLineItem">
-								Dungeons & Dragons is property of Wizards of the Coast LLC.
-							</div>
-						</div>
-					</div>
-					<div id="rightFooterContent">
-						<div id="rightFooterLine">
-							<FooterItem href="/#about" text="About" />
-							<FooterItem href="/#privacy-policy" text="Privacy Policy" />
-							<FooterItem href="/#terms-of-service" text="Terms of Service" />
-							<FooterItem href="/#contact-and-feedback" text="Contact & Feedback" />
-							<FooterItem href="/#bugs" text="Known Bugs" />
-						</div>
-					</div>
+		<footer>
+			<div id="footer-content">
+				<div className="footer-item">
+					The Weavemajj Campaign Setting
 				</div>
-			</footer>
-		</div>
+				<div className="footer-item">
+					<FooterLink href="/#about" text="About" />
+					<FooterLink href="/#privacy-policy" text="Privacy Policy" />
+					<FooterLink href="/#terms-of-service" text="Terms of Service" />
+					<FooterLink href="/#contact-and-feedback" text="Contact & Feedback" />
+					<FooterLink href="/#bugs" text="Known Bugs" />
+				</div>
+			</div>
+		</footer>
 	);
 }

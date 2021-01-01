@@ -1,82 +1,45 @@
-#footerWrapper {
+footer {
+	display: block;
 	z-index: 1;
 	padding: 0;
-	margin: 0;
-	margin-top: -30rem;
+	margin: -30rem 0 0 0;
 	height: 30rem;
 	width: 100vw;
-	text-align: center;
 
 	background-color: #111;
-	opacity: 0.95;
+	opacity: 0.9;
 	border: 0rem solid #555;
-
-	display: table;
 }
-	
-footer {
-	display: table-cell;
-	vertical-align: middle;
-	margin: 0 auto;
+
+#footer-content {
 	opacity: 1.0;
-}
-
-#footerContent {
-	max-width: 1000rem;
-	margin: 0 auto;
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	padding-top: 9rem;
-	padding-bottom: 5rem;
 }
 
-#leftFooterContent {
-}
+.footer-item {
+	display: inline;
 
-#leftFooterLine {
-	small {
-		font-size: smaller;
-	}
+	font-family: Helvetica, sans-serif;
+	color: #979AA4;
+	font-size: 12rem;
+	font-weight: 300;
 
-	#leftFooterLineItem {
-		display: inline;
-
-		font-family: Helvetica, sans-serif;
-		color: #979AA4;
-		font-size: 12rem;
-		font-weight: 300;
-	}
-
-	#leftFooterLineItem:not(:first-child):before {
+	&:not(:first-child):before {
 		content: "|";
 		margin: 0rem 15rem;
 	}
 }
 
+.footer-link {
+	font-family: Helvetica, sans-serif;
+	color: #979AA4;
+	font-size: 12rem;
+	font-weight: 500;
 
-#rightFooterContent {
-
-	#rightFooterLine {
-		list-style-type: none;
-	}
-
-	#rightFooterLineItem {
-		display: inline
-	}
-
-	#rightFooterLineItem:not(:first-child):before {
+	&:not(:first-child):before {
 		content: "\00B7";
 		margin: 0rem 5rem;
-
-		color: #979AA4;
-		font-size: 12rem;
-		font-weight: 500;
-	}
-
-	#rightFooterLineItem a {
-		font-family: Helvetica, sans-serif;
-		color: #979AA4;
-		font-size: 12rem;
-		font-weight: 500;
 	}
 }
