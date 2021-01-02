@@ -83,10 +83,9 @@
 
 		> a {
 			display: block;
-			font-size: 14rem;
 			padding: 14rem 16rem 14rem 16rem;
-			color: #888;
 			font-size: 14rem;
+			color: #888;
 			text-decoration: none;
 
 			&:hover, &:focus {
@@ -131,9 +130,6 @@
 			font-family: Helvetica, Arial, sans-serif;
 			background: #121212;
 			font-size: 14rem;
-
-			&:focus {
-			}
 		}
 
 		.searchbar-button {
@@ -147,19 +143,6 @@
 			cursor: pointer;
 			font-size: 20rem;
 		}
-
-		// .fa {
-		// 	display: inline-block;
-		// 	font: normal normal normal 14rem/1 FontAwesome;
-		// 	font-size: inherit;
-		// 	text-rendering: auto;
-		// 	-webkit-font-smoothing: antialiased;
-		// 	-moz-osx-font-smoothing: grayscale
-		// }
-
-		// .fa-search:before {
-		// 	content: "\f002"
-		// }
 	}
 }
 
