@@ -7,7 +7,7 @@ export default function Footer()
 	return (
 		<footer>
 			<div id="footer-content">
-				<div className="footer-item" style={ { 'font-size': '13rem' } }>
+				<div className="footer-item" style={ { fontSize: '13rem', letterSpacing: '1rem' } }>
 					The Worldbuilder's Wiki
 				</div>
 				<div className="footer-item">
