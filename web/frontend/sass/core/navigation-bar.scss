@@ -10,7 +10,7 @@
 	$prop: $values;
 }
 
-#navbarWrapper {
+#navbar-wrapper {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	z-index: 1;
 
@@ -30,20 +30,20 @@
 		position: relative;
 		margin-left: auto;
 		margin-right: auto;
-		width: 90%;
+		width: 95%;
 		height: 42rem; /* 14 + 14 + 14 (navbar a) */
 		opacity: 1.0;
 		line-height: 1;
 
 		#navbar-brand-wrapper {
-			left: 0;
-			bottom: 0;
 			padding: 9rem 16rem 10rem 16rem;
 			float: left;
 
 			#navbar-brand {
 				color: #888;
 				font-size: 20rem;
+				font-weight: 300;
+				letter-spacing: 2.5rem;
 
 				&:hover, &:focus {
 					// Highlight link on hover
@@ -54,14 +54,9 @@
 			}
 		}
 
-		#navbar-content-wrapper {
-			float: left;
-			width: 80%;
-			right: 0;
-			bottom: 0;
-			display: block;
-
-			/* navbar-content would be here */
+		#navbar-content {
+			display: flex;
+			justify-content: space-between;
 		}
 	}
 }
@@ -96,10 +91,6 @@
 			@include transition(transition, color 0.3s);
 		}
 	}
-}
-
-.navbar-list-right {
-	float: right;
 }
 
 
