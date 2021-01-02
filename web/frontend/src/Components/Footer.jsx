@@ -7,8 +7,8 @@ export default function Footer()
 	return (
 		<footer>
 			<div id="footer-content">
-				<div className="footer-item">
-					The Weavemajj Campaign Setting
+				<div className="footer-item" style={ { 'font-size': '13rem' } }>
+					The Worldbuilder's Wiki
 				</div>
 				<div className="footer-item">
 					<FooterLink href="/#about" text="About" />
