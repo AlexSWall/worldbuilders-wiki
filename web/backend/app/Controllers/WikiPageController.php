@@ -44,7 +44,7 @@ class WikiPageController extends Controller
 		$data = FrontEndDataUtilities::constructEndpointDataArray(
 			$wikiPage->getUrlPath(),
 			$wikiPage->getTitle(),
-			$wikiPage->getHtmlForPermissionsExpression($viewingPermissions)
+			$wikiPage->getHtmlForPermissions($viewingPermissions)
 		);
 
 		self::$logger->addInfo('Returning JSON');

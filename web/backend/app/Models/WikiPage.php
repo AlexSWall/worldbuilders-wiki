@@ -95,40 +95,21 @@ class WikiPage extends DatabaseEncapsulator
 	}
 
 	/**
-	 * Retrieves an array of WikiPagePermissionBlocks that are viewable given the
-	 * supplied permissions expression.
+	 * Retrieves the viewable HTML for a WikiPage for the supplied list of
+	 * permissions
 	 *
-	 * To retrieve the viewable _HTML_ for a given permissionsExpression, use the
-	 * `getHtmlForPermissionsExpression` function.
-	 *
-	 * @param permissionsExpression The permissions expression string to use to
-	 *		determine which permission blocks are viewable.
-	 *	@return An array of Wikitext permission blocks.
-	 */
-	private function getViewableBlocks( $permissionsExpression )
-	{
-		return PermissionsUtilities::getViewableBlocks( $permissionsExpression, $this->getPermissionBlocks() );
-	}
-
-	/**
-	 * Retrieves the viewable HTML for a WikiPage for the supplied permissions
-	 * expression.
-	 *
-	 * This function is purely a convenience function to avoid needing to call
-	 * `getViewableBlocks` and `convertBlocksToHtml` manually.
-	 *
-	 * @param permissionsExpression The permissions expression string to use to
-	 *		determine which permission blocks are viewable.
+	 * @param permissions The list of permissions the character has, used to
+	 *    determine which permission blocks are viewable.
 	 *	@return A string containing the HTML which contains the viewable wikitext
-	 *	content.
+	 *	   content.
 	 */
-	public function getHtmlForPermissionsExpression( $permissionsExpression )
+	public function getHtmlForPermissions( $permissions )
 	{
 		// Get array of WikiPagePermissionBlocks
 		self::$logger->addInfo('Getting viewable blocks');
-		$viewableBlocks = $this->getViewableBlocks( $permissionsExpression );
+		$viewableBlocks = PermissionsUtilities::getViewableBlocks( $permissions, $this->getPermissionBlocks() );
 
-		// Convert them to HTML.
+		// Convert them to HTML
 		self::$logger->addInfo('Converting them to HTML');
 		return WikiPagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
 	}
