@@ -15,18 +15,19 @@ footer {
 	opacity: 1.0;
 	display: flex;
 	justify-content: center;
-	align-items: end;
+	align-items: flex-end;
 }
 
 .footer-item {
 	position: relative;
 	display: flex;
-	align-items: end;
+	align-items: flex-end;
 
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #979AA4;
-	font-size: 12rem;
-	font-weight: 300;
+	font-size: 13rem;
+	font-weight: 200;
+	letter-spacing: 0.5rem;
 
 	&:not(:first-child):before {
 		content: "\0FF5C";
@@ -38,12 +39,13 @@ footer {
 .footer-link {
 	position: relative;
 	display: flex;
-	align-items: end;
+	align-items: flex-end;
 
 	& > a {
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-		font-size: 12rem;
-		font-weight: 300;
+		font-size: 13rem;
+		font-weight: 200;
+		letter-spacing: 0.5rem;
 		color: #979AA4;
 	}
 
