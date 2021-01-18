@@ -245,7 +245,9 @@ header =
 		}
 
 		return array_merge( $tokens, [
-			new OpeningTagToken('div'),
+			new OpeningTagToken('div', [
+				'class' => 'headerWrapper'
+			]),
 			new OpeningTagToken('h' . $level),
 			$textToken,
 			new ClosingTagToken('h' . $level),
