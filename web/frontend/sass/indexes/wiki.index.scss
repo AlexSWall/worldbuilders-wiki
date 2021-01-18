@@ -24,14 +24,14 @@
 
 #mainPanelWrapper {
 	#mainPanel {
-		font-family: Adamina,Georgia,Cambria,"Times New Roman",Times,serif;
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 		font-size: 16rem;
-		line-height: 1.6;
-		color: black;
+		line-height: 1.4;
+		color: #111;
 		z-index: 0;
 
 		/* In case the width of the screen is <= 860rem, max-width and left-right padding is used. */
-		max-width: 800rem;
+		max-width: 750rem;
 		padding-right: 45rem; 
 		padding-left: 45rem;
 		margin: 0 auto; /* Centres: Automatic margin left-right, no margin up-down. */
