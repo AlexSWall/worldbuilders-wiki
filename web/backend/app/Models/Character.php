@@ -90,13 +90,13 @@ class Character extends DatabaseEncapsulator
 	private function setPermissionsFieldIfNeeded()
 	{
 		if ( !$this->permissions )
-	    	$this->permissions = CharacterPermissionsQueries::getCharacterPermissions($this->getCharacterId());
+			$this->permissions = CharacterPermissionsQueries::getCharacterPermissions($this->getCharacterId());
 	}
 
 	public function getPermissions()
 	{
 		$this->setPermissionsFieldIfNeeded();
-	    return $this->permissions;
+		return $this->permissions;
 	}
 
 	public function addPermissions($permissions)
