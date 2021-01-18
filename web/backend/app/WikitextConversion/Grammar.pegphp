@@ -227,7 +227,11 @@ header =
 	)?
 	'==' extrasRight:'='* anySpacing
 	{
-		$level = strval( 2 + min( count($extrasLeft), count($extrasRight) ) );
+		// Get number of extra '='s, add that to 2, and don't go above 4 total.
+		$level = 2 + min( count($extrasLeft), count($extrasRight) );
+		$level = min( $level, 4 );  // Only go up to h4.
+		$level = strval( $level );
+
 		$textToken = new TextToken($inner);
 		$textToken->trim();
 
