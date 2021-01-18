@@ -137,6 +137,7 @@
 			li {
 				// Allow absolute bulletpoint to be placed relative to list item
 				position: relative;
+				min-height: 1.4em;
 
 				padding-left: 10rem;
 			}
