@@ -23,6 +23,9 @@ class PermissionsUtilities
 		if ( is_null($permissions) )
 			$permissions = new ArrayBasedSet();
 
+		if ( $permissions->has('dm') )
+			return true;
+
 		$tokens = explode(' ', $permissionsExpression);
 
 		$stack = array();
