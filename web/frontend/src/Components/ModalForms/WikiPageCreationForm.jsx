@@ -23,9 +23,11 @@ export default function WikiPageCreationForm({ closeModal })
 
 	const [submissionError, setSubmissionError] = useState(null);
 
+	const pagePath = window.location.hash.substring(1).split('#')[0];
+
 	return (
 		<Formik
-			initialValues={ { page_path: '', title: '' } }
+			initialValues={ { page_path: pagePath, title: '' } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting }) => {
 				fetch('/a/wiki', {
@@ -86,6 +88,7 @@ export default function WikiPageCreationForm({ closeModal })
 								hasError={ touched.page_path && errors.page_path }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
+								initialValue={ pagePath }
 							/>
 
 							<TextInput
