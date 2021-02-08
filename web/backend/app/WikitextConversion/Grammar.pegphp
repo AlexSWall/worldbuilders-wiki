@@ -363,7 +363,7 @@ image =
 
 wikilink =
 	"[[" target:$inlineText<template> displayText:("|" text:$inlineText<template> { return $text; })? "]]" {
-		$linkTarget = '\'/#' . strtolower(str_replace([' ', '_'], ['-', '-'], trim($target))) . '\'';
+		$linkTarget = '\'/#' . strtolower(str_replace([' ', '_', "'", 'Æ'], ['-', '-', '-', 'AE'], trim($target))) . '\'';
 		$linkText = trim($displayText ?: $target);
 		return [
 			new OpeningTagToken('a', [
