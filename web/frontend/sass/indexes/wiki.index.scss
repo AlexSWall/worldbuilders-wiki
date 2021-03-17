@@ -90,6 +90,7 @@
 
 	h4, h5, h6 {
 		display: block;
+		margin-top: 0.5em;
 	}
 
 	h1 {
@@ -109,7 +110,15 @@
 	}
 
 	h4 {
-		margin-top: 0.5em;
+		font-size: 1.15em;
+	}
+
+	h5 {
+		font-size: 1.075em;
+	}
+
+	h6 {
+		font-size: 1em;
 	}
 
 	p {
