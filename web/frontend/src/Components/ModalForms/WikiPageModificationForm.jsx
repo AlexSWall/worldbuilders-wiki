@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import GlobalsContext from 'GlobalsContext';
 
 import TextInput from '../Form_Components/TextInput';
-import TextArea from '../Form_Components/TextArea';
+import WikiTextArea from '../Form_Components/WikiTextArea';
 import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
 
@@ -106,7 +106,7 @@ export default function WikiPageModificationForm({ closeModal })
 								initialValue={ initialValues.title }
 							/>
 
-							<TextArea
+							<WikiTextArea
 								formId='wikitext'
 								labelText='Wikitext'
 								size={ { width: 250, height: 150 } }

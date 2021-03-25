@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function TextArea({ formId, labelText, size, hasError, setFieldTouched, handleChange, initialValue=undefined})
+export default function WikiTextArea({ formId, labelText, size, hasError, setFieldTouched, handleChange, initialValue=undefined})
 {
 	const [ isEmpty, setIsEmpty ] = useState(initialValue === undefined || initialValue === '');
 
@@ -18,7 +18,10 @@ export default function TextArea({ formId, labelText, size, hasError, setFieldTo
 							display: 'block',
 							width: 0.9 * window.innerWidth,
 							height: 0.5 * window.innerHeight,
-							resize: 'none'
+							resize: 'none',
+							fontFamily: 'Roboto Mono, monospace',
+							letterSpacing: '-1rem',
+							lineHeight: 1.5
 						} }
 						as='textarea'
 						onChange={ e => {
