@@ -9,6 +9,7 @@ namespace App\WikitextConversion;
 
 use App\WikitextConversion\Tokens\ClosingTagToken;
 use App\WikitextConversion\Tokens\EndOfFileToken;
+use App\WikitextConversion\Tokens\InfoboxToken;
 use App\WikitextConversion\Tokens\MetaToken;
 use App\WikitextConversion\Tokens\NewLineToken;
 use App\WikitextConversion\Tokens\OpeningTagToken;
@@ -217,6 +218,7 @@ paragraphBreak =
 blockLine =
 	header
 	/ list
+	/ infobox
 
 header =
 	anySpacing '==' extrasLeft:'='* inner:$inlineText<header>
@@ -271,6 +273,51 @@ listItem =
 
 listCharacter = [*#;:]
 
+infobox =
+	type:infoboxStart
+	entries:infoboxEntries
+	infoboxEnd {
+		return [new InfoboxToken($type, $entries)];
+	}
+
+infoboxStart =
+	'{{' anySpacing 'Infobox' someSpacing infoboxType:word anySpacing newLine {
+		return $infoboxType;
+	}
+
+infoboxEntries = 
+	entries:( infoboxEntry / ! infoboxEnd remainderOfLine { return null; } )+ {
+		// Ignore non-entry non-end lines
+		return array_values(array_filter($entries, fn ($e) => $e != null ));
+	}
+
+infoboxEntry =
+	anySpacing '|'
+	anySpacing key:word
+	anySpacing '='
+	anySpacing value:infoboxValue
+	anySpacing newLine {
+		return [ $key => $value ];
+	}
+
+infoboxValue =
+	infoboxValueList
+	/ trimmedInlineLine
+
+infoboxValueList =
+	newLine ? firstItem:infoboxValueListItem
+	additionalItems:( newLine item:infoboxValueListItem { return $item; } )* {
+		return array_merge(
+			[ $firstItem ],
+			$additionalItems
+		);
+	}
+
+infoboxValueListItem =
+	anySpacing '*' anySpacing item:trimmedInlineLine & newLine { return $item; }
+
+infoboxEnd =
+	anySpacing '}}' anySpacing & endOfLine
 
 /* == Inline Rules == */
 
@@ -395,7 +442,29 @@ italics =
 	}
 
 
-/* == Positional Rules == */
+/* == String Rules == */
+
+remainderOfLine =
+	$ (!newLine .)+
+
+word =
+	$ (!spacingOrEOL .)+
+
+number =
+	numberString:$[0-9]+ { return intval($numberString); }
+
+someSpacing =
+	$ spacing+
+
+anySpacing =
+	$ spacing*
+
+spacing =
+	[ \t]
+
+spacingOrEOL =
+	spacing
+	/ endOfLine
 
 startOfLine =
 	newLine
@@ -409,6 +478,9 @@ newLine =
 	'\n' { return [ new NewLineToken() ]; }
 	/ '\r\n' { return [ new NewLineToken() ]; }
 
+
+/* == Positional Rules == */
+
 startOfFile =
 	& { return $this->endOffset() === 0; } {
 		return [];
@@ -418,18 +490,6 @@ endOfFile =
 	& { return $this->endOffset() === $this->inputLength; } {
 		return [];
 	}
-
-someSpacing =
-	$spacing+
-
-anySpacing =
-	$spacing*
-
-spacing =
-	[ \t]
-
-number =
-	numberString:$[0-9]+ { return intval($numberString); }
 
 
 /* == Permissions Rules == */
