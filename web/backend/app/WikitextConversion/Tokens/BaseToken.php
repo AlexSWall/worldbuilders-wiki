@@ -2,6 +2,19 @@
 
 namespace App\WikitextConversion\Tokens;
 
+/*
+ * Inheritance hierarchy:
+ *    BaseToken
+ *       BasePlainToken
+ *          EndOfFileToken
+ *          NewLineToken
+ *       BaseTagToken
+ *          ClosingTagToken
+ *          OpeningTagToken
+ *          SelfClosingTagToken
+ *       MetaToken
+ *       TextToken
+ */
 abstract class BaseToken implements \JsonSerializable
 {
 	public function getName(): string
@@ -13,27 +26,6 @@ abstract class BaseToken implements \JsonSerializable
 	{
 		$classParts = explode( '\\', get_class( $this ) );
 		return end( $classParts );
-	}
-
-	public static function getToken( array $tokenData ): ?BaseToken
-	{
-		if ( !isset( $tokenData['type'] ) )
-			return null;
-
-		switch ( $tokenData['type'] ) {
-				case "TagTk":
-				    return new OpeningTagToken( $tokenData['name'], $tokenData['attributes'] );
-				case "EndTagTk":
-				    return new ClosingTagToken( $tokenData['name'], $tokenData['attributes'] );
-				case "SelfclosingTagTk":
-				    return new SelfClosingTagToken( $tokenData['name'], $tokenData['attributes'] );
-				case "NlTk":
-				    return new NewLineToken();
-				case "EOFTk":
-					return new EndOfFileToken();
-				default:
-				    return null;
-			}
 	}
 
 	abstract public function toHTML(): string;
