@@ -260,8 +260,8 @@ header =
 list =
 	firstItem:listItem & endOfLine
 	otherItems:(
-		end:endOfLine item:listItem & endOfLine { return array_merge( [ 'end' => $end ], $item ); }
-	) * {
+		end:newLine item:listItem & endOfLine { return array_merge( [ 'end' => $end ], $item ); }
+	)* {
 		$listItems = array_merge([ $firstItem ], $otherItems);
 		return $this->createListTokenArray($listItems);
 	}
@@ -336,10 +336,13 @@ trimmedInlineLine =
 		return $line;
 	}
 
-// This can have a template passed to it to represent the context, which affects what is counted as an inline break.
+// This can have a template passed to it to represent the context, which affects what is counted as
+// an inline break.
 inlineLine =
 	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+ 
 	{
+		// This code deals with multiple inline tokens, such as italics and links, and avoids adding
+		// unnecessary beginning or ending text tokens.
 		$lineContents = [];
 		$textBuffer = '';
 		foreach( $content as $element )
@@ -366,7 +369,8 @@ inlineElement =
 	& '[[' element:( templateElement ) { return $element; }
 	/ & "''" element:quotedContent { return $element; }
 
-// This can have a template passed to it to represent the context, which affects what is counted as an inline break.
+// This can have a template passed to it to represent the context, which affects what is counted as
+// an inline break.
 inlineText =
 	text:( !inlineBreak c:. { return $c; } )+ 
 	{
@@ -409,9 +413,23 @@ image =
 	}
 
 wikilink =
-	"[[" target:$inlineText<template> displayText:("|" text:$inlineText<template> { return $text; })? "]]" {
-		$linkTarget = '\'/#' . strtolower(str_replace([' ', '_', "'s", "'", '–', '—', 'Æ'], ['-', '-', 's', '-', '-', '-', 'AE'], trim($target))) . '\'';
+	"[["
+		target:$inlineText<template>
+		displayText:("|" text:$inlineText<template> { return $text; })?
+	"]]" {
+		// Find and replace strings in $target with URL-friendly values
+		$linkTarget = str_replace(
+			[' ', '_', "'s", "'", '–', '—', 'Æ'],  // from
+			['-', '-', 's', '-', '-', '-', 'AE'],  // to
+			trim($target)
+		);
+
+		// Create link URL target (of form '/#...')
+		$linkTarget = '\'/#' . strtolower($linkTarget) . '\'';
+
+		// Use $displayText if given, else $target
 		$linkText = trim($displayText ?: $target);
+
 		return [
 			new OpeningTagToken('a', [
 				'href' => $linkTarget
@@ -507,7 +525,8 @@ orExpressionGroup =
 	)* {
 		$expressionRPN = $firstAndExpression;
 		foreach ( $others as $operatorPermissionGroupPair )
-			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1] . ' ' . $operatorPermissionGroupPair[0];
+			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1]
+			                . ' ' . $operatorPermissionGroupPair[0];
 		return $expressionRPN;
 	}
 
@@ -520,7 +539,8 @@ andExpressionGroup =
 	)* {
 		$expressionRPN = $firstPermissionGroup;
 		foreach ( $others as $operatorPermissionGroupPair )
-			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1] . ' ' . $operatorPermissionGroupPair[0];
+			$expressionRPN .= ' ' . $operatorPermissionGroupPair[1]
+			                . ' ' . $operatorPermissionGroupPair[0];
 		return $expressionRPN;
 	}
 
