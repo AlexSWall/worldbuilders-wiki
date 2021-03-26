@@ -36,17 +36,19 @@ final class WikitextParserTests extends TestCase
 		$this->assertRegExp( $expectedRegex, ( new WikitextConverter($wikitext) )->getHtml() );
 	}
 
+
 	/* == Headers == */
 
 	public function testBasicHeaderConversion(): void
 	{
-		$this->wikitextConversionTester('==Header==', '<h2>Header</h2>');
+		$this->wikitextConversionTester('==Header==', "<div class='headerWrapper'><h2>Header</h2></div>");
 	}
 
 	public function testBasicHeaderConversion2(): void
 	{
-		$this->wikitextConversionTester('==  Header ===', '<h2>Header</h2>');
+		$this->wikitextConversionTester('==  Header ===', "<div class='headerWrapper'><h2>Header</h2></div>");
 	}
+
 
 	/* == Paragraphs == */
 
@@ -62,6 +64,7 @@ final class WikitextParserTests extends TestCase
 			"<p>P1 Line1\nP1 Line2</p>\n\n<p>P2 Line1\nP2 Line2</p>\n\n<p>P3 Line3</p>"
 		);
 	}
+
 
 	/* == Bold & Italics == */
 
@@ -95,6 +98,7 @@ final class WikitextParserTests extends TestCase
 		$this->wikitextConversionTester("Some '''bold with ''italics'' inside'''.", '<p>Some <b>bold with <i>italics</i> inside</b>.</p>');
 	}
 
+
 	/* == Wikilinks == */
 
 	public function testSimpleWikilinkConversion(): void
@@ -117,6 +121,7 @@ final class WikitextParserTests extends TestCase
 		$this->wikitextConversionTester("[[ Place link  |  some text ]]  ", "<p><a href='/#place-link'>some text</a></p>");
 	}
 
+
 	/* == Images == */
 
 	/* [[Image:'url'|width,height]]  ->  <img src='url' width='width' height='height'> */
@@ -134,6 +139,7 @@ final class WikitextParserTests extends TestCase
 	{
 		$this->wikitextConversionRegexTester("[[   Image: image.jpg    | 200,    100 ]]", "@<p><img src='/images/wiki-images/image.jpg' width='200' height='100' style='[^>]+'></p>@");
 	}
+
 
 	/* == Lists == */
 
@@ -176,15 +182,25 @@ final class WikitextParserTests extends TestCase
 	}
 
 
+	/* == Infoboxes == */
+
+	public function testInfoboxConversation(): void
+	{
+		$this->wikitextConversionTester("{{ Infobox Deity\n   | name   = Kord\n   | age    = 9001\n}}",
+			"");
+	}
+
+
 	/* == Headers with Paragraphs == */
 
 	public function testHeaderBetweenParagraphsConversion(): void
 	{
 		$this->wikitextConversionTester(
 			"First paragraph.\n==Heading==\nSecond paragraph.",
-			"<p>First paragraph.</p>\n<h2>Heading</h2>\n<p>Second paragraph.</p>"
+			"<p>First paragraph.</p>\n<div class='headerWrapper'><h2>Heading</h2></div>\n<p>Second paragraph.</p>"
 		);
 	}
+
 
 	/* == Complex Wikitext Rules == */
 
@@ -192,9 +208,10 @@ final class WikitextParserTests extends TestCase
 	{
 		$this->wikitextConversionTester(
 			" Intro  \n== Heading ===\n[[P2L1]]\n[[ P2 | L2 ]]\n== Heading  2==\n\n\n '''P''3L''1''' \n ====Sub Heading===\nend",
-			"<p>Intro</p>\n<h2>Heading</h2>\n<p><a href='/#p2l1'>P2L1</a>\n<a href='/#p2'>L2</a></p>\n<h2>Heading  2</h2>\n\n\n<p><b>P<i>3L</i>1</b></p>\n<h3>Sub Heading</h3>\n<p>end</p>"
+			"<p>Intro</p>\n<div class='headerWrapper'><h2>Heading</h2></div>\n<p><a href='/#p2l1'>P2L1</a>\n<a href='/#p2'>L2</a></p>\n<div class='headerWrapper'><h2>Heading  2</h2></div>\n\n\n<p><b>P<i>3L</i>1</b></p>\n<div class='headerWrapper'><h3>Sub Heading</h3></div>\n<p>end</p>"
 		);
 	}
+
 
 	/* == Safety Tests == */
 
