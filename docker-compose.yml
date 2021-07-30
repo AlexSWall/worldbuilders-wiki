@@ -53,6 +53,7 @@ services:
                         # tail -F anything'
     mysqldb:
         image: mysql:8
+        platform: linux/x86_64
         container_name: mysql
         restart: always
         env_file:
