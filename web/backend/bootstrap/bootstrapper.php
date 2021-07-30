@@ -187,8 +187,6 @@ FrontEndParametersFacade::setFlash($container->flash);
 
 $logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
 
-Respect\Validation\Validator::with('App\\Validation\\Rules\\');
-
 $logger->addInfo('Finished running bootstrap/app.php');
 $logger->addInfo('--');
 
