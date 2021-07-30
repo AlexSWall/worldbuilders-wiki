@@ -70,6 +70,8 @@ services:
     myadmin:
         image: phpmyadmin/phpmyadmin
         container_name: phpmyadmin
+        volumes:
+            - "./config/etc/phpmyadmin/apache2.conf:/etc/apache2/apache2.conf"
         ports:
             - "127.0.0.1:8080:80"
         environment:
