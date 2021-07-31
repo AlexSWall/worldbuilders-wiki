@@ -9,6 +9,8 @@ import TextInput from '../Form_Components/TextInput';
 import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
 
+import { computePasswordHash } from 'utils/crypto'
+
 const schema = Yup.object().shape({
 	preferred_name: Yup.string()
 		.matches(/[a-zA-Z ]*/, 'Must only contain letters and spaces')
@@ -47,24 +49,31 @@ export default function SignUpForm({ closeModal })
 				password_confirm: ''
 			} }
 			validationSchema={ schema }
-			onSubmit={ (values, { setSubmitting, setErrors }) => {
+			onSubmit={ async (values, { setSubmitting, setErrors }) => {
+
+				const passwordFrontendHash = await computePasswordHash(values.password);
+
 				console.log('Posting...')
-				fetch('/auth/', {
-					method: 'post',
-					headers: {
-						'Accept': 'application/json, text/plain, */*',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(Object.assign({}, {
-						action: 'sign up',
-						data: {
-							username: values.username,
-							email: values.email,
-							password: values.password,
-							preferred_name: values.preferred_name
+
+				try
+				{
+					const res = fetch('/auth/', {
+						method: 'post',
+						headers: {
+							'Accept': 'application/json, text/plain, */*',
+							'Content-Type': 'application/json'
 						},
-					}, globals.csrfTokens))
-				}).then(async res => {
+						body: JSON.stringify(Object.assign({}, {
+							action: 'sign up',
+							data: {
+								username: values.username,
+								email: values.email,
+								password: passwordFrontendHash,
+								preferred_name: values.preferred_name
+							},
+						}, globals.csrfTokens))
+					});
+
 					if (res.ok)
 					{
 						setSubmitting(false);
@@ -95,10 +104,12 @@ export default function SignUpForm({ closeModal })
 							});
 						}
 					}
-				}).catch( error => {
+				}
+				catch( error )
+				{
 					console.log('Failed to make POST request...')
 					console.log(error);
-				});
+				};
 			} }
 		>
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (

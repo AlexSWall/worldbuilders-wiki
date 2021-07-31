@@ -9,6 +9,8 @@ import TextInput from '../Form_Components/TextInput';
 import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
 
+import { computePasswordHash } from 'utils/crypto'
+
 const schema = Yup.object().shape({
 	password_old: Yup.string()
 		.required('Required')
@@ -38,22 +40,30 @@ export default function ChangePasswordForm({ closeModal })
 				password_new_confirm: ''
 			} }
 			validationSchema={ schema }
-			onSubmit={ (values, { setSubmitting, setErrors }) => {
+			onSubmit={ async (values, { setSubmitting, setErrors }) => {
+
+				const oldPasswordFrontendHash = await computePasswordHash(values.password_old);
+				const newPasswordFrontendHash = await computePasswordHash(values.password_new);
+
 				console.log('Posting...')
-				fetch('/auth/', {
-					method: 'post',
-					headers: {
-						'Accept': 'application/json, text/plain, */*',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(Object.assign({}, {
-						action: 'change password',
-						data: {
-							password_old: values.password_old,
-							password_new: values.password_new,
+
+				try
+				{
+					const res = await fetch('/auth/', {
+						method: 'post',
+						headers: {
+							'Accept': 'application/json, text/plain, */*',
+							'Content-Type': 'application/json'
 						},
-					}, globals.csrfTokens))
-				}).then(async res => {
+						body: JSON.stringify(Object.assign({}, {
+							action: 'change password',
+							data: {
+								password_old: oldPasswordFrontendHash,
+								password_new: newPasswordFrontendHash
+							},
+						}, globals.csrfTokens))
+					});
+
 					if (res.ok)
 					{
 						setSubmitting(false);
@@ -84,10 +94,12 @@ export default function ChangePasswordForm({ closeModal })
 							});
 						}
 					}
-				}).catch( error => {
+				}
+				catch( error )
+				{
 					console.log('Failed to make POST request...')
 					console.log(error);
-				});
+				};
 			} }
 		>
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (

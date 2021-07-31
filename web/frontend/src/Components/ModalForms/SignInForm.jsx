@@ -12,11 +12,7 @@ import CheckBox from '../Form_Components/CheckBox';
 
 import AccountRecoveryForm from './AccountRecoveryForm';
 
-import { sha256hex } from 'utils/crypto'
-
-// Need not be long; simply guarantees uniqueness to SHA256 hashes of the
-// provided password. It's not necessary but it doesn't hurt.
-const frontendPasswordHashPrefix = 'a72b9e12';
+import { computePasswordHash } from 'utils/crypto'
 
 const schema = Yup.object().shape({
 	identity: Yup.string()
@@ -42,8 +38,7 @@ export default function SignInForm({ closeModal, setModalComponent })
 			validationSchema={ schema }
 			onSubmit={ async (values, { setSubmitting, setErrors }) => {
 
-				// Take a modified SHA256 hash of the password provided to create frontend hash
-				const passwordFrontendHash = await sha256hex(frontendPasswordHashPrefix + values.password);
+				const passwordFrontendHash = await computePasswordHash(values.password);
 
 				console.log('Posting...');
 
@@ -59,7 +54,7 @@ export default function SignInForm({ closeModal, setModalComponent })
 							action: 'sign in',
 							data: {
 								identity: values.identity,
-								password: values.password,
+								password: passwordFrontendHash,
 								rememberMe: values.rememberMe
 							},
 						}, globals.csrfTokens))
