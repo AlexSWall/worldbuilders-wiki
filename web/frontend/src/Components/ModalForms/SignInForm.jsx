@@ -12,6 +12,8 @@ import CheckBox from '../Form_Components/CheckBox';
 
 import AccountRecoveryForm from './AccountRecoveryForm';
 
+import { sha256hex } from 'utils/crypto'
+
 const schema = Yup.object().shape({
 	identity: Yup.string()
 		.required('Required'),
@@ -34,23 +36,31 @@ export default function SignInForm({ closeModal, setModalComponent })
 				rememberMe: false
 			} }
 			validationSchema={ schema }
-			onSubmit={ (values, { setSubmitting, setErrors }) => {
-				console.log('Posting...')
-				fetch('/auth/', {
-					method: 'post',
-					headers: {
-						'Accept': 'application/json, text/plain, */*',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(Object.assign({}, {
-						action: 'sign in',
-						data: {
-							identity: values.identity,
-							password: values.password,
-							rememberMe: values.rememberMe
+			onSubmit={ async (values, { setSubmitting, setErrors }) => {
+
+				// Take a SHA256 hash of the password provided to create frontend hash
+				const passwordFrontendHash = await sha256hex(values.password);
+
+				console.log('Posting...');
+
+				try
+				{
+					const res = await fetch('/auth/', {
+						method: 'post',
+						headers: {
+							'Accept': 'application/json, text/plain, */*',
+							'Content-Type': 'application/json'
 						},
-					}, globals.csrfTokens))
-				}).then(async res => {
+						body: JSON.stringify(Object.assign({}, {
+							action: 'sign in',
+							data: {
+								identity: values.identity,
+								password: values.password,
+								rememberMe: values.rememberMe
+							},
+						}, globals.csrfTokens))
+					});
+
 					if (res.ok)
 					{
 						setSubmitting(false);
@@ -83,10 +93,12 @@ export default function SignInForm({ closeModal, setModalComponent })
 							});
 						}
 					}
-				}).catch( error => {
-					console.log('Failed to make POST request...')
+				}
+				catch( error )
+				{
+					console.log('Failed to make POST request...');
 					console.log(error);
-				});
+				}
 			} }
 		>
 			{ ({ touched, setFieldTouched, handleChange, errors }) => (

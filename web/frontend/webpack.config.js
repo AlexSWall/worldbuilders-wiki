@@ -21,7 +21,8 @@ module.exports = {
 					alias: {
 						Components: path.resolve(__dirname, 'src/Components/'),
 						'Form Components': path.resolve(__dirname, 'src/Components/Form Components/'),
-						'GlobalsContext': path.resolve(__dirname, 'src/GlobalsContext.jsx')
+						'GlobalsContext': path.resolve(__dirname, 'src/GlobalsContext.jsx'),
+						'utils': path.resolve(__dirname, 'src/utils/')
 					},
 					extensions: [".js", ".jsx"]
 				}, 
