@@ -14,6 +14,10 @@ import AccountRecoveryForm from './AccountRecoveryForm';
 
 import { sha256hex } from 'utils/crypto'
 
+// Need not be long; simply guarantees uniqueness to SHA256 hashes of the
+// provided password. It's not necessary but it doesn't hurt.
+const frontendPasswordHashPrefix = 'a72b9e12';
+
 const schema = Yup.object().shape({
 	identity: Yup.string()
 		.required('Required'),
@@ -38,8 +42,8 @@ export default function SignInForm({ closeModal, setModalComponent })
 			validationSchema={ schema }
 			onSubmit={ async (values, { setSubmitting, setErrors }) => {
 
-				// Take a SHA256 hash of the password provided to create frontend hash
-				const passwordFrontendHash = await sha256hex(values.password);
+				// Take a modified SHA256 hash of the password provided to create frontend hash
+				const passwordFrontendHash = await sha256hex(frontendPasswordHashPrefix + values.password);
 
 				console.log('Posting...');
 
