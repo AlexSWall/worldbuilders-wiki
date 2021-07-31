@@ -41,14 +41,21 @@ services:
             - NODE_ENV=development
         volumes:
             - "./web:/app"
-        command: sh -c 'apt-get update > /dev/null &&
+        command: sh -c 'echo "Running \`apt-get update\`" &&
+                        apt-get update > /dev/null &&
+                        echo "Running \`apt-get install inotify-tools expect ruby-full\`" &&
                         apt-get install inotify-tools expect ruby-full -y > /dev/null &&
+                        echo "Running \`npm install -g\`" &&
                         npm install -g npm@7 > /dev/null &&
+                        echo "Running \`npm install -g webpack webpack-cli wikipeg\`" &&
                         npm install -g webpack webpack-cli wikipeg > /dev/null &&
+                        echo "Running \`npm install\`" &&
                         npm install > /dev/null &&
+                        echo "Running \`npm run build\`" &&
                         npm run build > /dev/null &&
+                        echo "Running \`gem install sass compass\`" &&
                         gem install sass compass > /dev/null &&
-                        echo "Frontend dev setup done" &&
+                        echo "Frontend dev setup done; watching..." &&
                         ./watch'
                         # tail -F anything'
     mysqldb:
