@@ -6,11 +6,15 @@ if ! type inotifywait &>/dev/null ; then
 fi
 
 function watchscss () {
+	echo "Compiling SCSS..."
 	unbuffer compass compile --output-style compressed --force
+	echo "Compiled SCSS"
 	while true
 	do
 		inotifywait --quiet -r -e close_write,moved_to,create sass > /dev/null
+		echo "Compiling SCSS..."
 		unbuffer compass compile --output-style compressed --force
+		echo "Compiled SCSS"
 		sleep .1
 	done
 }
@@ -21,13 +25,13 @@ function watchjs() {
 
 function watchpegparser() {
 	cd ../backend/app/WikitextConversion >/dev/null
-	unbuffer echo 'Compiling PEG Parser'
+	unbuffer echo 'Compiling PEG Parser...'
 	unbuffer wikipeg Grammar.pegphp Grammar.php
 	unbuffer echo 'Compiled PEG Parser'
 	while true
 	do
 		inotifywait --quiet -e close_write,moved_to,create Grammar.pegphp > /dev/null
-		unbuffer echo 'Compiling PEG Parser'
+		unbuffer echo 'Compiling PEG Parser...'
 		unbuffer wikipeg Grammar.pegphp Grammar.php
 		unbuffer echo 'Compiled PEG Parser'
 		sleep .1
