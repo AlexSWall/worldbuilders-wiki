@@ -18,7 +18,8 @@ const schema = Yup.object().shape({
 	identity: Yup.string()
 		.required('Required'),
 	password: Yup.string()
-		.required('Required'),
+		.required('Required')
+		.min(8, 'Must be at least 8 characters long'),
 	rememberMe: Yup.boolean()
 });
 

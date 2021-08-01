@@ -8,6 +8,7 @@ import GlobalsContext from 'GlobalsContext';
 import TextInput from '../Form_Components/TextInput';
 import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
+import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
 
 import { computePasswordHash } from 'utils/crypto'
 
@@ -24,12 +25,10 @@ const schema = Yup.object().shape({
 		.required('Required')
 		.email('Email must be valid'),
 	password: Yup.string()
-		.required('Required')
-		.min(6, 'Must be at least 6 characters long')
-		.max(30, 'Cannot be over 30 characters long'),
+		.min(8, 'Must be at least 8 characters long')
+		.required('Required'),
 	password_confirm: Yup.string()
 		.required('Required')
-		.min(6, 'Must be at least 6 characters long')
 		.oneOf([Yup.ref('password'), null], "Passwords do not match")
 });
 
@@ -112,7 +111,7 @@ export default function SignUpForm({ closeModal })
 				};
 			} }
 		>
-			{ ({ touched, setFieldTouched, handleChange, errors }) => (
+			{ ({ values, touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
 						Sign In
@@ -154,7 +153,9 @@ export default function SignUpForm({ closeModal })
 								hasError={ touched.password && errors.password }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
-							/>
+							>
+								<WeakPasswordWarning password={ values.password } width={ 250 }/>
+							</TextInput>
 
 							<TextInput
 								formId='password_confirm'

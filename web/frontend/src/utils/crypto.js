@@ -49,3 +49,16 @@ export async function sha256hex(strIn)
 
 	return hashHex;
 }
+
+export function getWeakPasswordString(password)
+{
+	// Check first whether if password is actually invalid.
+	if (password.length < 8)
+		return '';
+
+	// Check whether valid password is weak.
+	if (password.length < 12)
+		return 'Your password is short.\nTo avoid account compromise, consider making it longer.'
+
+	return '';
+}

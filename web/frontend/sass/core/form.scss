@@ -17,6 +17,14 @@
 			}
 		}
 
+		.form-warning {
+			display: block;
+			margin-top: 5rem;
+			font-size: 80%;
+			color: #cc8500;
+			word-break: break-word;
+		}
+
 		.form-error {
 			display: block;
 			margin-top: 5rem;
@@ -80,7 +88,6 @@
 		color: #c40000;
 	}
 }
-
 
 .form-input-wrapper {
 	position: relative;

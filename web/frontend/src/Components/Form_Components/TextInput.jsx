@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function TextInput({ formId, labelText, type, width, autoComplete, hasError, setFieldTouched, handleChange, initialValue=undefined })
+export default function TextInput({ formId, labelText, type, width, autoComplete, hasError, setFieldTouched, handleChange, children, initialValue=undefined })
 {
 	const [ isEmpty, setIsEmpty ] = useState(initialValue === undefined || initialValue === '');
 
@@ -26,6 +26,7 @@ export default function TextInput({ formId, labelText, type, width, autoComplete
 				</span>
 			</div>
 			<ErrorMessage name={ formId } component='span' className='form-error' style={ { width: width } } />
+			{ children }
 		</div>
 	);
 }
