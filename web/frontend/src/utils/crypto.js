@@ -28,7 +28,7 @@ export async function computePasswordHash(password)
 {
 	// Take a modified SHA256 hash of the password provided to create frontend
 	// hash.
-	const passwordFrontendHash = await sha256hex(frontendPasswordHashPrefix + values.password);
+	const passwordFrontendHash = await sha256hex(frontendPasswordHashPrefix + password);
 
 	return passwordFrontendHash;
 }
@@ -39,7 +39,7 @@ export async function sha256hex(strIn)
 	const bytes = new TextEncoder().encode(strIn);                    
 
 	// SHA-256 hash
-	const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+	const hashBuffer = await crypto.subtle.digest('SHA-256', bytes);
 
 	// Convert ArrayBuffer to array of bytes
 	const hashArray = Array.from(new Uint8Array(hashBuffer));
