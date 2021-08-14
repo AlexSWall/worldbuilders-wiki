@@ -58,7 +58,7 @@ export default function SignUpForm({ closeModal })
 
 				try
 				{
-					const res = fetch('/auth/', {
+					const res = await fetch('/auth/', {
 						method: 'post',
 						headers: {
 							'Accept': 'application/json, text/plain, */*',
