@@ -22,15 +22,30 @@ class Rules
 		};
 	}
 
-	public static function length( int $minLength, int $maxLength, ?string $failureString = null ) : callable
+	public static function length( ?int $minLength, ?int $maxLength, ?string $failureString = null ) : callable
 	{
-		$failureString = $failureString ?: "Must be between {$minLength} and {$maxLength} characters long";
+		if ( ! $failureString )
+		{
+			if ( $minLength && $maxLength )
+				$failureString = "Must be between {$minLength} and {$maxLength} characters long";
+
+			else if ( $minLength )
+				$failureString = "Must be {$minLength} characters long";
+
+			else if ( $maxLength )
+				$failureString = "Must be no more than {$maxLength} characters long";
+		}
 
 		return function( string $input ) use ( $minLength, $maxLength, $failureString ) : ?string
 		{
 			$inputLen = strlen( $input );
-			if ( $inputLen < $minLength || $inputLen > $maxLength )
+
+			if ( $minLength && $inputLen < $minLength )
 				return $failureString;
+
+			if ( $maxLength && $inputLen > $maxLength )
+				return $failureString;
+
 			return null;
 		};
 	}
@@ -134,7 +149,7 @@ class Rules
 
 	public static function passwordRules() : array
 	{
-		return [ self::required(), self::length(6, 30) ];
+		return [ self::required(), self::length(8, null) ];
 	}
 
 	public static function usernameAvailableRules() : array
@@ -159,6 +174,6 @@ class Rules
 
 	public static function preferredNameRules()
 	{
-		return [ self::alphaAndSpaces(), self::length(0, 20) ];
+		return [ self::length(null, 20) ];
 	}
 }
