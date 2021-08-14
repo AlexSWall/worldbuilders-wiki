@@ -39,6 +39,8 @@ export default function SignInForm({ closeModal, setModalComponent })
 			validationSchema={ schema }
 			onSubmit={ async (values, { setSubmitting, setErrors }) => {
 
+				setSubmissionError(null);
+
 				const passwordFrontendHash = await computePasswordHash(values.password);
 
 				console.log('Posting...');

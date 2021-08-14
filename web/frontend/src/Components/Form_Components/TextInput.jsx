@@ -9,7 +9,9 @@ export default function TextInput({ formId, labelText, type, width, autoComplete
 	return (
 		<div className='form-group'>
 			<div className='form-input-wrapper'>
-				<Field name={ formId }
+				<Field
+					name={ formId }
+					id={ formId }
 					className={ (hasError ? 'form-input-has-error ' : '') + (! isEmpty ? 'has-content ' : '' ) + 'form-input' }
 					type={ type || 'text' }
 					autoComplete={ autoComplete || 'on' }
@@ -20,7 +22,7 @@ export default function TextInput({ formId, labelText, type, width, autoComplete
 						handleChange(e);
 					} }
 				/>
-				<label>{ labelText }</label>
+				<label htmlFor={ formId }>{ labelText }</label>
 				<span className="focus-border">
 					<i></i>
 				</span>

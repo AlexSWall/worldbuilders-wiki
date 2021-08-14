@@ -40,6 +40,8 @@ export default function ChangePasswordForm({ closeModal })
 			validationSchema={ schema }
 			onSubmit={ async (values, { setSubmitting, setErrors }) => {
 
+				setSubmissionError(null);
+
 				const oldPasswordFrontendHash = await computePasswordHash(values.password_old);
 				const newPasswordFrontendHash = await computePasswordHash(values.password_new);
 
@@ -121,6 +123,7 @@ export default function ChangePasswordForm({ closeModal })
 								formId='password_new'
 								labelText='New Password'
 								type='password'
+								autoComplete='new-password'
 								width={ 250 }
 								hasError={ touched.password_new && errors.password_new }
 								setFieldTouched={ setFieldTouched }
@@ -133,6 +136,7 @@ export default function ChangePasswordForm({ closeModal })
 								formId='password_new_confirm'
 								labelText='Confirm New Password'
 								type='password'
+								autoComplete='new-password'
 								width={ 250 }
 								hasError={ touched.password_new_confirm && errors.password_new_confirm }
 								setFieldTouched={ setFieldTouched }

@@ -50,6 +50,8 @@ export default function SignUpForm({ closeModal })
 			validationSchema={ schema }
 			onSubmit={ async (values, { setSubmitting, setErrors }) => {
 
+				setSubmissionError(null);
+
 				const passwordFrontendHash = await computePasswordHash(values.password);
 
 				console.log('Posting...')
@@ -117,10 +119,12 @@ export default function SignUpForm({ closeModal })
 						Sign Up
 					</div>
 					<div className='card-body'>
-						<Form className='form'>
+						<Form className='form' autoComplete='off'>
 							<TextInput
 								formId='preferred_name'
 								labelText='Preferred Name'
+								type='search'
+								autoComplete='off'
 								width={ 250 }
 								hasError={ touched.preferred_name && errors.preferred_name }
 								setFieldTouched={ setFieldTouched }
@@ -130,6 +134,8 @@ export default function SignUpForm({ closeModal })
 							<TextInput
 								formId='username'
 								labelText='Username'
+								type='search'
+								autoComplete='off'
 								width={ 250 }
 								hasError={ touched.username && errors.username }
 								setFieldTouched={ setFieldTouched }
@@ -139,6 +145,8 @@ export default function SignUpForm({ closeModal })
 							<TextInput
 								formId='email'
 								labelText='Email'
+								type='search'
+								autoComplete='off'
 								width={ 250 }
 								hasError={ touched.email && errors.email }
 								setFieldTouched={ setFieldTouched }
@@ -149,6 +157,7 @@ export default function SignUpForm({ closeModal })
 								formId='password'
 								labelText='Password'
 								type='password'
+								autoComplete='new-password'
 								width={ 250 }
 								hasError={ touched.password && errors.password }
 								setFieldTouched={ setFieldTouched }
@@ -161,6 +170,7 @@ export default function SignUpForm({ closeModal })
 								formId='password_confirm'
 								labelText='Confirm Password'
 								type='password'
+								autoComplete='new-password'
 								width={ 250 }
 								hasError={ touched.password_confirm && errors.password_confirm }
 								setFieldTouched={ setFieldTouched }

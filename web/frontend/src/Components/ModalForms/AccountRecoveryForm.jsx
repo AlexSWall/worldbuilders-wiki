@@ -28,7 +28,11 @@ export default function AccountRecoveryForm({ closeModal })
 			} }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
+
+				setSubmissionError(null);
+
 				console.log('Posting...')
+
 				fetch('/auth/', {
 					method: 'post',
 					headers: {
