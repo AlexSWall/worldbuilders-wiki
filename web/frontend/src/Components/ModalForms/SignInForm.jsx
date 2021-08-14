@@ -103,61 +103,69 @@ export default function SignInForm({ closeModal, setModalComponent })
 				}
 			} }
 		>
-			{ ({ touched, setFieldTouched, handleChange, errors }) => (
-				<div className='card'>
-					<div className='card-header'>
-						Sign In
+			{ ({ values, touched, setFieldTouched, handleChange, errors }) => {
+				// Required by Firefox auto-fill; if 'password' is given a value
+				// by auto-fill, the 'Required' error still exists in errors.
+				// Hence, we need to delete it manually.
+				if ( values.password )
+					delete errors.password;
+
+				return (
+					<div className='card'>
+						<div className='card-header'>
+							Sign In
+						</div>
+						<div className='card-body'>
+							<Form className='form'>
+								<TextInput
+									formId='identity'
+									labelText='Username or Email'
+									width={ 250 }
+									hasError={ touched.identity && errors.identity }
+									setFieldTouched={ setFieldTouched }
+									handleChange={ handleChange }
+								/>
+
+								<TextInput
+									formId='password'
+									labelText='Password'
+									type='password'
+									width={ 250 }
+									hasError={ touched.password && errors.password }
+									setFieldTouched={ setFieldTouched }
+									handleChange={ handleChange }
+								/>
+
+								<div className='form-group'>
+									<label className='form-label' style={ { width: 250 } } >
+										<a href='#' onClick={ () => {
+											setModalComponent(() => AccountRecoveryForm);
+										} }>Forgotten your password?</a>
+									</label>
+								</div>
+
+								<div className='form-group'>
+									<label className='form-label' style={ { width: 250 } } >
+										{ 'Don\'t have an account? ' }
+										<a href='#'>Sign up.</a>
+									</label>
+								</div>
+
+								<CheckBox
+									formId='rememberMe'
+									labelText='Keep me signed in'
+								/>
+
+								<SubmitButton disabled={ !(Object.keys(errors).length == 0 && 'identity' in touched && 'password' in touched) }> Sign In </SubmitButton>
+
+								{ submissionError
+									? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
+									: null }
+							</Form>
+						</div>
 					</div>
-					<div className='card-body'>
-						<Form className='form'>
-							<TextInput
-								formId='identity'
-								labelText='Username or Email'
-								width={ 250 }
-								hasError={ touched.identity && errors.identity }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<TextInput
-								formId='password'
-								labelText='Password'
-								type='password'
-								width={ 250 }
-								hasError={ touched.password && errors.password }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<div className='form-group'>
-								<label className='form-label' style={ { width: 250 } } >
-									<a href='#' onClick={ () => {
-										setModalComponent(() => AccountRecoveryForm);
-									} }>Forgotten your password?</a>
-								</label>
-							</div>
-
-							<div className='form-group'>
-								<label className='form-label' style={ { width: 250 } } >
-									{ 'Don\'t have an account? ' }
-									<a href='#'>Sign up.</a>
-								</label>
-							</div>
-
-							<CheckBox
-								formId='rememberMe'
-								labelText='Keep me signed in'
-							/>
-
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && 'identity' in touched && 'password' in touched) }> Sign In </SubmitButton>
-
-							{ submissionError
-								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
-								: null }
-						</Form>
-					</div>
-				</div>
-			) }
+				)
+			} }
 		</Formik>
 	);
 }
