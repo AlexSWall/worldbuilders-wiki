@@ -114,14 +114,16 @@
 	background: transparent;
 }
 
+// -- Top and bottom sides --
 .form-input ~ .focus-border:before,
 .form-input ~ .focus-border:after {
+	z-index: 2;
 	content: "";
 	position: absolute;
 	top: 0;
 	right: 0;
 	width: 0;
-	height: 2rem;
+	height: 1rem;
 	background-color: #3399FF;
 	transition: 0.2s;
 	transition-delay: 0.2s;
@@ -140,13 +142,15 @@
 	transition-delay: 0.6s;
 }
 
+// -- Left and right sides --
 .form-input ~ .focus-border i:before,
 .form-input ~ .focus-border i:after {
+	z-index: 2;
 	content: "";
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 2rem;
+	width: 1rem;
 	height: 0;
 	background-color: #3399FF;
 	transition: 0.2s;
