@@ -114,7 +114,7 @@ export default function SignUpForm({ closeModal })
 			{ ({ values, touched, setFieldTouched, handleChange, errors }) => (
 				<div className='card'>
 					<div className='card-header'>
-						Sign In
+						Sign Up
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
