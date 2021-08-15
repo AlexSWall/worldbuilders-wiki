@@ -87,6 +87,13 @@
 		font-weight: normal;
 		color: #c40000;
 	}
+
+	a:link, a:visited, a:hover, a:active {
+		color: #0000b0;
+		font-style: italic;
+		background-color: transparent;
+		text-decoration: none;
+	}
 }
 
 .form-input-wrapper {
