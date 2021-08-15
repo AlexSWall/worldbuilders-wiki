@@ -129,7 +129,7 @@ export default function ChangePasswordForm({ closeModal })
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							>
-								<WeakPasswordWarning password={ values.password } width={ 250 }/>
+								<WeakPasswordWarning password={ values.password_new } width={ 250 }/>
 							</TextInput>
 
 							<TextInput
