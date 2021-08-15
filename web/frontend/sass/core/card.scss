@@ -6,24 +6,24 @@
 	overflow-wrap: break-word;
 	background-color: rgb(255, 255, 255);
 	background-clip: border-box;
-	border: 1rem solid rgba(0, 0, 0, 0.4);
-	border-radius: 4rem;
+	border: .1rem solid rgba(0, 0, 0, 0.4);
+	border-radius: 0.4rem;
 
 	.card-header {
-		padding: 12rem 20rem;
+		padding: 1.2rem 2.0rem;
 		margin-bottom: 0;
 		background-color: rgba(0, 0, 0, 0.03);
-		border-bottom: 1rem solid rgba(0, 0, 0, 0.125);
+		border-bottom: .1rem solid rgba(0, 0, 0, 0.125);
 		font-size: 120%;
 		text-align: center;
 	}
 
 	.card-header:first-child {
-		border-radius: calc(4rem - 16rem) calc(4rem - 16rem) 0rem 0rem;
+		border-radius: calc(0.4rem - 1.6rem) calc(0.4rem - 1.6rem) 0rem 0rem;
 	}
 
 	.card-body {
 		flex: 1 1 auto;
-		padding: 0 20rem 0 20rem;
+		padding: 0 2.0rem 0 2.0rem;
 	}
 }

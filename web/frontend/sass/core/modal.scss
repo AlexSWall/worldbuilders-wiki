@@ -16,12 +16,12 @@
 	background-color: #FFF;
 	z-index: 1000;
 
-	border-radius: 5rem;
-	-moz-border-radius: 5rem;
-	-webkit-border-radius: 5rem;
+	border-radius: .5rem;
+	-moz-border-radius: .5rem;
+	-webkit-border-radius: .5rem;
 
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 15rem;
+	font-size: 1.5rem;
 	line-height: 1.4;
 
 	#modal-x-button {
@@ -29,14 +29,14 @@
 		cursor: pointer;
 		z-index: 1001;
 
-		top: -10rem;
-		right: -10rem;
+		top: -1.0rem;
+		right: -1.0rem;
 
 		box-sizing: border-box;
-		width: 20rem;
-		height: 20rem;
+		width: 2.0rem;
+		height: 2.0rem;
 
-		border-width: 3rem;
+		border-width: .3rem;
 		border-style: solid;
 		border-color: #605F61;
 		border-radius: 100%;

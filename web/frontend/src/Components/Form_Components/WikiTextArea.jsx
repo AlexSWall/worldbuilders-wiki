@@ -20,7 +20,7 @@ export default function WikiTextArea({ formId, labelText, size, hasError, setFie
 							height: 0.5 * window.innerHeight,
 							resize: 'none',
 							fontFamily: 'Roboto Mono, monospace',
-							letterSpacing: '-1rem',
+							letterSpacing: '-.1rem',
 							lineHeight: 1.5
 						} }
 						as='textarea'

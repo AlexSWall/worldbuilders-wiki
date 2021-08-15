@@ -31,19 +31,19 @@
 		margin-left: auto;
 		margin-right: auto;
 		width: 95%;
-		height: 42rem; /* 14 + 14 + 14 (navbar a) */
+		height: 4.2rem; /* 14 + 14 + 14 (navbar a) */
 		opacity: 1.0;
 		line-height: 1;
 
 		#navbar-brand-wrapper {
-			padding: 9rem 16rem 10rem 16rem;
+			padding: .9rem 1.6rem 1.0rem 1.6rem;
 			float: left;
 
 			#navbar-brand {
 				color: #888;
-				font-size: 20rem;
+				font-size: 2.0rem;
 				font-weight: 300;
-				letter-spacing: 2.5rem;
+				letter-spacing: .25rem;
 
 				&:hover, &:focus {
 					// Highlight link on hover
@@ -70,7 +70,7 @@
 	@at-root .navbar-item {
 		position: relative;
 		float: left;
-		margin-right: 1rem;
+		margin-right: .1rem;
 
 		&:last-child {
 			border-bottom: none;
@@ -78,8 +78,8 @@
 
 		> a {
 			display: block;
-			padding: 14rem 16rem 14rem 16rem;
-			font-size: 14rem;
+			padding: 1.4rem 1.6rem 1.4rem 1.6rem;
+			font-size: 1.4rem;
 			color: #888;
 			text-decoration: none;
 
@@ -97,11 +97,11 @@
 /* == Navigation Bar Search == */
 
 .searchbar-wrapper {
-	width: 220rem;
-	padding-top: 6rem;
-	padding-bottom: 5rem;
-	padding-left: 20rem;
-	padding-right: 20rem;
+	width: 22.0rem;
+	padding-top: .6rem;
+	padding-bottom: .5rem;
+	padding-left: 2.0rem;
+	padding-right: 2.0rem;
 
 	.searchbar {
 		width: 100%;
@@ -110,29 +110,29 @@
 
 		.searchbar-input {
 			width: 100%;
-			border: 1rem solid #2d2d2d;
+			border: .1rem solid #2d2d2d;
 			border-right: none;
-			padding-top: 8rem;
-			padding-bottom: 4rem;
-			padding-left: 8rem;
-			height: 17rem;
+			padding-top: .8rem;
+			padding-bottom: .4rem;
+			padding-left: .8rem;
+			height: 1.7rem;
 			outline: none;
 			color: #aaa;
 			font-family: Helvetica, Arial, sans-serif;
 			background: #121212;
-			font-size: 14rem;
+			font-size: 1.4rem;
 		}
 
 		.searchbar-button {
-			width: 40rem;
-			height: 31rem;
-			border: 1rem solid #2d2d2d;
+			width: 4.0rem;
+			height: 3.1rem;
+			border: .1rem solid #2d2d2d;
 			background: #2d2d2d;
 			text-align: center;
 			color: #666;
-			border-radius: 0 2rem 2rem 0;
+			border-radius: 0 .2rem .2rem 0;
 			cursor: pointer;
-			font-size: 20rem;
+			font-size: 2.0rem;
 		}
 	}
 }
@@ -157,7 +157,7 @@
 	// Base dropdown CSS
 	& > .dropdown-list {
 		// Add top border to distance dropdown from navbar
-		border-top: 3rem solid #111;
+		border-top: .3rem solid #111;
 
 		// Take time to disappear
 		transition: 0s 0.6s;
@@ -181,11 +181,11 @@
 		display: block;
 		background: #111;
 		color: #888;
-		font-size: 14rem;
+		font-size: 1.4rem;
 		text-decoration: none;
 		padding: .8em 1.8em .8em 1.8em;
 		position: relative;
-		border-bottom: 1rem solid #221;
+		border-bottom: .1rem solid #221;
 
 		&:hover, &:focus {
 			// Highlight link on hover
@@ -221,16 +221,16 @@
 		height: 0;
 		width: 0;
 		top: 50%;
-		margin-top: -5rem;
-		right: 5rem;
-		border: 5rem solid transparent;
+		margin-top: -.5rem;
+		right: .5rem;
+		border: .5rem solid transparent;
 		border-left-color: #aaa;
 	}
 
 	// Reverse arrows and change their colour when hovering over their dropdown item
 	&:hover > .dropdown-link:first-child:nth-last-child(2):before {
-		border: 5rem solid transparent;
-		right: 10rem;
+		border: .5rem solid transparent;
+		right: 1.0rem;
 		border-right-color: #cee;
 	}
 
@@ -239,14 +239,14 @@
 	> .dropdown-list > .dropdown-item {
 
 		// Transparent left border by default
-		border-left: 3rem solid transparent;
+		border-left: .3rem solid transparent;
 
 		// Normal colour for top item of sub-menu
 		&:first-child {
-			border-left: 3rem solid #111;
+			border-left: .3rem solid #111;
 
 			& > .dropdown-link {
-				border-left: 3rem solid #111;
+				border-left: .3rem solid #111;
 			}
 		}
 	}
@@ -275,8 +275,8 @@
 		position: absolute;
 		z-index: -1;
 		content: "";
-		width: 3rem;
-		height: 3rem;
+		width: .3rem;
+		height: .3rem;
 		left: 0;
 		bottom: 0;
 	}

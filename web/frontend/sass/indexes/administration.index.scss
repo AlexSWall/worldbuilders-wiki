@@ -2,7 +2,7 @@
 
 body {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 14rem;
+	font-size: 1.4rem;
 }
 
 #pageWrapper {
@@ -10,7 +10,7 @@ body {
 
 main {
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 15rem;
+	font-size: 1.5rem;
 	z-index: 0;
 	line-height: 1.4;
 }
@@ -20,19 +20,19 @@ main {
 }
 
 #content {
-	padding-top: 42rem; /* 42 = 14 + 14 + 14 (navbar a links) */;
-	padding-bottom: 50rem;
+	padding-top: 4.2rem; /* 42 = 14 + 14 + 14 (navbar a links) */;
+	padding-bottom: 5.0rem;
 }
 
 #mainPanelWrapper {
 }
 
 #mainPanel {
-	/* In case the width of the screen is <= 860rem, max-width and left-right padding is used. */
-	max-width: 1200rem;
-	padding-right: 30rem; 
-	padding-left: 30rem;
+	/* In case the width of the screen is <= 86.0rem, max-width and left-right padding is used. */
+	max-width: 120.0rem;
+	padding-right: 3.0rem; 
+	padding-left: 3.0rem;
 	margin: 0 auto; /* Centres: Automatic margin left-right, no margin up-down. */
-	padding-top: 30rem;
-	padding-bottom: 20rem;
+	padding-top: 3.0rem;
+	padding-bottom: 2.0rem;
 }
