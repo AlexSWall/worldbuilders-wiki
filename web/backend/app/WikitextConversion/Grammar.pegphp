@@ -26,14 +26,17 @@ class Grammar
 }
 /* ----------------------------------------------------------- */ {
 
-private function array_flatten($array = null) {
+private function array_flatten($array = null)
+{
 	$result = array();
 
-	if (!is_array($array)) {
+	if (!is_array($array))
+	{
 		$array = func_get_args();
 	}
 
-	foreach ($array as $key => $value) {
+	foreach ($array as $key => $value)
+	{
 		if (is_array($value))
 			$result = array_merge($result, array_flatten($value));
 		else
@@ -43,11 +46,25 @@ private function array_flatten($array = null) {
 	return $result;
 }
 
-private function startOffset() {
+private function array_flatten_top($array)
+{
+	$result = array();
+
+	foreach ($array as $key => $value)
+	{
+		$result = array_merge($result, $value);
+	}
+
+	return $result;
+}
+
+private function startOffset()
+{
 	return $this->savedPos;
 }
 
-private function endOffset() {
+private function endOffset()
+{
 	return $this->currPos;
 }
 
@@ -150,7 +167,7 @@ private function createListTokenArray( $listItems )
 
 start "start" =
 	blocks:topLevelBlock+ newLine* endOfFile {
-		return array_flatten([ $blocks, new EndOfFileToken() ]);
+		return $this->array_flatten([ $blocks, new EndOfFileToken() ]);
 	}
 
 topLevelBlock =
