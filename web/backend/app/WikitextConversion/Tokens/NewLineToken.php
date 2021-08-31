@@ -6,6 +6,6 @@ class NewLineToken extends BasePlainToken
 {
 	public function toHTML(): string
 	{
-		return "\n";
+		return "";
 	}
 }

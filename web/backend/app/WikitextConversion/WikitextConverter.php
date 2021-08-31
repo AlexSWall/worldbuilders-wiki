@@ -4,20 +4,19 @@ namespace App\WikitextConversion;
 
 class WikitextConverter
 {
-	private $htmlBuilder;
+	private $tokenProcessor;
 
-	private $htmlBlocks;
-	private $html;
+	private array $htmlBlocks;
+	private ?string $html;
 
 	public function __construct(string $wikitext)
 	{
-		$this->htmlBuilder = new HTML5Builder();
+		$this->tokenProcessor = new TokenProcessor();
 
 		$tokens = WikitextParser::parse($wikitext);
 
-		$this->htmlBuilder->build($tokens);
+		$this->htmlBlocks = $this->tokenProcessor->process($tokens, 'top-level');
 
-		$this->htmlBlocks = $this->htmlBuilder->getHtmlBlocks();
 		$this->html = null;
 	}
 
@@ -30,7 +29,7 @@ class WikitextConverter
 	{
 		// Set cache member variable if necessary
 		if ($this->html === null)
-			$this->html = $this->htmlBuilder->getHtml();
+			$this->html = $this->tokenProcessor->getHtml();
 
 		// Read from cache member variable
 		return $this->html;

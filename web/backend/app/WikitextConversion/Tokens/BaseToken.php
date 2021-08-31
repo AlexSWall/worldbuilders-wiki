@@ -14,6 +14,7 @@ namespace App\WikitextConversion\Tokens;
  *          SelfClosingTagToken
  *       MetaToken
  *       TextToken
+ *       InfoboxToken
  */
 abstract class BaseToken implements \JsonSerializable
 {

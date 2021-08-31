@@ -9,7 +9,7 @@ class WikitextParser
 	/**
 	 * @return string Returns an iterable of BaseToken instances, representing the wikitext.
 	 */
-	public static function parse( string $wikitext )
+	public static function parse( string $wikitext ): array
 	{
 		self::$logger->addInfo('Parsing wikitext');
 

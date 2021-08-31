@@ -70,55 +70,56 @@
 		margin-bottom: .5rem;
 	}
 
-	h1, h2, h3, h4, h5, h6
+	.wiki-header
 	{
 		font-family: 'Georgia', 'Times', serif;
 		font-weight: 400;
 		color: black;
 		margin-left: 0;
 		margin-right: 0;
+		overflow: hidden;
 	}
 
-	h1, h2 {
+	h1.wiki-header, h2.wiki-header {
 		display: block;
 		border-bottom: 1px solid #AAAAAA;
 	}
 
-	h3 {
+	h3.wiki-header {
 		display: inline-block;
 		border-bottom: 1px solid #AAAAAA;
 	}
 
-	h4, h5, h6 {
+	h4.wiki-header, h5.wiki-header, h6.wiki-header {
 		display: block;
 		margin-top: 0.5em;
 	}
 
-	h1 {
+	h1.wiki-header {
 		font-size: 2em;
 		margin-top: 0.33em;
 		margin-bottom: 0.5em;
 	}
 
-	h2 {
+	h2.wiki-header {
 		font-size: 1.5em;
 		margin-top: 0.5em;
 		margin-bottom: 0.35em;
 	}
 
-	h3 {
+	h3.wiki-header {
 		font-size: 1.3em;
 	}
 
-	h4 {
+	h4.wiki-header {
 		font-size: 1.15em;
 	}
 
-	h5 {
+	h5.wiki-header {
 		font-size: 1.075em;
 	}
 
-	h6 {
+	h6.wiki-header {
 		font-size: 1em;
 	}
 
@@ -250,4 +251,97 @@
 		max-width: 100%;
 		display: block;
 	}
+}
+
+.infobox {
+	border-radius: .3rem;
+	border-style: solid;
+	border-width: .1rem;
+	border-color: #555;
+	clear: right;
+	float: right;
+	margin: 0 0 1.8rem 1.8rem;
+	width: 27rem;
+
+	hr {
+		background-color: #888;
+		margin: .4rem .7rem .2rem .7rem;
+	}
+}
+
+.infobox > section:last-child,
+.infobox > .infobox-entry:last-child {
+	margin-bottom: .5rem;
+}
+
+.infobox-title {
+	margin: 0;
+	padding: 0.9rem;
+	text-align: center;
+	font-size: 1.8rem;
+	font-weight: 700;
+	line-height: 1;
+	background: #dbc7b2;
+	color: #000;
+	overflow-wrap: break-word;
+	border: none;
+	border-bottom-style: solid;
+	border-color: #282828;
+	border-bottom-width: .1rem;
+}
+
+.infobox-image {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   height: auto;
+   max-width: 100%;
+}
+
+.infobox-subheading {
+	margin: 0;
+	padding: 0.9rem;
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1;
+	// background: #3a5472;
+	// color: #fff;
+	// background: #e3c19f;
+	background: #dbc7b2;
+	color: #000;
+	overflow-wrap: break-word;
+	border-style: solid;
+	border-width: 0 0 .1rem 0;
+	border-color: #282828;
+}
+
+.infobox-entry {
+	display: flex;
+	flex-direction: row;
+	box-sizing: border-box;
+	grid-column-gap: 0.9rem;
+	overflow: hidden;
+	// border-top-style: solid;
+	// border-color: #3a5472;
+	// border-top-width: .1rem;
+	padding: .3rem .7rem .3rem .7rem;
+	font-size: 1.4rem;
+}
+
+.infobox-subheading+.infobox-entry
+/* , figure+.infobox-entry */ {
+	border-top-width: 0;
+	margin-top: .3rem;
+}
+
+.infobox-entry-key {
+	flex-basis: 7rem;
+	font-weight: 700;
+}
+
+.infobox-entry-value {
+	hyphens: auto;
+	flex-basis: 1.6rem;
+	flex-grow: 1;
 }

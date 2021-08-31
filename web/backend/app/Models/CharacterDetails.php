@@ -13,7 +13,7 @@ class CharacterDetails extends DatabaseEncapsulator
 	
 	protected static function getPrimaryKey()
 	{
-		return 'Id';
+		return 'CharacterDetailsId';
 	}
 
 	protected static function getDefaults()
@@ -46,9 +46,9 @@ class CharacterDetails extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	public function getId()
+	public function getCharacterDetailsId()
 	{
-		return $this->get('Id');
+		return $this->get('CharcterDetailsId');
 	}
 
 	public function getCharacterId()

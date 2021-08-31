@@ -26,26 +26,6 @@ class Grammar
 }
 /* ----------------------------------------------------------- */ {
 
-private function array_flatten($array = null)
-{
-	$result = array();
-
-	if (!is_array($array))
-	{
-		$array = func_get_args();
-	}
-
-	foreach ($array as $key => $value)
-	{
-		if (is_array($value))
-			$result = array_merge($result, array_flatten($value));
-		else
-			$result = array_merge($result, array($key => $value));
-	}
-
-	return $result;
-}
-
 private function array_flatten_top($array)
 {
 	$result = array();
@@ -166,8 +146,8 @@ private function createListTokenArray( $listItems )
 /* == Top-level Rules == */
 
 start "start" =
-	blocks:topLevelBlock+ newLine* endOfFile {
-		return $this->array_flatten([ $blocks, new EndOfFileToken() ]);
+	maybeInfobox:infobox? blocks:topLevelBlock+ newLine* endOfFile {
+		return [ $maybeInfobox, $blocks, new EndOfFileToken() ];
 	}
 
 topLevelBlock =
@@ -179,6 +159,66 @@ block =
 	/ nl:newLine anySpacing {
 		return $nl;
 	}
+
+
+/* == Infobox == */
+
+infobox =
+	type:infoboxStart
+	entries:infoboxEntries
+	infoboxEnd {
+		return new InfoboxToken($type, $entries);
+	}
+
+infoboxStart =
+	'{{' anySpacing 'Infobox' someSpacing infoboxType:word anySpacing newLine {
+		return $infoboxType;
+	}
+
+infoboxEntries =
+	entries:( infoboxEntry / ( ! infoboxEnd remainderOfLine newLine { return null; } ) )+
+	{
+		// Ignore non-entry non-end lines
+		return $this->array_flatten_top(array_filter($entries, fn ($e) => $e != null ));
+	}
+
+infoboxEntry =
+	anySpacing '|'
+	anySpacing key:infoboxKey
+	anySpacing '='
+	anySpacing value:infoboxValue
+	anySpacing newLine {
+		return [ $key => $value ];
+	}
+
+infoboxKey =
+	string<infoboxKey>
+
+// Returns an array of token arrays; each entry is a line of tokens.
+infoboxValue =
+	initialValue:inlineLine
+	additionalValues:( newLine anySpacing '=' v:inlineLine { return $v; } )*
+	{
+		if (empty($additionalValues))
+			return $initialValue;
+
+		return array_merge([$initialValue], $additionalValues);
+	}
+
+infoboxValueList =
+	newLine ? firstItem:infoboxValueListItem
+	additionalItems:( newLine item:infoboxValueListItem { return $item; } )* {
+		return array_merge(
+			[ $firstItem ],
+			$additionalItems
+		);
+	}
+
+infoboxValueListItem =
+	anySpacing '*' anySpacing item:trimmedInlineLine & newLine { return $item; }
+
+infoboxEnd =
+	anySpacing '}}' anySpacing & endOfLine
 
 
 /* == Block-level Rules == */
@@ -235,7 +275,7 @@ paragraphBreak =
 blockLine =
 	header
 	/ list
-	/ infobox
+	/ image
 
 header =
 	anySpacing '==' extrasLeft:'='* inner:$inlineText<header>
@@ -267,7 +307,9 @@ header =
 			new OpeningTagToken('div', [
 				'class' => 'headerWrapper'
 			]),
-			new OpeningTagToken('h' . $level),
+			new OpeningTagToken('h' . $level, [
+				'class' => 'wiki-header'
+			]),
 			$textToken,
 			new ClosingTagToken('h' . $level),
 			new ClosingTagToken('div')
@@ -290,53 +332,30 @@ listItem =
 
 listCharacter = [*#;:]
 
-infobox =
-	type:infoboxStart
-	entries:infoboxEntries
-	infoboxEnd {
-		return [new InfoboxToken($type, $entries)];
+image =
+	"[[" anySpacing "image:"i anySpacing imageFileName:$inlineText<template>
+	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing {
+			return [ $width, $height ];
+		}
+	) ?
+	"]]" {
+		$tokenAttributes = [ 'src' => '/images/wiki-images/' . trim($imageFileName) ];
+
+		if ( $dimensions )
+		{
+			[ $width, $height ] = $dimensions;
+			$tokenAttributes['width'] = $width;
+			$tokenAttributes['height'] = $height;
+			$tokenAttributes['style'] = 'display: block; margin-left: auto; margin-right: auto;';
+		}
+
+		return [
+			new OpeningTagToken('img', $tokenAttributes),
+		];
 	}
 
-infoboxStart =
-	'{{' anySpacing 'Infobox' someSpacing infoboxType:word anySpacing newLine {
-		return $infoboxType;
-	}
 
-infoboxEntries = 
-	entries:( infoboxEntry / ! infoboxEnd remainderOfLine { return null; } )+ {
-		// Ignore non-entry non-end lines
-		return array_values(array_filter($entries, fn ($e) => $e != null ));
-	}
-
-infoboxEntry =
-	anySpacing '|'
-	anySpacing key:word
-	anySpacing '='
-	anySpacing value:infoboxValue
-	anySpacing newLine {
-		return [ $key => $value ];
-	}
-
-infoboxValue =
-	infoboxValueList
-	/ trimmedInlineLine
-
-infoboxValueList =
-	newLine ? firstItem:infoboxValueListItem
-	additionalItems:( newLine item:infoboxValueListItem { return $item; } )* {
-		return array_merge(
-			[ $firstItem ],
-			$additionalItems
-		);
-	}
-
-infoboxValueListItem =
-	anySpacing '*' anySpacing item:trimmedInlineLine & newLine { return $item; }
-
-infoboxEnd =
-	anySpacing '}}' anySpacing & endOfLine
-
-/* == Inline Rules == */
+/* == General Inline Rules == */
 
 inlineContent =
 	inlineLine
@@ -355,6 +374,7 @@ trimmedInlineLine =
 
 // This can have a template passed to it to represent the context, which affects what is counted as
 // an inline break.
+// Returns an array of tokens.
 inlineLine =
 	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+ 
 	{
@@ -389,7 +409,7 @@ inlineElement =
 // This can have a template passed to it to represent the context, which affects what is counted as
 // an inline break.
 inlineText =
-	text:( !inlineBreak c:. { return $c; } )+ 
+	text:( !inlineBreak char:. { return $char; } )+
 	{
 		return [ new TextToken( implode('', $text) ) ];
 	}
@@ -402,32 +422,11 @@ inlineBreak =
 	/ & <template> & ( "]]" / "|" )
 	/ & <permission> & ( "==" / spacing )
 
-/* == Inline Rules == */
+
+/* == Specific Inline Rules == */
 
 templateElement =
-	image / wikilink
-
-image =
-	"[[" anySpacing "image:"i anySpacing imageFileName:$inlineText<template>
-	dimensions:("|" anySpacing width:number anySpacing "," anySpacing height:number anySpacing {
-			return [ $width, $height ];
-		}
-	) ?
-	"]]" {
-		$tokenAttributes = [ 'src' => '/images/wiki-images/' . trim($imageFileName) ];
-
-		if ( $dimensions )
-		{
-			[ $width, $height ] = $dimensions;
-			$tokenAttributes['width'] = $width;
-			$tokenAttributes['height'] = $height;
-			$tokenAttributes['style'] = 'display: block; margin-left: auto; margin-right: auto;';
-		}
-
-		return [
-			new OpeningTagToken('img', $tokenAttributes),
-		];
-	}
+	wikilink
 
 wikilink =
 	"[["
@@ -479,8 +478,27 @@ italics =
 
 /* == String Rules == */
 
+// This can have a template passed to it to represent the context, which affects
+// both what is counted as a string break and how to process the string
+// afterwards.
+string =
+	isInfoboxKey:<infoboxKey>
+	str:( !stringBreak char:. { return $char; } )+
+	{
+		$str = implode('', $str);
+
+		if ($isInfoboxKey)
+			$str = trim($str);
+
+		return $str;
+	}
+
+stringBreak =
+	& newLine
+	/ & <infoboxKey> & ( "=" )
+
 remainderOfLine =
-	$ (!newLine .)+
+	$ (!newLine .)*
 
 word =
 	$ (!spacingOrEOL .)+

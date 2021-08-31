@@ -174,7 +174,7 @@ class User extends DatabaseEncapsulator
 		UserPermissions::createDefaultUserPermissions($this->getUserId());
 	}
 
-	public function getUserPermissions()
+	public function getUserPermissions() : UserPermissions
 	{
 		/* Lazy instantiation. */
 		if ( !$this->userPermissions )
@@ -195,7 +195,7 @@ class User extends DatabaseEncapsulator
 		UserDetails::createUserDetails($this->getUserId(), $preferredName);
 	}
 
-	public function getUserDetails()
+	public function getUserDetails(): UserDetails
 	{
 	    /* Lazy instantiation. */
 		if ( !$this->userDetails )

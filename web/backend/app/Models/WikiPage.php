@@ -134,7 +134,6 @@ class WikiPage extends DatabaseEncapsulator
 	// To avoid a separate Modal for permission blocks, the required
 	// functionality has been included here.
 	// The `getViewableBlocks` and `getHtmlForPermissionsExpression` above can
-	//
 	// be used to get the actual wikitext blocks and the HTML for the wikitext
 	// blocks that are viewable for a given permissions expression.
 
@@ -146,12 +145,12 @@ class WikiPage extends DatabaseEncapsulator
 	 *
 	 * @return An array of `WikiPagePermissionBlock`s.
 	 */
-	private function getPermissionBlocks()
+	private function getPermissionBlocks() : array
 	{
 		// Check whether cache private member variable is already populated.
 		if ( !$this->wikiPagePermissionBlocks )
 			// If not, populate it.
-			$this->setPermissionBlocks( 
+			$this->setPermissionBlocks(
 				WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks( $this->getWikiPageId() )
 			);
 
@@ -169,6 +168,7 @@ class WikiPage extends DatabaseEncapsulator
 	{
 		// Update cache private member variable.
 		$this->wikiPagePermissionBlocks = $wikiPagePermissionBlocks;
+
 		// Update the database.
 		WikiPagePermissionBlockQueries::setPermissionBlocksForWikiPage( $this->getWikiPageId(), $wikiPagePermissionBlocks );
 	}
