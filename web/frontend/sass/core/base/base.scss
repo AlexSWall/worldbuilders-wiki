@@ -47,6 +47,14 @@ html {
 	/* Hide scrollbar for IE, Edge and Firefox */
 	-ms-overflow-style: none;  /* IE and Edge */
 	scrollbar-width: none;  /* Firefox */
+
+	// Used for over-scrolling
+	background-color: #111;
+}
+
+body {
+	// Used for over-scrolling? Sometimes maybe?
+	background-color: #111;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
