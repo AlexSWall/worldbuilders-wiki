@@ -98,7 +98,7 @@ class Infobox extends DatabaseEncapsulator
 		$this->infoboxItems = $infoboxItems;
 
 		// Update the database.
-		//InfoboxQueries::setInfoboxItems( $this->getInfoboxId(), $infoboxItems );
+		InfoboxQueries::setInfoboxItems( $this->getInfoboxId(), $infoboxItems );
 	}
 
 	/* == Infobox Queries == */

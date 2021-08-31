@@ -100,7 +100,7 @@ class InfoboxQueries
 	 */
 	public static function setInfoboxItems( int $infoboxId, array $infoboxItems ): void
 	{
-		// self::deleteInfoboxItems($infoboxId);
+		self::deleteInfoboxItems($infoboxId);
 
 		$typeIdLookupArray = self::getTypeIdLookupArray();
 
@@ -163,10 +163,12 @@ class InfoboxQueries
 		$typeStringToTypeId = array();
 
 		foreach ( $result as $entry )
-			$infoboxItemTypeId = $entry->infoboxItemTypeId;
-			$typeString = $entry->typeString;
+		{
+			$infoboxItemTypeId = $entry->InfoboxItemTypeId;
+			$typeString = $entry->TypeString;
 
 			$typeStringToTypeId[$typeString] = $infoboxItemTypeId;
+		}
 
 		return $typeStringToTypeId;
 	}
