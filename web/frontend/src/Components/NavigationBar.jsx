@@ -7,12 +7,15 @@ import DropdownItem from './NavigationBar/DropdownItem';
 import Item         from './NavigationBar/Item';
 import SearchBar    from './NavigationBar/SearchBar';
 
+import ChangePasswordForm       from './ModalForms/ChangePasswordForm';
+import InfoboxCreationForm      from './ModalForms/InfoboxCreationForm';
+import InfoboxDeletionForm      from './ModalForms/InfoboxDeletionForm';
+import InfoboxModificationForm  from './ModalForms/InfoboxModificationForm';
+import WikiPageCreationForm     from './ModalForms/WikiPageCreationForm';
+import WikiPageDeletionForm     from './ModalForms/WikiPageDeletionForm';
+import WikiPageModificationForm from './ModalForms/WikiPageModificationForm';
 import SignInForm               from './ModalForms/SignInForm';
 import SignUpForm               from './ModalForms/SignUpForm';
-import ChangePasswordForm       from './ModalForms/ChangePasswordForm';
-import WikiPageCreationForm     from './ModalForms/WikiPageCreationForm';
-import WikiPageModificationForm from './ModalForms/WikiPageModificationForm';
-import WikiPageDeletionForm     from './ModalForms/WikiPageDeletionForm';
 
 export default function NavigationBar()
 {
@@ -58,9 +61,20 @@ export default function NavigationBar()
 						{
 							globals.isAuthenticated ? (
 								<>
-									<Item text='Add Page' ModalComponent={ WikiPageCreationForm } />
-									<Item text='Edit Page' ModalComponent={ WikiPageModificationForm } />
-									<Item text='Delete Page' ModalComponent={ WikiPageDeletionForm } />
+									<Item text='Modify Wiki' href={ false }>
+										<DropdownList>
+											<DropdownItem text='Add Page' ModalComponent={ WikiPageCreationForm } />
+											<DropdownItem text='Edit Page' ModalComponent={ WikiPageModificationForm } />
+											<DropdownItem text='Delete Page' ModalComponent={ WikiPageDeletionForm } />
+											<DropdownItem text='Infobox' href={ false }>
+												<DropdownList>
+													<DropdownItem text='Add Infobox' ModalComponent={ InfoboxCreationForm } />
+													<DropdownItem text='Edit Infobox' ModalComponent={ InfoboxModificationForm } />
+													<DropdownItem text='Delete Infobox' ModalComponent={ InfoboxDeletionForm } />
+												</DropdownList>
+											</DropdownItem>
+										</DropdownList>
+									</Item>
 								</>
 							) : (<React.Fragment />)
 						}

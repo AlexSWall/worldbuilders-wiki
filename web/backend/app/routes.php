@@ -45,6 +45,13 @@ $app->group('', function() use ($app)
 	$app->post('/a/wiki', 'WikiController:serveModifyWikiContentPostRequest');
 })->add(new AdministratorMiddleware($container, true));
 
+/* Admin Infobox Structure API */
+$app->group('', function() use ($app)
+{
+	$app->get('/a/infobox', 'WikiController:serveInfoboxStructure');
+	$app->post('/a/infobox', 'WikiController:serveModifyInfoboxStructurePostRequest');
+})->add(new AdministratorMiddleware($container, true));
+
 /* ------------------ */
 /* Account Management */
 /* ------------------ */

@@ -100,4 +100,64 @@ class WikiController extends Controller
 		// This shouldn't happen
 		return $errorResponse(500, "server error");
 	}
+
+	/* GET request with path of the form /a/wiki */
+	public function serveInfoboxStructure(RequestInterface $request, ResponseInterface $response)
+	{
+		$infoboxName = $request->getQueryParam('infobox_name');
+		self::$logger->addInfo('Received GET request for infobox structure for the infobox named ' . $infoboxName);
+
+		return InfoboxStructureController::getInfoboxStructureResponse($response, $infoboxName);
+	}
+
+	/* POST request with path of the form /a/wiki */
+	public function serveModifyInfoboxStructurePostRequest($request, $response)
+	{
+		$parsedBody = $request->getParsedBody();
+		$action = $parsedBody['action'];
+		$infoboxName = trim($parsedBody['infobox_name']);
+		$data = $parsedBody['data'];
+
+		self::$logger->addInfo('Received GET request to modify the infobox structure for the infobox named ' . $infoboxName);
+		self::$logger->addInfo('Action: ' . $action . '; Page Path: ' . $infoboxName . '; Data: ' . $data);
+
+		// Convenience wrapper for error response
+		$errorResponse = function($errorCode, $error) use ($response)
+		{
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
+		};
+
+		// -- Validate --
+
+		if (!DataUtilities::isNonEmptyString($action) || !DataUtilities::isNonEmptyString($infoboxName))
+			return $errorResponse(400, "'action' and 'infobox_name' must be non-empty strings");
+
+		if (!is_array($data))
+			return $errorResponse(400, "'data' must be a JSON object/array");
+
+		self::$logger->addInfo('Data array: ' . json_encode($data));
+
+		// -- Act --
+		switch ($action)
+		{
+			case 'create':
+				return InfoboxStructureController::createInfoboxStructure($response, $infoboxName);
+
+			case 'modify':
+				$infoboxStructure = $data['infobox_structure'];
+				if (!is_string($infoboxStructure))
+					return $errorResponse(400, $action + "action needs data with 'infobox_structure' key and string value");
+
+				return InfoboxStructureController::modifyInfoboxStructure($response, $infoboxName, $infoboxStructure);
+
+			case 'delete':
+				return InfoboxStructureController::deleteInfoboxStructure($response, $infoboxName);
+
+			default:
+				return $errorResponse(501, "action must be one of 'create', 'modify', or 'delete'");
+		}
+
+		// This shouldn't happen
+		return $errorResponse(500, "server error");
+	}
 }

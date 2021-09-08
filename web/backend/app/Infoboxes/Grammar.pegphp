@@ -1,0 +1,172 @@
+/*<?*/
+/**
+ *
+ */
+
+/* ----------------------------------------------------------- */ {
+
+namespace App\Infoboxes;
+
+class Grammar
+{
+	static function getNewGrammarParser()
+	{
+		return new PEGParser();
+	}
+}
+
+// This must be on a separate line
+}
+/* ----------------------------------------------------------- */ {
+
+private function startOffset()
+{
+	return $this->savedPos;
+}
+
+private function endOffset()
+{
+	return $this->currPos;
+}
+
+} /* ----------------------------------------------------------- */
+
+/* == Top-level Rules == */
+
+start "start" =
+	startOfFile $items:infoboxStructure endOfFile
+	{
+		return $items;
+	}
+
+infoboxStructure = items:(
+		anySpacing i:item newLine
+		{
+			return $i;
+		}
+	)*
+	{
+		return $items;
+	} 
+
+item =
+	header
+	/ horizontalLine
+	/ image
+	/ caption
+	/ entry 
+
+header = "==" "="* headerChars:(char:[^=]* { return $char; } ) "==" "="* anySpacing &newLine
+	{
+		return new InfoboxHeader(trim(implode('', $headerChars)));
+	} 
+
+horizontalLine = "---" "-"* anySpacing &newLine
+	{
+		return new InfoboxHorizontalLine();
+	} 
+
+image = "Image " key:key &newLine
+	{
+		return new InfoboxImage($key);
+	} 
+
+caption = "Caption " key:key &newLine
+	{
+		return new InfoboxCaption($key);
+	} 
+
+entry = keys:entryKeys someSpacing keyTitles:entryKeyTitles
+	{
+		$entries = [];
+
+		$numEntries = min(count($keys), count($keyTitles));
+
+		foreach( range(1, $numEntries) as $i )
+		{
+			$entries[] = new InfoboxEntry($keys[$i], $keyTitles[$i]);
+		}
+
+		return $entries;
+	}
+
+entryKeys =
+	firstKey:key
+	otherKeys:(
+		anySpacing "/" anySpacing otherKey:key
+		{
+			return otherKey;
+		}
+	)* 
+	{
+		return array_merge([$firstKey], $otherKeys);
+	}
+
+entryKeyTitles =
+	firstTitle:entryKeyTitle
+	otherTitles:(
+		anySpacing "/" anySpacing otherTitle:entryKeyTitle
+		{
+			return otherTitle;
+		}
+	)*
+	{
+		return array_merge([$firstTitle], $otherTitles);
+	}
+
+entryKeyTitle =
+	'"' chars:([^'"']*) '"'
+	/ "'" chars:([^"'"]*) "'"
+	{
+		return trim(implode('', $chars));
+	}
+
+key = chars:([a-zA-Z0-9_ -]+)
+	{
+		return trim(implode('', $chars));
+	}
+
+
+/* == String Rules == */
+
+remainderOfLine =
+	$ (!newLine .)*
+
+someSpacing =
+	$ spacing+
+
+anySpacing =
+	$ spacing*
+
+spacing =
+	[ \t]
+
+spacingOrEOL =
+	spacing
+	/ endOfLine
+
+startOfLine =
+	newLine
+	/ startOfFile
+
+endOfLine =
+	newLine
+	/ endOfFile
+
+newLine = 
+	'\n' { return [ new NewLineToken() ]; }
+	/ '\r\n' { return [ new NewLineToken() ]; }
+
+
+/* == Positional Rules == */
+
+startOfFile =
+	& { return $this->endOffset() === 0; } {
+		return [];
+	}
+
+endOfFile =
+	& { return $this->endOffset() === $this->inputLength; } {
+		return [];
+	}
+
