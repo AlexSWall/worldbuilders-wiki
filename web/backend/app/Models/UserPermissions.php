@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models;
 
@@ -6,21 +6,21 @@ class UserPermissions extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
 	
-	protected static function getDefaults()
-	{
-		return [
-			'IsAdmin' => false
-		];
-	}
-	
-	protected static function getTableName()
+	protected static function getTableName(): string
 	{
 		return 'UserPermissions';
 	}
 	
-	protected static function getPrimaryKey()
+	protected static function getPrimaryKey(): string
 	{
 		return 'Id';
+	}
+	
+	protected static function getDefaults(): array
+	{
+		return [
+			'IsAdmin' => false
+		];
 	}
 
 
@@ -29,12 +29,12 @@ class UserPermissions extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	public static function createDefaultUserPermissions($userId)
+	public static function createDefaultUserPermissions(int $userId): ?UserPermissions
 	{
 	    return self::createModelWithEntries(['UserId' => $userId]);
 	}
 
-	public static function retrieveUserPermissionsByUserId($userId)
+	public static function retrieveUserPermissionsByUserId(int $userId): ?UserPermissions
 	{
 		return self::retrieveModelWithEntries(['UserId' => $userId]);
 	}
@@ -42,17 +42,17 @@ class UserPermissions extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	private function hasPermission($permission)
+	private function hasPermission(string $permission): bool
 	{
 		return (bool) $this->get($permission);
 	}
 
-	public function getUserId()
+	public function getUserId(): int
 	{
 		return $this->get('UserId');
 	}
 
-	public function isAdmin()
+	public function isAdmin(): bool
 	{
 		return $this->hasPermission('IsAdmin');
 	}

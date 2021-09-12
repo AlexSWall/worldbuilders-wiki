@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Controllers;
 
@@ -11,18 +11,21 @@ use App\Helpers\FrontEndDataUtilities;
 use App\Validation\Validator;
 use App\Validation\Rules;
 
+use Slim\Http\Response;
+use Slim\Http\ServerRequest as Request;
+
 class AuthenticationController extends Controller
 {
-	static $logger;
-	static $debug_logger;
+	static \App\Logging\Logger $logger;
+	static \App\Logging\Logger $debug_logger;
 
-	public function servePostRequest($request, $response)
+	public function servePostRequest(Request $request, Response $response)
 	{
 		$parsedBody = $request->getParsedBody();
 		$action = $parsedBody['action'];
 		$data = $parsedBody['data'];
 
-		self::$logger->addInfo('Received auth POST request with action \'' . $action . '\'');
+		self::$logger->info('Received auth POST request with action \'' . $action . '\'');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -57,7 +60,7 @@ class AuthenticationController extends Controller
 
 				// Get whether validation returns a requirement string.
 				$validationRequirement = $validator( $arg );
-				if ( $validationResult )
+				if ( $validationRequirement )
 					return $errorResponse(400, "'{$action}' action needs data with '{$key}' key and {$validationRequirement} value");
 
 				// No requirement string: validation succeeded, add to list of args
@@ -83,11 +86,11 @@ class AuthenticationController extends Controller
 		return $errorResponse(500, "server error");
 	}
 
-	private static function getAPIActionData( string $action ) : ?array
+	private static function getAPIActionData( string $action ): ?array
 	{
-		$createValidator = function ( $validator, string $description ) : callable
+		$createValidator = function ( $validator, string $description ): callable
 		{
-			return function ( $input ) use ( $validator, $description ) : ?string
+			return function ( $input ) use ( $validator, $description ): ?string
 			{
 				return ( ! $validator( $input ) ) ? $description : null;
 			};
@@ -137,9 +140,9 @@ class AuthenticationController extends Controller
 		}
 	}
 
-	private function signUp($response, $username, $email, $password, $preferredName)
+	private function signUp(Response $response, string $username, string $email, string $password, string $preferredName): Response
 	{
-		self::$logger->addInfo('Attempting to sign up client');
+		self::$logger->info('Attempting to sign up client');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error, $extraErrorData) use ($response)
@@ -159,9 +162,9 @@ class AuthenticationController extends Controller
 		if ( ! empty($errors) )
 			return $errorResponse(400, 'Validation failure', ['validation_errors' => $errors]);
 
-		self::$logger->addInfo('Validation passed, creating inactive user');
+		self::$logger->info('Validation passed, creating inactive user');
 
-		$identifier = $this->container->randomlib->generateString(128);
+		$identifier = $this->container->get('randomlib')->generateString(128);
 
 		$user = User::createInactiveUser(
 			$username,
@@ -185,9 +188,9 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function signIn($response, $identity, $password, $rememberMe)
+	private function signIn(Response $response, string $identity, string $password, bool $rememberMe): Response
 	{
-		self::$logger->addInfo('Attempting to sign user in');
+		self::$logger->info('Attempting to sign user in');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -195,27 +198,27 @@ class AuthenticationController extends Controller
 			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
-		self::$debug_logger->addInfo('Checking that client is not already authenticated...');
+		self::$debug_logger->info('Checking that client is not already authenticated...');
 
 		if ( $this->auth->isAuthenticated() )
 			return $errorResponse(400, 'Already signed in');
 
-		self::$debug_logger->addInfo('Checking that user exists...');
+		self::$debug_logger->info('Checking that user exists...');
 
 		if ( ! $this->auth->checkUserExists($identity) )
 			return $errorResponse(401, 'Identity not in use');
 
-		self::$debug_logger->addInfo('User exists, checking they\'re activated...');
+		self::$debug_logger->info('User exists, checking they\'re activated...');
 
 		if ( !$this->auth->checkActivated($identity) )
 			return $errorResponse(401, 'Not activated');
 
-		self::$debug_logger->addInfo('User activated, checking authentication succeeds...');
+		self::$debug_logger->info('User activated, checking authentication succeeds...');
 
 		if ( !$this->auth->attempt($identity, $password) )
 			return $errorResponse(401, 'Identity in use but authentication failed');
 
-		self::$debug_logger->addInfo('User successfully logged in');
+		self::$debug_logger->info('User successfully logged in');
 
 		if ( $rememberMe )
 			$response = $this->auth->setRememberMeCookie($response, $identity);
@@ -223,9 +226,9 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function signOut($request, $response)
+	private function signOut(Request $request, Response $response): Response
 	{
-		self::$logger->addInfo('Attempting to sign user out');
+		self::$logger->info('Attempting to sign user out');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -233,7 +236,7 @@ class AuthenticationController extends Controller
 			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
-		self::$debug_logger->addInfo('Checking that client is authenticated...');
+		self::$debug_logger->info('Checking that client is authenticated...');
 
 		if ( ! $this->auth->isAuthenticated() )
 			return $errorResponse(400, 'Not signed in');
@@ -243,12 +246,12 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function changePassword($response, $oldPassword, $newPassword)
+	private function changePassword(Response $response, string $oldPassword, string $newPassword): Response
 	{
-		self::$logger->addInfo('Attempting to change user\'s password');
+		self::$logger->info('Attempting to change user\'s password');
 
 		// Convenience wrapper for error response
-		$errorResponse = function($errorCode, $error, $extraErrorData) use ($response)
+		$errorResponse = function($errorCode, $error, $extraErrorData = []) use ($response)
 		{
 			return ResponseUtilities::respondWithError($response, $errorCode, $error, $extraErrorData);
 		};
@@ -258,7 +261,7 @@ class AuthenticationController extends Controller
 
 		$user = $this->auth->getUser();
 
-		self::$logger->addInfo('Client is authenticated, validating passwords');
+		self::$logger->info('Client is authenticated, validating passwords');
 
 		$errors = Validator::validate([
 			'password_old' => [ Rules::passwordCorrectRules( $user->getPasswordHash() ), $oldPassword ],
@@ -268,26 +271,27 @@ class AuthenticationController extends Controller
 		if ( !empty($errors) )
 			return $errorResponse(400, 'Validation failure', ['validation_errors' => $errors]);
 
-		self::$logger->addInfo('Validataed passwords, setting new password');
+		self::$logger->info('Validataed passwords, setting new password');
 
 		$user->setUnhashedPassword( $newPassword );
 
-		$this->flash->addMessage('info', 'Your password has been changed.');
+		// TODO
+		//$this->flash->addMessage('info', 'Your password has been changed.');
 
 		return $response->withStatus(200);
 	}
 
-	private function requestPasswordResetEmail($response, $email)
+	private function requestPasswordResetEmail(Response $response, string $email): Response
 	{
-		self::$logger->addInfo('Attempting to send reset password email');
+		self::$logger->info('Attempting to send reset password email');
 
 		// Convenience wrapper for error response
-		$errorResponse = function($errorCode, $error, $extraErrorData) use ($response)
+		$errorResponse = function($errorCode, $error, $extraErrorData = []) use ($response)
 		{
 			return ResponseUtilities::respondWithError($response, $errorCode, $error, $extraErrorData);
 		};
 
-		self::$logger->addInfo('Validating supplied email address');
+		self::$logger->info('Validating supplied email address');
 
 		$errors = Validator::validate([
 			'email' => [ Rules::emailInUseRules(), $email ]
@@ -296,19 +300,19 @@ class AuthenticationController extends Controller
 		if ( !empty($errors) )
 			return $errorResponse(400, 'Validation failure', ['validation_errors' => $errors]);
 
-		self::$logger->addInfo('Validataed email address, creating password recovery email');
+		self::$logger->info('Validataed email address, creating password recovery email');
 
 		$user = User::retrieveUserByIdentity($email);
 
 		if ( $user === null )
 			return $errorResponse(400, 'Failed to retrieve user via email address');
 
-		$identifier = $this->container->randomlib->generateString(128);
+		$identifier = $this->container->get('randomlib')->generateString(128);
 		$hashedIdentifier = $this->HashingUtilities->hash($identifier);
 		
 		$user->setPasswordRecoveryHash($hashedIdentifier);
 
-		self::$logger->addInfo('Sending password recovery email');
+		self::$logger->info('Sending password recovery email');
 
 		$this->mailer->send(
 			$user,
@@ -320,9 +324,9 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function resetPassword($response, $email, $identifier, $newPassword)
+	private function resetPassword(Response $response, string $email, string $identifier, string $newPassword): Response
 	{
-		self::$logger->addInfo('Attempting to send reset password email');
+		self::$logger->info('Attempting to send reset password email');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error, $extraErrorData = []) use ($response)
@@ -330,7 +334,7 @@ class AuthenticationController extends Controller
 			return ResponseUtilities::respondWithError($response, $errorCode, $error, $extraErrorData);
 		};
 
-		self::$logger->addInfo('Attempting to retrieve user by email');
+		self::$logger->info('Attempting to retrieve user by email');
 
 		$user = User::retrieveUserByIdentity($email);
 
@@ -345,7 +349,7 @@ class AuthenticationController extends Controller
 		if ( ! $this->HashingUtilities->checkHash( $user->getPasswordRecoveryHash(), $hashedIdentifier ) )
 			return $errorResponse(400, 'Incorrect password recovery hash supplied');
 
-		self::$logger->addInfo('Successfully authenticated with password recovery hash, validating new password');
+		self::$logger->info('Successfully authenticated with password recovery hash, validating new password');
 
 		$errors = Validator::validate([
 			'password_new' => [ Rules::passwordRules(), $newPassword ]
@@ -354,25 +358,27 @@ class AuthenticationController extends Controller
 		if ( !empty($errors) )
 			return $errorResponse(400, 'Validation failure', ['validation_errors' => $errors]);
 
-		self::$logger->addInfo('New password successfully validated, setting it now');
+		self::$logger->info('New password successfully validated, setting it now');
 
 		$user->setUnhashedPassword( $newPassword );
 		$user->removePasswordRecoveryHash();
 
-		$this->flash->addMessage('info', 'Password successfully set. You can now sign in.');
+		// TODO
+		// $this->flash->addMessage('info', 'Password successfully set. You can now sign in.');
 
 		return $response->withStatus(200);
 	}
 
-	public function serveActivationAttempt($request, $response)
+	public function serveActivationAttempt(Request $request, Response $response): Response
 	{
-		self::$logger->addInfo('Attempting to activate account');
+		self::$logger->info('Attempting to activate account');
 
 		// Convenience function for creating response
 		$makeResponse = function($messageType, $message) use ($response)
 		{
-			self::$logger->addInfo("Responding with {$messageType} flash message: {$message}");
-			$this->flash->addMessage($messageType, $message);
+			// TODO
+			//self::$logger->info("Responding with {$messageType} flash message: {$message}");
+			//$this->flash->addMessage($messageType, $message);
 			return $response->withRedirect($this->router->pathFor('home'));
 		};
 
@@ -385,32 +391,32 @@ class AuthenticationController extends Controller
 		if ( ! $identifier )
 			return $makeResponse('error', '\'identifier\' GET parameter required');
 
-		self::$logger->addInfo('Retrieving account');
+		self::$logger->info('Retrieving account');
 
 		$user = User::retrieveInactiveUserByEmail($email);
 
 		if ( ! $user )
 			return $makeResponse('error', "Inactivate user with email '{$email}' could not be found");
 
-		self::$logger->addInfo('Account retrieved; checking identifier');
+		self::$logger->info('Account retrieved; checking identifier');
 
 		$hashedIdentifier = $this->HashingUtilities->hash($identifier);
 
 		if ( !$this->HashingUtilities->checkHash($user->getActiveHash(), $hashedIdentifier))
 			return $makeResponse('error', "Identifier incorrect");
 
-		self::$logger->addInfo('Identifier validated; activating account');
+		self::$logger->info('Identifier validated; activating account');
 
 		$user->activateAccount();
 
-		self::$logger->addInfo('Account activated');
+		self::$logger->info('Account activated');
 
 		return $makeResponse('info', "Your account has been activated and you can sign in.");
 	}
 
-	public function serveResetPasswordGetRequest($request, $response)
+	public function serveResetPasswordGetRequest(Request $request, Response $response): Response
 	{
-		self::$logger->addInfo('Serving reset password page');
+		self::$logger->info('Serving reset password page');
 
 		return FrontEndDataUtilities::getEntryPointResponse( $this->view, $response, 'reset-password');
 	}

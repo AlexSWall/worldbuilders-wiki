@@ -3,7 +3,6 @@ import React, { useContext } from 'react';
 import GlobalsContext from 'GlobalsContext';
 
 import NavigationBar from './Components/NavigationBar';
-import Flash from './Components/Flash';
 
 export default function AdministrationApp()
 {
@@ -12,7 +11,6 @@ export default function AdministrationApp()
 	return (
 		<div id="pageWrapper">
 			<NavigationBar />
-			<Flash />
 			<main>
 				<div id="contentWrapper">
 					<div id="content">

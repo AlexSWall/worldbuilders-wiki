@@ -4,8 +4,8 @@ namespace App\WikitextConversion\Tokens;
 
 class MetaToken extends BaseToken
 {
-	private $name;
-	private $attributes;
+	private string $name;
+	private array $attributes;
 
 	public function __construct( string $name, array $attributes = [] )
 	{

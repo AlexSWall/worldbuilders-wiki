@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models;
 
@@ -6,17 +6,17 @@ class UserDetails extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
 	
-	protected static function getTableName()
+	protected static function getTableName(): string
 	{
 		return 'UserDetails';
 	}
 	
-	protected static function getPrimaryKey()
+	protected static function getPrimaryKey(): string
 	{
 		return 'Id';
 	}
 	
-	protected static function getDefaults()
+	protected static function getDefaults(): array
 	{
 		return [
 			'PreferredName' => null,
@@ -30,7 +30,7 @@ class UserDetails extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	public static function createUserDetails($userId, $preferredName)
+	public static function createUserDetails(int $userId, string $preferredName): ?UserDetails
 	{
 	    return self::createModelWithEntries([
 			'UserId' => $userId,
@@ -38,7 +38,7 @@ class UserDetails extends DatabaseEncapsulator
 		]);
 	}
 
-	public static function retrieveUserDetailsByUserId($userId)
+	public static function retrieveUserDetailsByUserId(int $userId): ?UserDetails
 	{
 		return self::retrieveModelWithEntries(['UserId' => $userId]);
 	}
@@ -46,17 +46,17 @@ class UserDetails extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	public function getUserId()
+	public function getUserId(): int
 	{
 		return $this->get('UserId');
 	}
 
-	public function getPreferredName()
+	public function getPreferredName(): string
 	{
 		return $this->get('PreferredName');
 	}
 
-	public function getDescription()
+	public function getDescription(): string
 	{
 		return $this->get('Description');
 	}

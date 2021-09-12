@@ -1,39 +1,56 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Middleware;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+use Slim\Http\ServerRequest as Request;
+
 class LogRequestMiddleware extends Middleware
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
-	public function __invoke($request, $response, $next)
+	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		self::$logger->addInfo('Request\'s Method Requested URI Path: '
+		self::$logger->info('Request\'s Method Requested URI Path: '
 			. $request->getMethod() . ': '
 			. $request->getURI()->getPath());
 
-		self::$logger->addInfo('Request\'s Query Parameters: ' .
+		self::$logger->info('Request\'s Query Parameters: ' .
 			json_encode($request->getQueryParams()));
 
-		self::$logger->addInfo('Request\'s POST Parameters: ' .
-			json_encode($this->getCleanedPOSTParameters($request->getParsedBody())));
+		self::$logger->info('Request\'s POST Parameters: ' .
+			json_encode(self::getCleanedPOSTParameters($request->getParsedBody())));
 
-		self::$logger->addInfo('Request\'s Cookie Parameters: ' . 
+		self::$logger->info('Request\'s Cookie Parameters: ' . 
 			json_encode($request->getCookieParams()));
 
-		$response = $next($request, $response);
+		$response = $handler->handle($request);
+
+		self::$logger->info('Response\'s Status Code: ' .
+			json_encode($response->getStatusCode()));
+
+		self::$logger->info('Response\'s Headers: ' .
+			json_encode($response->getHeaders()));
+
+		self::$logger->info('Response\'s Body: ' .
+			json_encode($response->getBody()));
+
 		return $response;
 	}
 
 	/* Redact any information which is keyed with a key which contains the phrase 'password'. */
-	private function getCleanedPOSTParameters($restParams)
+	static private function getCleanedPOSTParameters(?array $restParams): array
 	{
 		if (is_null($restParams))
 			return [];
 
 		foreach ($restParams as $key => $value)
-			if ( is_string($value) && stristr($value, 'password') )
+			if ( is_string($value) && (stristr($value, 'password') || stristr($key, 'password') ) )
 				$restParams[$key] = '<REDACTED>';
+			else if ( is_array($value) )
+				$restParams[$key] = self::getCleanedPOSTParameters($value);
 		return $restParams;
 	}
 }

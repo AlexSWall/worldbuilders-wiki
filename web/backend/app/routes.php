@@ -1,8 +1,15 @@
-<?php
+<?php declare( strict_types = 1 );
 
-use App\Middleware\GuestMiddleware;
-use App\Middleware\AuthenticatedMiddleware;
+/* use App\Middleware\GuestMiddleware; */
+/* use App\Middleware\AuthenticatedMiddleware; */
 use App\Middleware\AdministratorMiddleware;
+
+use Psr\Container\ContainerInterface;
+
+use Slim\Http\ServerRequest as Request;
+use Slim\Http\Response;
+
+assert(isset($container));
 
 /* Note:
  * 	$app->get('/', 'Foo:bar');
@@ -20,7 +27,7 @@ use App\Middleware\AdministratorMiddleware;
 $app->get('/', 'WikiController:serveWikiApp')->setName('home');
 
 /* 302: /<PageName> -> /#<PageName> */
-$app->get('/{wikipage}', function ($request, $response, $args) {
+$app->get('/{wikipage}', function (Request $request, Response $response, array $args) {
 	return $response->withStatus(302)->withHeader('Location', '/#' . $args['wikipage']);
 });
 
@@ -47,7 +54,7 @@ $app->get('/auth/activate-account', 'AuthenticationController:serveActivationAtt
 	 ->setName('activate-account');
 
 $app->get('/auth/reset-password', 'AuthenticationController:serveResetPasswordGetRequest')
-    ->setName('reset-password');;
+    ->setName('reset-password');
 
 // -- POST Requests --
 $app->post('/auth/', 'AuthenticationController:servePostRequest');

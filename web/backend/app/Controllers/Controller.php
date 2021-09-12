@@ -1,22 +1,24 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Controllers;
 
+use Psr\Container\ContainerInterface;
+
 abstract class Controller
 {
-	protected $container;
+	protected ContainerInterface $container;
 
-	public function __construct($container)
+	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
 	}
 
-	/* e.g. give controllers access to view. */
-	public function __get($property)
+	/* E.g. gives Controllers access to view. */
+	public function __get(string $property): mixed
 	{
-		if ( $this->container->{$property} )
+		if ( $this->container->get($property) )
 		{
-			return $this->container->{$property};
+			return $this->container->get($property);
 		}
 	}
 }

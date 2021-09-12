@@ -6,8 +6,11 @@ use App\Utilities\ArrayBasedSet;
 
 class PermissionsUtilities
 {
-	public static function getViewableBlocks( $permissions, array $wikiPagePermissionBlocks ): array
+	public static function getViewableBlocks( ?ArrayBasedSet $permissions, array $wikiPagePermissionBlocks ): array
 	{
+		if ( is_null($permissions) )
+			$permissions = new ArrayBasedSet();
+
 		$viewableBlocks = array();
 		foreach ( $wikiPagePermissionBlocks as $block )
 			if ( self::satisfiesPermissionExpression( $permissions, $block->getPermissionsExpression() ) )
@@ -15,13 +18,10 @@ class PermissionsUtilities
 		return $viewableBlocks;
 	}
 
-	public static function satisfiesPermissionExpression( $permissions, string $permissionsExpression ): bool
+	public static function satisfiesPermissionExpression( ArrayBasedSet $permissions, string $permissionsExpression ): bool
 	{
 		if ( $permissionsExpression === '' )
 			return true;
-
-		if ( is_null($permissions) )
-			$permissions = new ArrayBasedSet();
 
 		if ( $permissions->has('dm') )
 			return true;

@@ -2,11 +2,9 @@
 
 namespace App\Infoboxes;
 
-use App\WikitextConversion\Tokens\TextToken;
-
 class InfoboxImage extends AbstractInfoboxItem
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	private string $key;
 

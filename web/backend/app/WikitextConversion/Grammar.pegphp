@@ -26,9 +26,9 @@ class Grammar
 }
 /* ----------------------------------------------------------- */ {
 
-private function array_flatten_top($array)
+private function array_flatten_top( array $array ): array
 {
-	$result = array();
+	$result = [];
 
 	foreach ($array as $key => $value)
 	{
@@ -38,17 +38,17 @@ private function array_flatten_top($array)
 	return $result;
 }
 
-private function startOffset()
+private function startOffset(): int
 {
 	return $this->savedPos;
 }
 
-private function endOffset()
+private function endOffset(): int
 {
 	return $this->currPos;
 }
 
-private function createListTokenArray( $listItems )
+private function createListTokenArray( array $listItems ): array
 {
 	$previousPrefix = '';
 	$listTokens = array();

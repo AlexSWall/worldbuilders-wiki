@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models;
 
@@ -6,32 +6,31 @@ class User extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
 	
-	protected static function getTableName()
+	protected static function getTableName(): string
 	{
 		return 'Users';
 	}
 	
-	protected static function getPrimaryKey()
+	protected static function getPrimaryKey(): string
 	{
 		return 'UserId';
 	}
 	
-	protected static function getDefaults()
+	protected static function getDefaults(): array
 	{
-		return [
-		];
+		return [];
 	}
 
 
 	/* == Instance Variables == */
 
-	private $userPermissions;
-	private $userDetails;
+	private ?UserPermissions $userPermissions = null;
+	private ?UserDetails $userDetails = null;
 
 
 	/* == Creators & Retrievers == */
 
-	public static function createInactiveUser($username, $email, $passwordHash, $identifier)
+	public static function createInactiveUser(string $username, string $email, string $passwordHash, string $identifier): ?User
 	{
 		return self::createModelWithEntries([
 			'Username' => $username,
@@ -42,22 +41,22 @@ class User extends DatabaseEncapsulator
 		]);
 	}
 
-	public static function retrieveUserByUserId($userId)
+	public static function retrieveUserByUserId(int $userId): ?User
 	{
 		return self::retrieveModelWithEntries(['UserId' => $userId]);
 	}
 
-	public static function retrieveUserByUsername($username)
+	public static function retrieveUserByUsername(string $username): ?User
 	{
 		return self::retrieveModelWithEntries(['Username' => $username]);
 	}
 
-	public static function retrieveUserByEmail($email)
+	public static function retrieveUserByEmail(string $email): ?User
 	{
 		return self::retrieveModelWithEntries(['Email' => $email]);
 	}
 
-	public static function retrieveUserByIdentity($identity)
+	public static function retrieveUserByIdentity(string $identity): ?User
 	{
 		$user = self::retrieveUserByUsername($identity);
 		if ( !$user )
@@ -65,12 +64,12 @@ class User extends DatabaseEncapsulator
 		return $user;
 	}
 
-	public static function retrieveUserByRememberMeIdentifier($identifier)
+	public static function retrieveUserByRememberMeIdentifier(string $identifier): ?User
 	{
 		return self::retrieveModelWithEntries(['RememberMeIdentifier' => $identifier]);
 	}
 
-	public static function retrieveInactiveUserByEmail($email)
+	public static function retrieveInactiveUserByEmail(string $email): ?User
 	{
 		return self::retrieveModelWithEntries([
 			'Email' => $email,
@@ -81,17 +80,17 @@ class User extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	public function getUserId()
+	public function getUserId(): int
 	{
 		return $this->get('UserId');
 	}
 
-	public function getUsername()
+	public function getUsername(): string
 	{
 		return $this->get('Username');
 	}
 
-	public function setUsername($username)
+	public function setUsername(string $username): void
 	{
 		$this->set('Username', $username);
 	}
@@ -101,7 +100,7 @@ class User extends DatabaseEncapsulator
 		return $this->get('Email');
 	}
 
-	public function setEmail($email)
+	public function setEmail(string $email): void
 	{
 		$this->set('Email', $email);
 	}
@@ -111,27 +110,28 @@ class User extends DatabaseEncapsulator
 		return $this->get('Password');
 	}
 
-	public function setHashedPassword($password)
+	public function setHashedPassword(string $password): void
 	{
 		$this->set('Password', $password);
 	}
 
-	public function setUnhashedPassword($password)
+	public function setUnhashedPassword(string $password): void
 	{
-		$this->setHashedPassword(password_hash($password, PASSWORD_DEFAULT));
+		$hashingUtilities = \App\Globals\FrontEndParametersFacade::getHashingUtilities();
+		$this->setHashedPassword($hashingUtilities->hashPassword($password));
 	}
 
-	public function isActive()
+	public function isActive(): bool
 	{
 		return (bool) $this->get('Active');
 	}
 
-	public function getActiveHash()
+	public function getActiveHash(): string
 	{
 		return $this->get('ActiveHash');
 	}
 
-	public function activateAccount()
+	public function activateAccount(): void
 	{
 		$this->update([
 			'Active' => true,
@@ -139,27 +139,27 @@ class User extends DatabaseEncapsulator
 		]);
 	}
 
-	public function getPasswordRecoveryHash()
+	public function getPasswordRecoveryHash(): string
 	{
 		return $this->get('RecoveryHash');
 	}
 
-	public function setPasswordRecoveryHash($recoveryHash)
+	public function setPasswordRecoveryHash(?string $recoveryHash): void
 	{
 		$this->set('RecoveryHash', $recoveryHash);
 	}
 
-	public function getRememberMeIdentifier()
+	public function getRememberMeIdentifier(): string
 	{
 		return $this->get('RememberMeIdentifier');
 	}
 
-	public function getRememberMeToken()
+	public function getRememberMeToken(): string
 	{
 		return $this->get('RememberMeToken');
 	}
 
-	public function setRememberMeCredentials($identifier, $token)
+	public function setRememberMeCredentials(?string $identifier, ?string $token): void
 	{
 		$this->update([
 			'RememberMeIdentifier' => $identifier,
@@ -169,7 +169,7 @@ class User extends DatabaseEncapsulator
 
 	/* == User Permissions == */
 
-	public function createUserPermissions()
+	public function createUserPermissions(): void
 	{
 		UserPermissions::createDefaultUserPermissions($this->getUserId());
 	}
@@ -182,7 +182,7 @@ class User extends DatabaseEncapsulator
 		return $this->userPermissions;
 	}
 
-	public function isAdmin()
+	public function isAdmin(): bool
 	{
 		return $this->getUserPermissions()->isAdmin();
 	}
@@ -190,7 +190,7 @@ class User extends DatabaseEncapsulator
 
 	/* == User Details == */
 
-	public function createUserDetails($preferredName)
+	public function createUserDetails(string $preferredName): void
 	{
 		UserDetails::createUserDetails($this->getUserId(), $preferredName);
 	}
@@ -203,19 +203,19 @@ class User extends DatabaseEncapsulator
 		return $this->userDetails;
 	}
 
-	public function getPreferredName()
+	public function getPreferredName(): string
 	{
 		return $this->getUserDetails()->getPreferredName();
 	}
 
 	/* == Miscellaneous == */
 
-	public function removeRememberMeCredentials()
+	public function removeRememberMeCredentials(): void
 	{
 		$this->setRememberMeCredentials(null, null);
 	}
 
-	public function removePasswordRecoveryHash()
+	public function removePasswordRecoveryHash(): void
 	{
 		$this->setPasswordRecoveryHash(null);
 	}

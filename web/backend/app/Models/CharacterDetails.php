@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models;
 
@@ -6,17 +6,17 @@ class CharacterDetails extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
 	
-	protected static function getTableName()
+	protected static function getTableName(): string
 	{
 		return 'CharacterDetails';
 	}
 	
-	protected static function getPrimaryKey()
+	protected static function getPrimaryKey(): string
 	{
 		return 'CharacterDetailsId';
 	}
 
-	protected static function getDefaults()
+	protected static function getDefaults(): array
 	{
 		return [
 			'Nickname' => null,
@@ -30,7 +30,7 @@ class CharacterDetails extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	public static function createCharacterDetails($characterId, $fullName)
+	public static function createCharacterDetails(int $characterId, string $fullName): ?CharacterDetails
 	{
 	    return self::createModelWithEntries([
 			'CharacterId' => $characterId,
@@ -38,7 +38,7 @@ class CharacterDetails extends DatabaseEncapsulator
 		]);
 	}
 
-	public static function retrieveCharacterDetailsByCharacterId($characterId)
+	public static function retrieveCharacterDetailsByCharacterId(int $characterId): ?CharacterDetails
 	{
 		return self::retrieveModelWithEntries(['CharacterId' => $characterId]);
 	}
@@ -46,52 +46,52 @@ class CharacterDetails extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	public function getCharacterDetailsId()
+	public function getCharacterDetailsId(): int
 	{
 		return $this->get('CharcterDetailsId');
 	}
 
-	public function getCharacterId()
+	public function getCharacterId(): int
 	{
 		return $this->get('CharacterId');
 	}
 
-	public function getFullName()
+	public function getFullName(): string
 	{
 		return $this->get('FullName');
 	}
 
-	public function setFullName($fullName)
+	public function setFullName(string $fullName): void
 	{
 		$this->set('FullName', $fullName);
 	}
 
-	public function getNickname()
+	public function getNickname(): string
 	{
 		return $this->get('Nickname');
 	}
 
-	public function setNickname($nickname)
+	public function setNickname(string $nickname): void
 	{
 		$this->set('Nickname', $nickname);
 	}
 
-	public function getWikiPageLink()
+	public function getWikiPageLink(): string
 	{
 		return $this->get('WikiPageLink');
 	}
 
-	public function setWikiPageLink($wikiPageLink)
+	public function setWikiPageLink(string $wikiPageLink): void
 	{
 		$this->set('WikiPageLink', $wikiPageLink);
 	}
 
-	public function getDescription()
+	public function getDescription(): string
 	{
 		return $this->get('Description');
 	}
 
-	public function setDescription($description)
+	public function setDescription(string $description): void
 	{
 		$this->set('Description', $description);
 	}

@@ -4,43 +4,43 @@ namespace App\WikitextConversion;
 
 class WikitextParser
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	/**
-	 * @return string Returns an iterable of BaseToken instances, representing the wikitext.
+	 * @return Returns an iterable of BaseToken instances, representing the wikitext.
 	 */
 	public static function parse( string $wikitext ): array
 	{
-		self::$logger->addInfo('Parsing wikitext');
+		self::$logger->info('Parsing wikitext');
 
 		$grammarParser = Grammar::getNewGrammarParser();
 		$parseResult = $grammarParser->parse($wikitext);
 
-		self::$logger->addInfo('Post-processing parsed wikitext tokens');
+		self::$logger->info('Post-processing parsed wikitext tokens');
 		$tokensArray = self::postProcess($parseResult);
 
-		self::$logger->addInfo('Finished parsing; returning tokens');
+		self::$logger->info('Finished parsing; returning tokens');
 		return $tokensArray;
 	}
 
-	private static function postProcess( $parseResult )
+	private static function postProcess( array $parseResult ): array
 	{
 		return $parseResult;
 	}
 
-	public static function checkParse( string $wikitext ) : bool
+	public static function checkParse( string $wikitext ): bool
 	{
-		self::$logger->addInfo('Checking wikitext parses');
+		self::$logger->info('Checking wikitext parses');
 
 		try
 		{
 			self::parse($wikitext);
-			self::$logger->addInfo('Wikitext parses');
+			self::$logger->info('Wikitext parses');
 			return true;
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
-			self::$logger->addInfo('Wikitext does not parse');
+			self::$logger->info('Wikitext does not parse');
 			return false;
 		}
 	}

@@ -1,10 +1,10 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Utilities;
 
 final class ArrayBasedSet implements \Iterator, SetInterface
 {
-	private $data;
+	private array $data;
 
 	public function __construct( array $arr = [] )
 	{
@@ -19,39 +19,39 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	private const CONTAINED = TRUE;
 
-	public function has($item)
+	public function has( mixed $item ): bool
 	{
 		return isset($this->data[$item]);
 	}
 
-	public function add($item)
+	public function add( mixed $item ): void
 	{
 		$this->data[$item] = self::CONTAINED;
 	}
 
-	public function addAll($items)
+	public function addAll( Iterable $items ): void
 	{
 		foreach ( $items as $item )
 			$this->data[$item] = self::CONTAINED;
 	}
 
-	public function delete($item)
+	public function delete( mixed $item ): void
 	{
 		unset($this->data[$item]);
 	}
 
-	public function deleteAll($items)
+	public function deleteAll( Iterable $items ): void
 	{
 		foreach ( $items as $item )
 			unset($this->data[$item]);
 	}
 
-	public function clear()
+	public function clear(): void
 	{
 		$this->data = [];
 	}
 
-	public function values()
+	public function values(): array
 	{
 		return array_keys($this->data);
 	}
@@ -59,36 +59,36 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	/* == Iterator == */
 
-	private $values;
-	private $position;
+	private array $values;
+	private int $position;
 
-	public function getIterator()
+	public function getIterator(): \Iterator
 	{
 		return $this;
 	}
 
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->values = $this->values();
 		$this->position = 0;
 	}
 
-	public function current()
+	public function current(): mixed
 	{
 		return $this->values[$this->position];
 	}
 
-	public function key()
+	public function key(): mixed
 	{
 		return $this->position;
 	}
 
-	public function next()
+	public function next(): void
 	{
 		++ $this->position;
 	}
 
-	public function valid()
+	public function valid(): bool
 	{
 		return isset($this->array[$this->position]);
 	}
@@ -96,7 +96,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	/* == Countable == */
 
-	public function count()
+	public function count(): int
 	{
 		return @count($this->data);
 	}

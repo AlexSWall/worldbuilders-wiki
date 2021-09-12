@@ -6,9 +6,9 @@ use App\Models\Infobox;
 
 class InfoboxToken extends BaseToken
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
-	private $infoboxType;
+	private string $infoboxType;
 	/** [
 	 *      string entryKey => [
 	 *          int lineNumber => [
@@ -17,7 +17,7 @@ class InfoboxToken extends BaseToken
 	 *      ]
 	 *  ] $values;
 	 */
-	private $values;
+	private array $values;
 
 	public function __construct( string $infoboxType, array $values = [] )
 	{
@@ -107,7 +107,7 @@ class InfoboxToken extends BaseToken
 				}
 				else
 				{
-					self::$logger->addInfo("InfoboxToken::toHtml else statement: shouldn't get here");
+					self::$logger->info("InfoboxToken::toHtml else statement: shouldn't get here");
 				}
 			}
 
@@ -115,7 +115,7 @@ class InfoboxToken extends BaseToken
 				$html .= '</section>';
 		}
 
-		self::$logger->addInfo( 'HTML produced: ' . print_r($html, true) );
+		self::$logger->info( 'HTML produced: ' . print_r($html, true) );
 
 		$html .= '</aside>';
 

@@ -1,29 +1,31 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Controllers;
 
-use App\Models\WikiPage;
 use App\Helpers\FrontEndDataUtilities;
 use App\Helpers\DataUtilities;
 use App\Helpers\ResponseUtilities;
 
+use Slim\Http\Response;
+use Slim\Http\ServerRequest as Request;
+
 class WikiController extends Controller
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	/* GET request with path of the form /#{pageName} */
-	public function serveWikiApp($request, $response)
+	public function serveWikiApp(Request $request, Response $response): Response
 	{
-		self::$logger->addInfo('Received GET request for Wiki app');
+		self::$logger->info('Received GET request for Wiki app');
 
 		return FrontEndDataUtilities::getEntryPointResponse( $this->view, $response, 'wiki' );
 	}
 
 	/* GET request with path of the form /w/{pageName} */
-	public function serveWikiContentGetRequest($request, $response, $args)
+	public function serveWikiContentGetRequest(Request $request, Response $response, array $args): Response
 	{
 		$pagePath = $args['wikipage'];
-		self::$logger->addInfo('Received GET request for standard wikipage data of page ' . $pagePath);
+		self::$logger->info('Received GET request for standard wikipage data of page ' . $pagePath);
 
 		$character = $this->auth->getCharacter();
 		$viewingPermissions = ( $character ? $character->getPermissions() : null );
@@ -32,24 +34,24 @@ class WikiController extends Controller
 	}
 
 	/* GET request with path of the form /a/wiki */
-	public function serveWikitext($request, $response, $args)
+	public function serveWikitext(Request $request, Response $response): Response
 	{
-		$pagePath = $request->getQueryParam('wikipage');
-		self::$logger->addInfo('Received GET request for wikitext of page ' . $pagePath);
+		$pagePath = $request->getQueryParams()['wikipage'];
+		self::$logger->info('Received GET request for wikitext of page ' . $pagePath);
 
 		return WikiPageController::getWikiTextResponse($response, $pagePath);
 	}
 
 	/* POST request with path of the form /a/wiki */
-	public function serveModifyWikiContentPostRequest($request, $response)
+	public function serveModifyWikiContentPostRequest(Request $request, Response $response): Response
 	{
 		$parsedBody = $request->getParsedBody();
 		$action = $parsedBody['action'];
 		$pagePath = trim($parsedBody['page_path']);
 		$data = $parsedBody['data'];
 
-		self::$logger->addInfo('Received POST request to modify wiki content for ' . $pagePath);
-		self::$logger->addInfo('Action: ' . $action . '; Page Path: ' . $pagePath . '; Data: ' . $dataJSON);
+		self::$logger->info('Received POST request to modify wiki content for ' . $pagePath);
+		self::$logger->info('Action: ' . $action . '; Page Path: ' . $pagePath . '; Data: ' . $data);
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -65,7 +67,7 @@ class WikiController extends Controller
 		if (!is_array($data))
 			return $errorResponse(400, "'data' must be a JSON object/array");
 
-		self::$logger->addInfo('Data array: ' . json_encode($data));
+		self::$logger->info('Data array: ' . json_encode($data));
 
 		// -- Act --
 		switch ($action)

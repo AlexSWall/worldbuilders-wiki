@@ -6,7 +6,7 @@ use App\WikitextConversion\TokenProcessor;
 
 class InfoboxEntry extends AbstractInfoboxItem
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	private string $key;
 	private string $keyText;
@@ -17,14 +17,14 @@ class InfoboxEntry extends AbstractInfoboxItem
 		$this->keyText = $keyText;
 	}
 
-	public function getHtml($args): ?string
+	public function getHtml(array $args): ?string
 	{
 		$entryValueTokens = InfoboxUtilities::getEntryValueForKey($args, $this->key, 'is_array');
 		if ( $entryValueTokens === null )
 			return null;
 
-		self::$logger->addInfo('Placemarker');
-		self::$logger->addInfo(print_r($entryValueTokens, true));
+		self::$logger->info('Placemarker');
+		self::$logger->info(print_r($entryValueTokens, true));
 		$entryValueHtml = (new TokenProcessor())->process($entryValueTokens, 'inline');
 
 		$html = '';

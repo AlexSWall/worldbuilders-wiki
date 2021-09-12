@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 $setupFinished = false;  /* For logging purposes. */
 
@@ -31,7 +31,7 @@ foreach ( $logger_names as $logger_name => $logger_ref )
 
 $logger = \App\Logging\LoggerRegistry::get(\App\Logging\LoggerRegistry::SETUP_LOGGER);
 
-spl_autoload_register( function( $class_name ) use ($logger, $logger_names, &$setupFinished)
+spl_autoload_register( function( string $class_name ) use ($logger, $logger_names, &$setupFinished): void
 {
 	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
 
@@ -40,7 +40,7 @@ spl_autoload_register( function( $class_name ) use ($logger, $logger_names, &$se
 	if ( file_exists($class_path) )
 	{
 		if ( $setupFinished )
-			$logger->addInfo('Including ' . $class_name);
+			$logger->info('Including ' . $class_name);
 
 		include $class_path; /* No need for include_once; if it had been included, we wouldn't be here. */
 
@@ -51,125 +51,196 @@ spl_autoload_register( function( $class_name ) use ($logger, $logger_names, &$se
 	}
 } );
 
-$logger->addInfo('---------------');
-$logger->addInfo('Setup starting.');
-
-/* == Begin setup == */
+$logger->info('---------------');
+$logger->info('Setup starting.');
 
 session_start();
 
-$app = new \Slim\App(['settings' => $config]);
+/* == Create Container Builder == */
 
-$container = $app->getContainer();
+$containerBuilder = new DI\ContainerBuilder();
 
-/* == Container Items == */
-
-$logger->addInfo('Populating the container.');
-
-$container['loggers'] = $loggers;
-
-$container['HashingUtilities']         = function($container) { return new \App\Helpers\HashingUtilities($container->get('settings')['app']['hash']); };
-$container['randomlib']                = function($container) { return (new RandomLib\Factory)->getMediumStrengthGenerator(); };
-$container['auth']                     = function($container) { return new \App\Auth\Auth($container->get('settings')['auth'], $container->HashingUtilities, $container->randomlib); };
-$container['AuthenticationController'] = function($container) { return new \App\Controllers\AuthenticationController($container); };
-$container['AdministrationController'] = function($container) { return new \App\Controllers\Auth\AdministrationController($container); };
-$container['WikiController']           = function($container) { return new \App\Controllers\WikiController($container); };
-$container['WikiPageController']       = function($container) { return new \App\Controllers\WikiPageController($container); };
-$container['flash']                    = function($container) { return new \Slim\Flash\Messages; };
-
-
-$container['csrf'] = function($container)
-{
-	$guard = new \Slim\Csrf\Guard();
-	// $guard = new \Slim\Csrf\Guard(new \Slim\Psr7\Factory\ResponseFactory());
-
-	// One CSRF token per session.
-	// TODO: Ensure this is invalidated on login.
-	$guard->setPersistentTokenMode(true);
-
-	$guard->setFailureCallable(function ($request, $response, $next) {
-		return $response->withJson([
-			'error' => 'Failed CSRF check'
-		], 400);
-	});
-
-	return $guard;
-};
-
-
-$container['view'] = function($container)
-{
-	$view = new \Slim\Views\Twig( BASE_PATH . '/../frontend/webpages', [
-		'cache' => false,
-	]);
-
-	$view->addExtension(new \Slim\Views\TwigExtension(
-		$container->router,
-		$container->request->getUri()
-	));
-
-	return $view;
-};
-
+// Add configuration
+$containerBuilder->addDefinitions([
+	'settings' => $config,
+]);
 
 $capsule = new \Illuminate\Database\Capsule\Manager; /* Use database component outside of Laravel. */
-$capsule->addConnection($container->get('settings')['db']);
+$capsule->addConnection($config['db']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
-$container['db'] = function($container) use ($capsule) { return $capsule; };
+
+use Psr\Container\ContainerInterface;
+
+// Add dependencies/container items
+$containerBuilder->addDefinitions(
+[
+	'loggers' => $loggers,
+
+	'HashingUtilities' => function( ContainerInterface $container ): \App\Helpers\HashingUtilities
+		{
+			return new \App\Helpers\HashingUtilities($container->get('settings')['app']['hash']);
+		},
+
+	'randomlib' => function(): \RandomLib\Generator
+		{
+			return (new RandomLib\Factory)->getMediumStrengthGenerator();
+		},
+
+	'auth' => function(ContainerInterface $container): \App\Auth\Auth
+		{
+			return new \App\Auth\Auth($container->get('settings')['auth'], $container->get('HashingUtilities'), $container->get('randomlib'));
+		},
+
+	'AuthenticationController' => function( ContainerInterface $container ): \App\Controllers\AuthenticationController
+		{
+			return new \App\Controllers\AuthenticationController($container);
+		},
+
+	'AdministrationController' => function( ContainerInterface $container ): \App\Controllers\AdministrationController
+		{
+			return new \App\Controllers\AdministrationController($container);
+		},
+
+	'WikiController' => function( ContainerInterface $container ): \App\Controllers\WikiController
+		{
+			return new \App\Controllers\WikiController($container);
+		},
+
+	'WikiPageController' => function( ContainerInterface $container ): \App\Controllers\WikiPageController
+		{
+			return new \App\Controllers\WikiPageController($container);
+		},
+
+	'view' => function(): \Slim\Views\Twig
+		{
+			$view = \Slim\Views\Twig::create( BASE_PATH . '/../frontend/webpages', [
+				'cache' => false,
+			]);
+
+			/* $view->addExtension(new \Slim\Views\TwigExtension( */
+			/* 	$container->router, */
+			/* 	$container->request->getUri() */
+			/* )); */
+
+			return $view;
+		},
+
+	'db' => function() use ($capsule): \Illuminate\Database\Capsule\Manager
+		{
+			return $capsule;
+		},
+
+	'mailer' => function( DI\Container $container ): \App\Mail\Mailer
+		{
+			$mailer = new PHPMailer\PHPMailer\PHPMailer;
+
+			$mailerSettings = $container->get('settings')['mail'];
+
+			$mailer->isSMTP();  
+			$mailer->Host = $mailerSettings['host'];
+			$mailer->SMTPAuth = $mailerSettings['smtp_auth'];
+			$mailer->SMTPSecure = $mailerSettings['smtp_secure'];
+			$mailer->Port = $mailerSettings['port'];
+			$mailer->Username = $mailerSettings['username'];
+			$mailer->Password = $mailerSettings['password'];
+
+			$mailer->setFrom($mailerSettings['from_email'], $mailerSettings['from_name']);
+
+			$mailer->isHTML($mailerSettings['html']);
 
 
+			$container->set('mailerView', function(): \Slim\Views\Twig
+			{
+				$mailerView = \Slim\Views\Twig::create( BASE_PATH . '/../frontend/email', [
+					'cache' => false,
+				]);
+
+				/* $mailerView->addExtension(new \Slim\Views\TwigExtension( */
+				/* 	$container->router, */
+				/* 	$container->request->getUri() */
+				/* )); */
+
+				return $mailerView;
+			});
+
+			return new \App\Mail\Mailer($mailer, $container->get('mailerView'));
+		}
+]);
 
 
-$container['mailer'] = function($container)
-{
-	$mailer = new PHPMailer\PHPMailer\PHPMailer;
+/* == Build Container == */
 
-	$mailerSettings = $container->get('settings')['mail'];
+$container = $containerBuilder->build();
 
-	$mailer->isSMTP();  
-	$mailer->Host = $mailerSettings['host'];
-	$mailer->SMTPAuth = $mailerSettings['smtp_auth'];
-	$mailer->SMTPSecure = $mailerSettings['smtp_secure'];
-	$mailer->Port = $mailerSettings['port'];
-	$mailer->Username = $mailerSettings['username'];
-	$mailer->Password = $mailerSettings['password'];
+Slim\Factory\AppFactory::setContainer($container);
+$app = Slim\Factory\AppFactory::create();
 
-	$mailer->setFrom($mailerSettings['from_email'], $mailerSettings['from_name']);
+$app->setBasePath('');
 
-	$mailer->isHTML($mailerSettings['html']);
-
-
-	$container['mailerView'] = function($container)
-	{
-		$mailerView = new \Slim\Views\Twig( BASE_PATH . '/../frontend/email', [
-			'cache' => false,
-		]);
-
-		$mailerView->addExtension(new \Slim\Views\TwigExtension(
-			$container->router,
-			$container->request->getUri()
-		));
-
-		return $mailerView;
-	};
-
-	return new \App\Mail\Mailer($mailer, $container->mailerView);
-};
 
 /* == Middleware == */
 
-$logger->addInfo('Adding middleware.');
+$logger->info('Adding middleware.');
 
-$app->add(new \App\Middleware\RememberMeMiddleware($container));
-$app->add(new \App\Middleware\CsrfMiddleware($container));
-$app->add($container->csrf);
-$app->add(new \App\Middleware\LogRequestMiddleware($container));
+// Log user in if they have a Remember Me cookie
+{
+	$app->add(new \App\Middleware\RememberMeMiddleware($container));
+}
 
+// CSRF guard and globals middleware
+{
+	$csrfGuard = new \Slim\Csrf\Guard($app->getResponseFactory());
+
+	// One CSRF token per session.
+	// TODO: Ensure this is invalidated on login.
+	$csrfGuard->setPersistentTokenMode(true);
+
+	$csrfGuard->setFailureHandler(function ($request, $handler): \Psr\Http\Message\ResponseInterface
+	{
+		$response = new \Slim\Psr7\Response;
+
+		$response->withStatus(400);
+
+		$body = json_encode([
+			'error' => 'Failed CSRF check'
+		]);
+		$response->getBody()->write($body);
+
+		return $response;
+	});
+
+	// Set CSRF token global variables.
+	$app->add(new \App\Middleware\CsrfMiddleware($container, $csrfGuard));
+
+	// Check previous CSRF Token
+	$app->add($csrfGuard);
+}
+
+// Add middleware to log all requests and responses
+{
+	$app->add(new \App\Middleware\LogRequestMiddleware($container));
+}
+
+// Error-handling middleware
+{
+	/**
+	 * Add Error Middleware
+	 *
+	 * @param bool                  $displayErrorDetails -> Should be set to false in production
+	 * @param bool                  $logErrors -> Parameter is passed to the default ErrorHandler
+	 * @param bool                  $logErrorDetails -> Display error details in error log
+	 * @param LoggerInterface|null  $logger -> Optional PSR-3 Logger  
+	 *
+	 * Note: This middleware should be added last. It will not handle any exceptions/errors
+	 * for middleware added after it.
+	 */
+	$errorMiddleware = $app->addErrorMiddleware(true, true, true, \App\Logging\LoggerRegistry::get('general'));
+}
 
 /* == Routes == */
 
-$logger->addInfo('Adding the routes.');
+$logger->info('Adding the routes.');
 
 require BASE_PATH . '/app/routes.php';
 
@@ -178,17 +249,21 @@ require BASE_PATH . '/app/routes.php';
 use App\Globals\FrontEndParametersFacade;
 
 FrontEndParametersFacade::createNewFrontEndParametersInstance();
-FrontEndParametersFacade::setIsAuthenticated($container->auth->isAuthenticated());
-FrontEndParametersFacade::setUserData($container->auth->getUserSafely());
+FrontEndParametersFacade::setIsAuthenticated($container->get('auth')->isAuthenticated());
+FrontEndParametersFacade::setHashingUtilities($container->get('HashingUtilities'));
+{
+	$maybeUser = $container->get('auth')->getUserSafely();
+	if ( $maybeUser )
+		FrontEndParametersFacade::setUserData($maybeUser);
+}
 FrontEndParametersFacade::setBaseUrl($container->get('settings')['app']['url']);
-FrontEndParametersFacade::setFlash($container->flash);
 
 /* == Miscellaneous == */
 
-$logger->addInfo('Completing all other (miscellaneous) bootstrapping.');
+$logger->info('Completing all other (miscellaneous) bootstrapping.');
 
-$logger->addInfo('Finished running bootstrap/app.php');
-$logger->addInfo('--');
+$logger->info('Finished running bootstrap/app.php');
+$logger->info('--');
 
 $setupFinished = true;  /* For logging purposes. */
 

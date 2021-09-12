@@ -1,25 +1,25 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Utilities;
 
 interface SetInterface extends \Traversable, \Countable
 {
 
-	public function has($item);
+	public function has(mixed $item): bool;
 
-	public function add($item);
+	public function add(mixed $item): void;
 
-	public function addAll($items);
+	public function addAll(Iterable $items): void;
 
-	public function delete($item);
+	public function delete(mixed $item): void;
 
-	public function deleteAll($items);
+	public function deleteAll(Iterable $items): void;
 
-	public function clear();
+	public function clear(): void;
 
-	public function values();
+	public function values(): array;
 	
-	public function getIterator();
+	public function getIterator(): \Iterator;
 
-	public function count();
+	public function count(): int;
 }

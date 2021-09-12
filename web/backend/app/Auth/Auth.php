@@ -1,9 +1,12 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Auth;
 
 use App\Models\User;
 use App\Models\Character;
+
+use Slim\Http\Response;
+use Slim\Http\ServerRequest as Request;
 
 use Dflydev\FigCookies\SetCookie;
 use Dflydev\FigCookies\FigResponseCookies;
@@ -12,28 +15,29 @@ use Carbon\Carbon;
 
 class Auth
 {
-	protected $hashUtilities;
-	protected $authConfig;
-	protected $generator;
+	protected array $authConfig;
 
-	public function __construct($authConfig, $hashUtilities, $generator)
+	protected \App\Helpers\HashingUtilities $hashUtilities;
+	protected \RandomLib\Generator $generator;
+
+	public function __construct(array $authConfig, \App\Helpers\HashingUtilities $hashUtilities, \RandomLib\Generator $generator)
 	{
-		$this->hashUtilities = $hashUtilities;
 		$this->authConfig = $authConfig;
+		$this->hashUtilities = $hashUtilities;
 		$this->generator = $generator;
 	}
 
-	public function checkUserExists($identity)
+	public function checkUserExists(string $identity): bool
 	{
 		return !is_null(User::retrieveUserByIdentity($identity));
 	}
 
-	public function checkActivated($identity)
+	public function checkActivated(string $identity): bool
 	{
 		return User::retrieveUserByIdentity($identity)->isActive();
 	}
 
-	public function attempt($identity, $password)
+	public function attempt(string $identity, string $password): bool
 	{
 		$user = User::retrieveUserByIdentity($identity);
 
@@ -52,7 +56,7 @@ class Auth
 		return true;
 	}
 
-	private function createRememberMeCookie($value, $expiry_str)
+	private function createRememberMeCookie(string $value, string $expiry_str): SetCookie
 	{
 		return SetCookie::create($this->authConfig['remember'])
 			->withValue($value)
@@ -60,7 +64,7 @@ class Auth
 			->withPath('/');
 	}
 
-	public function setRememberMeCookie($response, $identity)
+	public function setRememberMeCookie(Response $response, string $identity): Response
 	{
 		$user = User::retrieveUserByIdentity($identity);
 
@@ -80,25 +84,32 @@ class Auth
 		return $response;
 	}
 
-	public function isAuthenticated()
+	public function isAuthenticated(): bool
 	{
 		return isset($_SESSION[$this->authConfig['session']]);
 	}
 
-	public function getUser()
+	public function getUser(): User
 	{
 		return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
 	}
 
-	public function getCharacter()
+	public function getCharacter(): ?Character
 	{
 		if ( ! $this->isAuthenticated() )
 			return null;
 
 		$user = $this->getUser();
+		$character = null;
 
-		$characterId = $_SESSION[$this->authConfig['characterId']];
-		$character = Character::retrieveCharacterByCharacterId($characterId);
+		// Find character if possible.
+		$characterIdKey = $this->authConfig['characterId'];
+		if (array_key_exists($characterIdKey, $_SESSION))
+		{
+			$characterId = $_SESSION[$this->authConfig['characterId']];
+			if ($characterId)
+				$character = Character::retrieveCharacterByCharacterId($characterId);
+		}
 
 		if ( $user && $character && $user->getUserId() === $character->getUserId() )
 			return $character;
@@ -106,13 +117,15 @@ class Auth
 			return null;
 	}
 
-	public function getUserSafely()
+	public function getUserSafely(): ?User
 	{
 		if ( $this->isAuthenticated() )
 			return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
+
+		return null;
 	}
 
-	public function logout($request, $response)
+	public function logout(Request $request, Response $response): Response
 	{
 		$rememberMeCookie = FigRequestCookies::get($request, $this->authConfig['remember']);
 		$data = $rememberMeCookie->getValue();

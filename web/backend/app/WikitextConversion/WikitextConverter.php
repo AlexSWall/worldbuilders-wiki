@@ -9,7 +9,7 @@ class WikitextConverter
 	private array $htmlBlocks;
 	private ?string $html;
 
-	public function __construct(string $wikitext)
+	public function __construct( string $wikitext )
 	{
 		$this->tokenProcessor = new TokenProcessor();
 

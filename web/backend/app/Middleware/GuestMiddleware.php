@@ -1,23 +1,30 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Middleware;
 
+use Slim\Psr7\Response;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+use Slim\Http\ServerRequest as Request;
+
 class GuestMiddleware extends Middleware
 {
-	public function __invoke($request, $response, $next)
+	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
 	{
 		$logger = $this->loggers['logger'];
 
-		if ($this->container->auth->isAuthenticated())
+		if ($this->container->get('auth')->isAuthenticated())
 		{
-			$logger->addInfo('Failed to proceed as not a guest');
+			$logger->info('Failed to proceed as not a guest');
 
-			return $response->withRedirect($this->container->router->pathFor('home'));
+			return (new Response())->withHeader('Location', $this->container->router->pathFor('home'))->withStatus(302);
 		}
 
-		$logger->addInfo('Is a guest so proceeding');
+		$logger->info('Is a guest so proceeding');
 
-		$response = $next($request, $response);
+		$response = $handler->handle($request);
 		return $response;
 	}
 }

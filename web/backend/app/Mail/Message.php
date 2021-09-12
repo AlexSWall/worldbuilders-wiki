@@ -1,27 +1,29 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Mail;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 class Message
 {
-	protected $mailer;
+	protected PHPMailer $mailer;
 
-	public function __construct($mailer)
+	public function __construct(PHPMailer $mailer)
 	{
 		$this->mailer = $mailer;
 	}
 
-	public function to($address, $name)
+	public function to(string $address, string $name): void
 	{
 		$this->mailer->addAddress($address, $name);
 	}
 
-	public function subject($subject)
+	public function subject(string $subject): void
 	{
 		$this->mailer->Subject = $subject;
 	}
 
-	public function body($body)
+	public function body(string $body): void
 	{
 		$this->mailer->Body = $body;
 	}

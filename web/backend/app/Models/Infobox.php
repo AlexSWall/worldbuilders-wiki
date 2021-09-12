@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models;
 
@@ -8,17 +8,17 @@ class Infobox extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
 
-	protected static function getTableName()
+	protected static function getTableName(): string
 	{
 		return 'Infoboxes';
 	}
 
-	protected static function getPrimaryKey()
+	protected static function getPrimaryKey(): string
 	{
 		return 'InfoboxId';
 	}
 
-	protected static function getDefaults()
+	protected static function getDefaults(): array
 	{
 		return [
 			'RawText' => 'infobox {}'
@@ -33,7 +33,7 @@ class Infobox extends DatabaseEncapsulator
 
 	/* == Creators, Retrievers & Deleter == */
 
-	public static function createInfobox($name, $rawText)
+	public static function createInfobox(string $name, string $rawText): ?Infobox
 	{
 	    return self::createModelWithEntries([
 			'Name' => $name,
@@ -41,12 +41,12 @@ class Infobox extends DatabaseEncapsulator
 		]);
 	}
 
-	public static function retrieveInfoboxByName($name): object
+	public static function retrieveInfoboxByName(string $name): ?Infobox
 	{
 		return self::retrieveModelWithEntries(['Name' => $name]);
 	}
 
-	public function delete()
+	public function delete(): void
 	{
 		parent::delete();
 	}
@@ -54,27 +54,27 @@ class Infobox extends DatabaseEncapsulator
 
 	/* == Getters & Setters == */
 
-	public function getInfoboxId()
+	public function getInfoboxId(): int
 	{
 		return $this->get('InfoboxId');
 	}
 
-	public function getName()
+	public function getName(): string
 	{
 		return $this->get('Name');
 	}
 
-	public function setName($name)
+	public function setName(string $name): void
 	{
 		$this->set('Name', $name);
 	}
 
-	public function getRawText()
+	public function getRawText(): string
 	{
 		return $this->get('RawText');
 	}
 
-	public function setRawText($rawText)
+	public function setRawText(string $rawText): void
 	{
 		$this->set('RawText', $rawText);
 	}
@@ -92,7 +92,7 @@ class Infobox extends DatabaseEncapsulator
 		return $this->infoboxItems;
 	}
 
-	public function setInfoboxItems( $infoboxItems )
+	public function setInfoboxItems( array $infoboxItems ): void
 	{
 		// Update cache private member variable.
 		$this->infoboxItems = $infoboxItems;

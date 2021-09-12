@@ -1,24 +1,32 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Middleware;
 
+use Slim\Psr7\Response;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+use Slim\Http\ServerRequest as Request;
+
 class AuthenticatedMiddleware extends Middleware
 {
-	public function __invoke($request, $response, $next)
+	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
 	{
 		$logger = $this->loggers['logger'];
 
-		if ( !$this->container->auth->isAuthenticated() )
+		if ( !$this->container->get('auth')->isAuthenticated() )
 		{
-			$logger->addInfo('Failed to proceed as not authenticated');
+			$logger->info('Failed to proceed as not authenticated');
 
-			$this->container->flash->addMessage('error', 'Please sign in before doing that.');
-			return $response->withRedirect($this->container->router->pathFor('auth.signin'));
+			// TODO
+			//$this->container->get('flash')->addMessage('error', 'Please sign in before doing that.');
+			return (new Response)->withHeader('Location', $this->container->router->pathFor('auth.signin'))->withStatus(302);
 		}
 
-		$logger->addInfo('Is authenticated so proceeding');
+		$logger->info('Is authenticated so proceeding');
 
-		$response = $next($request, $response);
+		$response = $handler->handle($request);
 		return $response;
 	}
 }

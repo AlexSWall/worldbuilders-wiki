@@ -58,7 +58,7 @@ export default function SignInForm({ closeModal, setModalComponent })
 							data: {
 								identity: values.identity,
 								password: passwordFrontendHash,
-								rememberMe: values.rememberMe
+								remember_me: values.rememberMe
 							},
 						}, globals.csrfTokens))
 					});

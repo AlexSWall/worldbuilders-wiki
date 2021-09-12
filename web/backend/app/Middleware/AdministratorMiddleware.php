@@ -1,40 +1,46 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Middleware;
 
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+use Slim\Http\ServerRequest as Request;
+use Slim\Psr7\Response as PsrResponse;
+
 class AdministratorMiddleware extends Middleware
 {
-	private $isApiRoute;
+	private bool $isApiRoute;
 
-	public function __construct($container, $isApiRoute)
+	public function __construct(ContainerInterface $container, bool $isApiRoute)
 	{
 		parent::__construct($container);
 
 		$this->isApiRoute = $isApiRoute;
 	}
 
-	public function __invoke($request, $response, $next)
+	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
 	{
 		$logger = $this->loggers['logger'];
 
-		if ( !$this->container->auth->isAuthenticated() || !$this->container->auth->getUser()->isAdmin() )
+		if ( !$this->container->get('auth')->isAuthenticated() || !$this->container->get('auth')->getUser()->isAdmin() )
 		{
-			$logger->addInfo('Failed to authenticate as an admin');
+			$logger->info('Failed to authenticate as an admin');
 
-			if ($isApiRoute)
+			if ($this->isApiRoute)
 			{
-				return $response->withJSON([], 401, JSON_UNESCAPED_UNICODE);
+				return (new PsrResponse())->withHeader('Location', [], 401, JSON_UNESCAPED_UNICODE)->withStatus(302);
 			}
 			else
 			{
-				$this->container->flash->addMessage('error', 'You must be an administrator to access that page!');
-				return $response->withRedirect($this->container->router->pathFor('home'));
+				return (new PsrResponse())->withHeader('Location', $this->container->get('router')->pathFor('home'))->withStatus(302);
 			}
 		}
 
-		$logger->addInfo('Authenticated as an admin');
+		$logger->info('Authenticated as an admin');
 
-		$response = $next($request, $response);
+		$response = $handler->handle($request);
 		return $response;
 	}
 }

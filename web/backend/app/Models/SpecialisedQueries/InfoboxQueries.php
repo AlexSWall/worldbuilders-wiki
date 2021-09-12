@@ -12,13 +12,13 @@ use \App\Infoboxes\InfoboxSubheading;
 
 class InfoboxQueries
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	/**
 	 * Returns an array containing AbstractInfoboxItem objects for the infobox
 	 * specified, in order of position (ordered from 1 to N without gaps).
 	 */
-	public static function getInfoboxItems( $infoboxId ): array
+	public static function getInfoboxItems( string|int $infoboxId ): array
 	{
 		$result = DB::table('InfoboxItems AS e')
 				->select(['e.Position', 'e.ItemKey', 'eTypes.TypeString', 'eData.DataName', 'eData.DataValue'])
@@ -98,7 +98,7 @@ class InfoboxQueries
 	 * Enter the infobox data contained by an array of AbstractInfoboxItem
 	 * objects into database
 	 */
-	public static function setInfoboxItems( int $infoboxId, array $infoboxItems ): void
+	public static function setInfoboxItems( string|int $infoboxId, array $infoboxItems ): void
 	{
 		self::deleteInfoboxItems($infoboxId);
 
@@ -141,7 +141,7 @@ class InfoboxQueries
 		DB::table('InfoboxItemData')->insert($infoboxItemDataTableValues);
 	}
 
-	public static function deleteInfoboxItems( int $infoboxId ): void
+	public static function deleteInfoboxItems( string|int $infoboxId ): void
 	{
 		DB::table('InfoboxItems')
 				->where('InfoboxId', $infoboxId)

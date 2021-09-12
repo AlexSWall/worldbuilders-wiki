@@ -6,28 +6,25 @@ use App\Permissions\WikiPagePermissionBlock;
 
 class TokenProcessor
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	// Instance variables
-	private string $mode;
 	private bool $usePermissionBlocks;
 
 	// Output variable
 	/** [ WikiTextPermissionBlock ] */
-	private $result;
+	private array $blocks = [];
 
 	// Transient variables used for processing.
 	private $currentPermissionsExpression;
 	private $html;
 
 	/**
-	 * Processes the tokens created by the parser to construct the $result
-	 * member variables
+	 * Processes the tokens created by the parser; sets the $blocks member
+	 * variables
 	 */
-	public function process( array $tokens, string $mode = 'inline' )
+	public function process( array $tokens, string $mode = 'inline' ): array|string
 	{
-		$this->mode = $mode;
-
 		switch ( $mode )
 		{
 			case 'inline':
@@ -42,7 +39,7 @@ class TokenProcessor
 				throw new \InvalidArgumentException('$mode parameter must be either \'inline\' or \'top-level\'.');
 		}
 
-		self::$logger->addInfo('Processing Wikitext tokens');
+		self::$logger->info('Processing Wikitext tokens');
 
 		// Ensure member variables are cleared
 		$this->initialise();
@@ -57,18 +54,20 @@ class TokenProcessor
 			// a permission block, add it now.
 			if ($this->html !== '')
 				$this->addHtmlBlock( $this->currentPermissionsExpression, $this->html );
+
+			$return = $this->blocks;
 		}
 		else
 		{
-			if ( ! empty($this->result) )
+			if ( ! empty($this->blocks) )
 				throw new \InvalidArgumentException('$mode requires no permission blocks but permission meta-token given.');
 
-			$this->result = $this->html;
+			$return = $this->html;
 		}
 
-		self::$logger->addInfo('Finished processing tokens');
+		self::$logger->info('Finished processing tokens');
 
-		return $this->result;
+		return $return;
 	}
 
 	// == Getters ==
@@ -76,7 +75,7 @@ class TokenProcessor
 	public function getHtml(): string
 	{
 		$entireHtml = '';
-		foreach ( $this->result as $htmlBlock )
+		foreach ( $this->blocks as $htmlBlock )
 			$entireHtml .= $htmlBlock->getHtml();
 		return $entireHtml;
 	}
@@ -86,7 +85,7 @@ class TokenProcessor
 	private function initialise(): void
 	{
 		$this->currentPermissionsExpression = '';
-		$this->result = array();
+		$this->blocks = [];
 		$this->html = '';
 	}
 
@@ -114,12 +113,12 @@ class TokenProcessor
 
 	private function addHtmlBlock( string $permissionsExpression, string $html ): void
 	{
-		$this->result[] = new WikiPagePermissionBlock( $permissionsExpression, $html );
+		$this->blocks[] = new WikiPagePermissionBlock( $permissionsExpression, $html );
 	}
 
-	private static function array_flatten($array = null): array
+	private static function array_flatten( array $array = null ): array
 	{
-		$result = array();
+		$result = [];
 
 		if (!is_array($array))
 		{

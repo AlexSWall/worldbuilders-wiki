@@ -1,95 +1,79 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Globals;
 
+use App\Models\User;
+use App\Helpers\HashingUtilities;
+
 class FrontEndParametersFacade
 {
-	public static function createNewFrontEndParametersInstance()
+	public static function createNewFrontEndParametersInstance(): void
 	{
 		$GLOBALS['FrontEndParameters'] = new FrontEndParameters();
 	}
 
-	private static function setter($key, $value)
+	private static function setter(string $key, mixed $value): void
 	{
 		$GLOBALS['FrontEndParameters']->_setter($key, $value);
 	}
 
-	private static function getter($key)
+	private static function getter(string $key): mixed
 	{
 		return $GLOBALS['FrontEndParameters']->_getter($key);
 	}
 
 	/* == Setters == */
 
-	public static function setBaseUrl($url)
+	public static function setBaseUrl(string $url): void
 	{
 		self::setter('baseUrl', $url);
 	}
 
-	public static function setIsAuthenticated($value)
+	public static function setIsAuthenticated(bool $value): void
 	{
 		self::setter('isAuthenticated', $value);
 	}
 
-	public static function setCsrfTokens($tokens)
+	public static function setHashingUtilities(HashingUtilities $hashingUtilities): void
+	{
+		self::setter('hashingUtilities', $hashingUtilities);
+	}
+
+	private ?HashingUtilities $hashUtilities;
+	public static function setCsrfTokens(array $tokens): void
 	{
 		self::setter('csrfTokens', $tokens);
 	}
 
-	public static function setPreviousParameters($params)
-	{
-		self::setter('previousParameters', $params);
-	}
-
-	public static function setErrors($errors)
-	{
-		self::setter('errors', $errors);
-	}
-
-	public static function setUserData($data)
+	public static function setUserData(User $data): void
 	{
 		self::setter('userData', $data);
 	}
 
-	public static function setFlash($flash)
-	{
-		self::setter('flash', $flash);
-	}
-
 	/* == Getters == */
 
-	public static function getBaseUrl()
+	public static function getBaseUrl(): ?string
 	{
 		return self::getter('baseUrl');
 	}
 
-	public static function getIsAuthenticated()
+	public static function getIsAuthenticated(): ?bool
 	{
 		return self::getter('isAuthenticated');
 	}
 
-	public static function getCsrfTokens()
+	public static function getHashingUtilities(): ?HashingUtilities
+	{
+		return self::getter('hashingUtilities');
+	}
+
+	public static function getCsrfTokens(): ?array
 	{
 		return self::getter('csrfTokens');
 	}
 
-	public static function getPreviousParameters()
-	{
-		return self::getter('previousParameters');
-	}
-
-	public static function getErrors()
-	{
-		return self::getter('errors');
-	}
-
-	public static function getUserData()
+	public static function getUserData(): ?User
 	{
 		return self::getter('userData');
-	}
-
-	public static function getFlash()
-	{
-		return self::getter('flash');
 	}
 }

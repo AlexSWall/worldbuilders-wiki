@@ -1,24 +1,38 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Middleware;
 
-abstract class Middleware
-{
-	protected $container;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-	public function __construct($container)
+use Slim\Http\ServerRequest as Request;
+
+abstract class Middleware implements MiddlewareInterface
+{
+	protected ContainerInterface $container;
+
+	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
 	}
 
 	/* e.g. give controllers access to view. */
-	public function __get($property)
+	public function __get(string $property): mixed
 	{
-		if ( $this->container->{$property} )
+		if ( $this->container->get($property) )
 		{
-			return $this->container->{$property};
+			return $this->container->get($property);
 		}
 	}
 
-	public abstract function __invoke($request, $response, $next);
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+	{
+		// Assert ServerRequestInterface $request is a Slim 'Request'.
+		return $this->route($request, $handler);
+	}
+
+	public abstract function route(Request $request, RequestHandlerInterface $handler): ResponseInterface;
 }

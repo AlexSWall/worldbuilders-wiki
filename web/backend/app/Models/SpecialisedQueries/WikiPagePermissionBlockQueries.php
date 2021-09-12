@@ -7,9 +7,9 @@ use App\Permissions\WikiPagePermissionBlock;
 
 class WikiPagePermissionBlockQueries
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
-	public static function getWikiPagePermissionBlocks( $wikiPageId ): array
+	public static function getWikiPagePermissionBlocks( string|int $wikiPageId ): array
 	{
 		$queryResults = DB::table('WikiPagePermissionBlocks')
 				->select(['BlockPosition', 'PermissionsExpression', 'Html'])
@@ -26,7 +26,7 @@ class WikiPagePermissionBlockQueries
 		return $wikiPagePermissionBlocksArray;
 	}
 
-	public static function setPermissionBlocksForWikiPage( int $wikiPageId, array $blockArray ): void
+	public static function setPermissionBlocksForWikiPage( string|int $wikiPageId, array $blockArray ): void
 	{
 		self::clearPermissionBlocksForWikiPage( $wikiPageId );
 
@@ -48,7 +48,7 @@ class WikiPagePermissionBlockQueries
 		DB::table('WikiPagePermissionBlocks')->insert($insertion);
 	}
 
-	public static function clearPermissionBlocksForWikiPage( int $wikiPageId ): void
+	public static function clearPermissionBlocksForWikiPage( string|int $wikiPageId ): void
 	{
 		DB::table('WikiPagePermissionBlocks')
 				->where('WikiPageId', $wikiPageId)

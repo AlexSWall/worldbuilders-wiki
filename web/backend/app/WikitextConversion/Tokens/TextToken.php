@@ -4,24 +4,24 @@ namespace App\WikitextConversion\Tokens;
 
 class TextToken extends BaseToken
 {
-	private $text;
+	private string $text;
 
 	public function __construct( string $text )
 	{
 		$this->text = $text;
 	}
 
-	public function trim()
+	public function trim(): void
 	{
 		$this->text = trim($this->text);
 	}
 
-	public function ltrim()
+	public function ltrim(): void
 	{
 		$this->text = ltrim($this->text);
 	}
 
-	public function rtrim()
+	public function rtrim(): void
 	{
 		$this->text = rtrim($this->text);
 	}

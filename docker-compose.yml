@@ -18,7 +18,7 @@ services:
             - php
             - mysqldb
     php:
-        image: nanoninja/php-fpm:7.4.10
+        image: php:8.0.10-fpm
         container_name: php
         restart: always
         volumes:
@@ -26,6 +26,7 @@ services:
             - "./web:/var/www/html"
             - "./config:/config"
             - "./logs:/logs"
+        command: sh -c 'docker-php-ext-install pdo_mysql && php-fpm'
     composer:
         image: composer:latest
         container_name: composer

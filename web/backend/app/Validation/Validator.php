@@ -4,7 +4,7 @@ namespace App\Validation;
 
 class Validator
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	/**
 	 * Given a valdiation array, checks whether each value satisfies its rules
@@ -20,7 +20,7 @@ class Validator
 	 * @return An array containing any validation errors, indexed by the
 	 * parameter names; an empty array returned implies no validation errors.
 	 */
-	public static function validate( array $validationArray ) : array
+	public static function validate( array $validationArray ): array
 	{
 		$errors = [];
 
@@ -28,7 +28,7 @@ class Validator
 		{
 			assert(is_iterable($rules), 'Validation array rules must be an iterable of callables');
 
-			self::$logger->addInfo('Trying validation rules for ' . $field);
+			self::$logger->info('Trying validation rules for ' . $field);
 
 			foreach( $rules as $rule )
 			{
@@ -40,13 +40,13 @@ class Validator
 					// Validation error found for field; set it as the first
 					// validation error and finish attempting validation for this
 					// field.
-					self::$logger->addInfo("Failed to validate {$field}; error string: ${errorString}");
+					self::$logger->info("Failed to validate {$field}; error string: ${errorString}");
 					$errors[$field] = $errorString;
 					break;
 				}
 			}
 
-			self::$logger->addInfo('Validated ' . $field);
+			self::$logger->info('Validated ' . $field);
 		}
 
 		return $errors;

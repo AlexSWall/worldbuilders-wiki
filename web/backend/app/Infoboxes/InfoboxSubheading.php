@@ -4,9 +4,9 @@ namespace App\Infoboxes;
 
 class InfoboxSubheading extends AbstractInfoboxItem
 {
-	private $subheadingText;
+	private string $subheadingText;
 
-	function __construct($subheadingText)
+	function __construct(string $subheadingText)
 	{
 		$this->subheadingText = $subheadingText;
 	}

@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models\SpecialisedQueries;
 
@@ -15,7 +15,7 @@ class CharacterPermissionsQueries
 	 *         ON WikiPermissions.PermissionId = CharacterPermissionRelations.PermissionId
 	 *     WHERE CharacterPermissionRelations.CharacterId = {$CharacterId};
 	 */
-	public static function getCharacterPermissions($characterId): object
+	public static function getCharacterPermissions(string|int $characterId): ArrayBasedSet
 	{
 		$permissionNameStdClassArray = DB::table('WikiPermissions')
 				->select('PermissionName')
@@ -34,7 +34,7 @@ class CharacterPermissionsQueries
 	/**
 	 * Insert a collection of permissions, by name, to a character, by Id.
 	 */
-	public static function addCharacterPermissions($characterId, $permissions): void
+	public static function addCharacterPermissions(string|int $characterId, array|ArrayBasedSet $permissions): void
 	{
 		if ( count($permissions) == 0 )
 			return;
@@ -61,7 +61,7 @@ class CharacterPermissionsQueries
 	 *     WHERE r.`CharacterId` = {$CharacterId}
 	 *     AND p.`PermissionName` IN ('permission1', 'permission2',...);
 	 */
-	public static function removeCharacterPermissions($characterId, $permissions): void
+	public static function removeCharacterPermissions(string|int $characterId, array|ArrayBasedSet $permissions): void
 	{
 		if ( count($permissions) == 0 )
 			return;

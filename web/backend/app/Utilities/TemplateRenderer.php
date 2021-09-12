@@ -1,6 +1,8 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Utilities;
+
+use Psr\Container\ContainerInterface;
 
 /** === Regular Expression Syntax Rules ===
  *
@@ -58,14 +60,14 @@ namespace App\Utilities;
 
 class TemplateRenderer
 {
-	protected $container;
+	protected ContainerInterface $container;
 
-	public function __construct($container)
+	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
 	}
 
-	public static function renderTemplate($pageName, $templateContent)
+	public static function renderTemplate(string $pageName, string $templateContent): string
 	{
 		$workingContent = htmlspecialchars($templateContent, ENT_QUOTES, 'UTF-8');
 		$workingContent = str_replace("\r", '', $workingContent);
@@ -178,7 +180,7 @@ class TemplateRenderer
 		return $workingContent;
 	}
 
-	public static function addTableOfContents($url, $content)
+	public static function addTableOfContents(string $url, string $content)
 	{
 		$toc = "<h2>Table of Contents</h2>";
 		$prevLevel = 1;

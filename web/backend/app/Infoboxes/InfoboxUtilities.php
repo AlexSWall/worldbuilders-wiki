@@ -11,7 +11,7 @@ class InfoboxUtilities
 	 * arguments, and then checks its type with the typeCheckFunction parameter,
 	 * if provided.
 	 */
-	public static function getEntryValueForKey(array $args, string $entryKey, ?callable $typeCheckFunction = null)
+	public static function getEntryValueForKey(array $args, string $entryKey, ?callable $typeCheckFunction = null): mixed
 	{
 		if ( !array_key_exists($entryKey, $args) )
 			return null;
@@ -29,7 +29,7 @@ class InfoboxUtilities
 	 * Unpacks an array of length 1 containing only a TextToken into a string.
 	 * If the argument does not satisfy this, it throws.
 	 */
-	public static function unpackTextToken(array $tokens) : string
+	public static function unpackTextToken(array $tokens): string
 	{
 		if ( count($tokens) === 1 && is_a( $tokens[0], TextToken::class ) )
 			return $tokens[0]->toHtml();

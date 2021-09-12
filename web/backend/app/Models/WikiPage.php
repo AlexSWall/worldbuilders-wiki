@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Models;
 
@@ -9,23 +9,25 @@ use App\Models\SpecialisedQueries\WikiPagePermissionBlockQueries;
 use App\Permissions\PermissionsUtilities;
 use App\Permissions\WikiPagePermissionBlock;
 
+use App\Utilities\ArrayBasedSet;
+
 class WikiPage extends DatabaseEncapsulator
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
 	/* == Required Abstract Methods == */
 
-	protected static function getTableName()
+	protected static function getTableName(): string
 	{
 		return 'WikiPages';
 	}
 	
-	protected static function getPrimaryKey()
+	protected static function getPrimaryKey(): string
 	{
 		return 'WikiPageId';
 	}
 	
-	protected static function getDefaults()
+	protected static function getDefaults(): array
 	{
 		return [
 			'Title' => 'Page Title',
@@ -37,14 +39,14 @@ class WikiPage extends DatabaseEncapsulator
 
 	/* == Instance Variables == */
 
-	private $wikiPagePermissionBlocks;
+	private ?array $wikiPagePermissionBlocks = null;
 	
 
 	/* == Creators, Retrievers & Deleter == */
 
-	public static function createWikiPage($path, $title)
+	public static function createWikiPage( string $path, string $title ): ?WikiPage
 	{
-		self::$logger->addInfo('Creating WikiPage with title \'' . $title . '\' and path \'' . $path);
+		self::$logger->info('Creating WikiPage with title \'' . $title . '\' and path \'' . $path);
 
 		return self::createModelWithEntries([
 			'Title' => $title,
@@ -52,44 +54,44 @@ class WikiPage extends DatabaseEncapsulator
 		]);
 	}
 
-	public static function retrieveWikiPageById($id)
+	public static function retrieveWikiPageById( int $id ): ?WikiPage
 	{
 		return self::retrieveModelWithEntries(['WikiPageId' => $id]);
 	}
 
-	public static function retrieveWikiPageByUrlPath($urlPath)
+	public static function retrieveWikiPageByUrlPath( string $urlPath ): ?WikiPage
 	{
 		return self::retrieveModelWithEntries(['UrlPath' => $urlPath]);
 	}
 
-	public function delete()
+	public function delete(): void
 	{
 		parent::delete();
 	}
 
 	/* == Getters & Setters == */
 
-	public function getWikiPageId()
+	public function getWikiPageId(): int
 	{
 		return $this->get('WikiPageId');
 	}
 
-	public function getTitle()
+	public function getTitle(): string
 	{
 		return $this->get('Title');
 	}
 
-	public function getUrlPath()
+	public function getUrlPath(): string
 	{
 		return $this->get('UrlPath');
 	}
 
-	public function getWikiText()
+	public function getWikiText(): string
 	{
 		return $this->get('WikiText');
 	}
 
-	public function getAllHtml()
+	public function getAllHtml(): string
 	{
 		return WikiPagePermissionBlock::convertBlocksToHtml( $this->getPermissionBlocks() );
 	}
@@ -103,18 +105,18 @@ class WikiPage extends DatabaseEncapsulator
 	 *	@return A string containing the HTML which contains the viewable wikitext
 	 *	   content.
 	 */
-	public function getHtmlForPermissions( $permissions )
+	public function getHtmlForPermissions( ?ArrayBasedSet $permissions ): string
 	{
 		// Get array of WikiPagePermissionBlocks
-		self::$logger->addInfo('Getting viewable blocks');
+		self::$logger->info('Getting viewable blocks');
 		$viewableBlocks = PermissionsUtilities::getViewableBlocks( $permissions, $this->getPermissionBlocks() );
 
 		// Convert them to HTML
-		self::$logger->addInfo('Converting them to HTML');
+		self::$logger->info('Converting them to HTML');
 		return WikiPagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
 	}
 
-	public function updateWikiPage($title, $wikiText, $permissionBlocks = null, $html = null)
+	public function updateWikiPage( string $title, string $wikiText, array $permissionBlocks = null, ?string $html = null )
 	{
 		if ( $permissionBlocks === null || $html == null )
 		{
@@ -145,7 +147,7 @@ class WikiPage extends DatabaseEncapsulator
 	 *
 	 * @return An array of `WikiPagePermissionBlock`s.
 	 */
-	private function getPermissionBlocks() : array
+	private function getPermissionBlocks(): array
 	{
 		// Check whether cache private member variable is already populated.
 		if ( !$this->wikiPagePermissionBlocks )
@@ -164,7 +166,7 @@ class WikiPage extends DatabaseEncapsulator
 	 *
 	 * @param wikiPagePermissionBlocks An array of `WikiPagePermissionBlock`s.
 	 */
-	private function setPermissionBlocks( $wikiPagePermissionBlocks )
+	private function setPermissionBlocks( array $wikiPagePermissionBlocks ): void
 	{
 		// Update cache private member variable.
 		$this->wikiPagePermissionBlocks = $wikiPagePermissionBlocks;
