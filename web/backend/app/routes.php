@@ -19,6 +19,7 @@ assert(isset($container));
  * 	});
  */
 
+
 /* ------ */
 /*  Wiki  */
 /* ------ */
@@ -31,6 +32,7 @@ $app->get('/{wikipage}', function (Request $request, Response $response, array $
 	return $response->withStatus(302)->withHeader('Location', '/#' . $args['wikipage']);
 });
 
+
 /* -------- */
 /* Wiki API */
 /* -------- */
@@ -38,19 +40,18 @@ $app->get('/{wikipage}', function (Request $request, Response $response, array $
 /* Get Wiki Page Contents /w/<PageName> */
 $app->get('/w/{wikipage:.*}', 'WikiController:serveWikiContentGetRequest');
 
-/* Admin Wiki Page API */
+/* Admin Wiki APIs */
 $app->group('', function() use ($app)
 {
-	$app->get('/a/wiki', 'WikiController:serveWikitext');
+	/* Wiki Page APIs */
+	$app->get('/a/wiki', 'WikiController:serveEditWikiPageGetRequest');
 	$app->post('/a/wiki', 'WikiController:serveModifyWikiContentPostRequest');
-})->add(new AdministratorMiddleware($container, true));
 
-/* Admin Infobox Structure API */
-$app->group('', function() use ($app)
-{
-	$app->get('/a/infobox', 'WikiController:serveInfoboxStructure');
+	/* Infobox Structure APIs */
+	$app->get('/a/infobox', 'WikiController:serveEditInfoboxStructureGetRequest');
 	$app->post('/a/infobox', 'WikiController:serveModifyInfoboxStructurePostRequest');
 })->add(new AdministratorMiddleware($container, true));
+
 
 /* ------------------ */
 /* Account Management */
@@ -65,6 +66,7 @@ $app->get('/auth/reset-password', 'AuthenticationController:serveResetPasswordGe
 
 // -- POST Requests --
 $app->post('/auth/', 'AuthenticationController:servePostRequest');
+
 
 /* -------------- */
 /* Administration */

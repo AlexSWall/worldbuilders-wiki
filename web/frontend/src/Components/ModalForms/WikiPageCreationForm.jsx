@@ -38,8 +38,10 @@ export default function WikiPageCreationForm({ closeModal })
 					},
 					body: JSON.stringify(Object.assign({}, {
 						action: 'create',
-						page_path: values.page_path,
-						data: { title: values.title },
+						data: {
+							page_path: values.page_path,
+							title: values.title
+						},
 					}, globals.csrfTokens))
 				}).then(async res => {
 					if (res.ok)

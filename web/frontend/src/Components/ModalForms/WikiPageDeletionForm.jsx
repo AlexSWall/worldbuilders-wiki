@@ -38,7 +38,9 @@ export default function WikiPageDeletionForm({ closeModal })
 					body: JSON.stringify(Object.assign({}, {
 						action: 'delete',
 						page_path: values.page_path,
-						data: {},
+						data: {
+							page_path: values.page_path
+						},
 					}, globals.csrfTokens))
 				}).then(async res => {
 					if (res.ok)

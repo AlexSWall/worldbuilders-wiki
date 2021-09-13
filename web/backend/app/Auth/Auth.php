@@ -4,6 +4,7 @@ namespace App\Auth;
 
 use App\Models\User;
 use App\Models\Character;
+use App\Globals\FrontEndParametersFacade;
 
 use Slim\Http\Response;
 use Slim\Http\ServerRequest as Request;
@@ -125,12 +126,9 @@ class Auth
 		return null;
 	}
 
-	public function logout(Request $request, Response $response): Response
+	public function logout(Response $response): Response
 	{
-		$rememberMeCookie = FigRequestCookies::get($request, $this->authConfig['remember']);
-		$data = $rememberMeCookie->getValue();
-
-		if ( !is_null($data) )
+		if ( FrontEndParametersFacade::getHasRememberMeCookie() )
 		{
 			$user = $this->getUser();
 			if ($user)

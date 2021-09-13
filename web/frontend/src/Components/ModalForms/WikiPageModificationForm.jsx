@@ -50,8 +50,8 @@ export default function WikiPageModificationForm({ closeModal })
 					},
 					body: JSON.stringify(Object.assign({}, {
 						action: 'modify',
-						page_path: wikiPagePath,
 						data: {
+							page_path: wikiPagePath,
 							title: values.title,
 							content: values.wikitext
 						},

@@ -148,6 +148,14 @@ class InfoboxQueries
 				->delete();
 	}
 
+	public static function getInfoboxNames(): array
+	{
+		return DB::table( 'Infoboxes' )
+			->select([ 'Name' ])
+			->orderBy('Name', 'asc')
+			->get()->all();
+	}
+
 
 	/* == Private Helper Functions == */
 

@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Controllers\Controller;
 
 use App\Models\User;
-use App\Helpers\DataUtilities;
 use App\Helpers\ResponseUtilities;
 use App\Helpers\FrontEndDataUtilities;
 use App\Validation\Validator;
@@ -21,126 +20,64 @@ class AuthenticationController extends Controller
 
 	public function servePostRequest(Request $request, Response $response)
 	{
-		$parsedBody = $request->getParsedBody();
-		$action = $parsedBody['action'];
-		$data = $parsedBody['data'];
+		$stringCheck = \App\Utilities\APIUtilities::$isStringValidator;
+		$nonEmptyStringCheck = \App\Utilities\APIUtilities::$isNonEmptyStringValidator;
+		$booleanCheck = \App\Utilities\APIUtilities::$isBooleanValidator;
 
-		self::$logger->info('Received auth POST request with action \'' . $action . '\'');
-
-		// Convenience wrapper for error response
-		$errorResponse = function($errorCode, $error) use ($response)
-		{
-			return ResponseUtilities::respondWithError($response, $errorCode, $error);
-		};
-
-		// -- Validate --
-
-		if (!DataUtilities::isNonEmptyString($action))
-			return $errorResponse(400, "'action' must be a non-empty string");
-
-		if (!is_array($data))
-			return $errorResponse(400, "'data' must be a JSON object/array");
-
-		// -- Act --
-
-		// The following code is at least one of: brilliant, mad, and disgusting.
-
-		$apiActionData = self::getAPIActionData($action);
-
-		if ( $apiActionData !== null )
-		{
-			[ $handler, $argsData ] = $apiActionData;
-
-			$args = [];
-
-			foreach ( $argsData as $key => $validator )
-			{
-				// Get required argument from API data key's value.
-				$arg = $data[$key];
-
-				// Get whether validation returns a requirement string.
-				$validationRequirement = $validator( $arg );
-				if ( $validationRequirement )
-					return $errorResponse(400, "'{$action}' action needs data with '{$key}' key and {$validationRequirement} value");
-
-				// No requirement string: validation succeeded, add to list of args
-				$args[] = $arg;
-			}
-
-			return $this->$handler( $response, ...$args );
-		}
-		else
-		{
-			// Special cases
-			switch ( $action )
-			{
-				case 'sign out':
-					return $this->signOut($request, $response);
-
-				default:
-					return $errorResponse(400, "invalid action");
-			}
-		}
-
-		// This should be unreachable
-		return $errorResponse(500, "server error");
-	}
-
-	private static function getAPIActionData( string $action ): ?array
-	{
-		$createValidator = function ( $validator, string $description ): callable
-		{
-			return function ( $input ) use ( $validator, $description ): ?string
-			{
-				return ( ! $validator( $input ) ) ? $description : null;
-			};
-		};
-
-		$stringCheck = $createValidator( 'is_string', 'string' );
-		$nonEmptyStringCheck = $createValidator( '\App\Helpers\DataUtilities::isNonEmptyString', 'non-empty string' );
-		$booleanCheck = $createValidator( 'is_bool', 'boolean' );
-
-		switch ( $action )
-		{
-			case 'sign up':
-				return [ 'signUp', [
+		$actionStructures = [
+			'sign up' => [
+				[ $this, 'signUp' ],
+				[
 					'username' => $nonEmptyStringCheck,
 					'email' => $nonEmptyStringCheck,
 					'password' => $nonEmptyStringCheck,
 					'preferred_name' => $stringCheck
-				]];
-
-			case 'sign in':
-				return [ 'signIn', [
+				]
+			],
+			'sign in' => [
+				[ $this, 'signIn' ],
+				[
 					'identity' => $nonEmptyStringCheck,
 					'password' => $nonEmptyStringCheck,
 					'remember_me' => $booleanCheck
-				]];
-
-			case 'change password':
-				return [ 'changePassword', [
+				]
+			],
+			'sign out' => [
+				[ $this, 'signOut' ],
+				[]
+			],
+			'change password' => [
+				[ $this, 'changePassword' ],
+				[
 					'password_old' => $nonEmptyStringCheck,
 					'password_new' => $nonEmptyStringCheck
-				]];
-
-			case 'request password reset email':
-				return [ 'requestPasswordResetEmail', [
+				]
+			],
+			'request password reset email' => [
+				[ $this, 'requestPasswordResetEmail' ],
+				[
 					'email' => $nonEmptyStringCheck,
-				]];
-
-			case 'reset password':
-				return [ 'resetPassword', [
+				]
+			],
+			'reset password' => [
+				[ $this, 'resetPassword' ],
+				[
 					'email' => $nonEmptyStringCheck,
 					'identifier' => $nonEmptyStringCheck,
 					'password_new' => $nonEmptyStringCheck,
-				]];
+				]
+			]
+		];
 
-			default:
-				return null;
-		}
+		$entryFunc = \App\Utilities\APIUtilities::createPostAPIEntryPoint(
+			'Authentication',
+			$actionStructures
+		);
+
+		return $entryFunc( $request, $response );
 	}
 
-	private function signUp(Response $response, string $username, string $email, string $password, string $preferredName): Response
+	public function signUp(Response $response, string $username, string $email, string $password, string $preferredName): Response
 	{
 		self::$logger->info('Attempting to sign up client');
 
@@ -188,7 +125,7 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function signIn(Response $response, string $identity, string $password, bool $rememberMe): Response
+	public function signIn(Response $response, string $identity, string $password, bool $rememberMe): Response
 	{
 		self::$logger->info('Attempting to sign user in');
 
@@ -226,7 +163,7 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function signOut(Request $request, Response $response): Response
+	public function signOut(Response $response): Response
 	{
 		self::$logger->info('Attempting to sign user out');
 
@@ -241,12 +178,12 @@ class AuthenticationController extends Controller
 		if ( ! $this->auth->isAuthenticated() )
 			return $errorResponse(400, 'Not signed in');
 
-		$response = $this->auth->logout($request, $response);
+		$response = $this->auth->logout($response);
 
 		return $response->withStatus(200);
 	}
 
-	private function changePassword(Response $response, string $oldPassword, string $newPassword): Response
+	public function changePassword(Response $response, string $oldPassword, string $newPassword): Response
 	{
 		self::$logger->info('Attempting to change user\'s password');
 
@@ -281,7 +218,7 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function requestPasswordResetEmail(Response $response, string $email): Response
+	public function requestPasswordResetEmail(Response $response, string $email): Response
 	{
 		self::$logger->info('Attempting to send reset password email');
 
@@ -324,7 +261,7 @@ class AuthenticationController extends Controller
 		return $response->withStatus(200);
 	}
 
-	private function resetPassword(Response $response, string $email, string $identifier, string $newPassword): Response
+	public function resetPassword(Response $response, string $email, string $identifier, string $newPassword): Response
 	{
 		self::$logger->info('Attempting to send reset password email');
 

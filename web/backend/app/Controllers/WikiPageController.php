@@ -57,7 +57,7 @@ class WikiPageController extends Controller
 		], $returnCode, JSON_UNESCAPED_UNICODE);
 	}
 
-	public static function getWikitextResponse(Response $response, string $path): Response
+	public static function getEditWikiPageResponse(Response $response, ?string $path): Response
 	{
 		self::$logger->info('Attempting to get WikiPage\'s wikitext');
 

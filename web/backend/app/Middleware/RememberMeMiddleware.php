@@ -3,8 +3,10 @@
 namespace App\Middleware;
 
 use App\Models\User;
+use App\Globals\FrontEndParametersFacade;
 
-use Dflydev\FigCookies\FigRequestCookies;
+use Dflydev\FigCookies\Cookie;
+use Dflydev\FigCookies\Cookies;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -16,39 +18,44 @@ class RememberMeMiddleware extends Middleware
 {
 	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		$beingLoggedIn = $this->attemptLogin($request);
+		$cookies = Cookies::fromRequest( $request );
+		$rememberMeCookieKey = $this->container->get( 'settings' )[ 'auth' ][ 'remember' ];
 
-		if ( $beingLoggedIn )
+		$rememberMeCookie = $cookies->get( $rememberMeCookieKey );
+		FrontEndParametersFacade::setHasRememberMeCookie( $rememberMeCookie !== null );
+
+		if ( ! $this->auth->isAuthenticated() && $this->attemptLogin( $rememberMeCookie ) )
 			/* The request should be resent to include the new session cookie in rendering the page. */
-			return (new PsrResponse())->withHeader('Location', $request->getUri()->getPath())->withStatus(302);
+			return ( new PsrResponse() )->withHeader( 'Location', $request->getUri()->getPath() )->withStatus(302);
 
 		$response = $handler->handle($request);
+
 		return $response;
 	}
 
 	/**
-	 * Attempts to log the client into their account if they have a 'Remember Me' cookie in the request
-	 * but include no session id cookie by adding the account to the newly created session.
+	 * Attempts to log the client into their account if their request includes a
+	 * 'Remember Me' cookie but no authenticated session ID cookie, by adding the
+	 * 'Remember Me' cookie's account to the newly created session.
+	 *
+	 * To make use of this, the client will need to reload their page via a
+	 * redirect Response/etc.
 	 * 
 	 * @return Returns true if the account corresponding to the cookie is
 	 * successfully logged into, otherwise it returns false.
 	 */
-	public function attemptLogin(Request $request): bool
+	public function attemptLogin(?Cookie $rememberMeCookie): bool
 	{
-		if ($this->auth->isAuthenticated())
-			return false;
-
 		$logger = $this->loggers['logger'];
 
-		$rememberMeCookie = FigRequestCookies::get($request, $this->container->get('settings')['auth']['remember']);
-		$data = $rememberMeCookie->getValue();
-
-		if ( is_null($data) || empty(trim($data)) )
+		if ( $rememberMeCookie === null )
 		{
 			$logger->info('Not authenticated but no \'remember me\' cookie.');
 
 			return false;
 		}
+
+		$data = $rememberMeCookie->getValue();
 
 		$credentials = explode('___', $data);
 

@@ -9,6 +9,7 @@ class FrontEndParameters
 	private ?\App\Helpers\HashingUtilities $hashingUtilities = null;
 	private ?array $csrfTokens = null;
 	private ?\App\Models\User $userData = null;
+	private ?bool $hasRememberMeCookie = null;
 
 	public function _setter(string $field, mixed $value): void
 	{

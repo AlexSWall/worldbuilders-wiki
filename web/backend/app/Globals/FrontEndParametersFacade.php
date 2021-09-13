@@ -50,6 +50,11 @@ class FrontEndParametersFacade
 		self::setter('userData', $data);
 	}
 
+	public static function setHasRememberMeCookie(bool $hasRememberMeCookie): void
+	{
+		self::setter('hasRememberMeCookie', $hasRememberMeCookie);
+	}
+
 	/* == Getters == */
 
 	public static function getBaseUrl(): ?string
@@ -75,5 +80,10 @@ class FrontEndParametersFacade
 	public static function getUserData(): ?User
 	{
 		return self::getter('userData');
+	}
+
+	public static function getHasRememberMeCookie(): bool
+	{
+		return self::getter('hasRememberMeCookie');
 	}
 }

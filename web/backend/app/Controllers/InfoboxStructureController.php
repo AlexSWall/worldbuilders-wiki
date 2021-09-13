@@ -1,46 +1,31 @@
-<?php
+<?php declare( strict_types = 1 );
 
 namespace App\Controllers;
 
-use App\Helpers\FrontEndDataUtilities;
 use App\Helpers\ResponseUtilities;
-use App\Models\WikiPage;
 use App\Infoboxes\InfoboxParser;
+use App\Models\Infobox;
+
+use Slim\Http\Response;
 
 class InfoboxController extends Controller
 {
-	static $logger;
+	static \App\Logging\Logger $logger;
 
-	public static function getInfoboxStructureResponse($response, $path)
+	public static function getInfoboxStructureNamesResponse( Response $response ): Response
 	{
-		self::$logger->addInfo('Attempting to get WikiPage\'s wikitext');
+		self::$logger->info('Getting infobox structure names');
 
-		// Convenience wrapper for error response
-		$errorResponse = function($errorCode, $error) use ($response)
-		{
-			return ResponseUtilities::respondWithError($response, $errorCode, $error);
-		};
-
-		if ($path === null)
-			$errorResponse(400, 'WikiPage path not supplied.');
-
-		self::$logger->addInfo('Checking whether WikiPage exists...');
-
-		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
-
-		if ($wikiPage === null)
-			$errorResponse(404, 'WikiPage not found.');
-
-		self::$logger->addInfo('WikiPage exists, returning wikitext...');
+		$infoboxNames = \App\Models\SpecialisedQueries\InfoboxQueries::getInfoboxNames();
 
 		return $response->withJSON([
-			'wikitext' => $wikiPage->getWikiText()
+			'infobox_names' => $infoboxNames
 		], 200, \JSON_UNESCAPED_UNICODE);
 	}
 
-	public static function createWikiPage($response, $path, $title)
+	public static function getInfoboxStructureResponse( Response $response, string $infoboxName ): Response
 	{
-		self::$logger->addInfo('Attempting to create WikiPage');
+		self::$logger->info('Getting infobox structure for infobox \'' . $infoboxName . '\'');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -48,25 +33,54 @@ class InfoboxController extends Controller
 			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
-		self::$logger->addInfo('Checking whether WikiPage exists...');
+		$infobox = Infobox::retrieveInfoboxByName( $infoboxName );
 
-		if ( WikiPage::retrieveWikiPageByUrlPath($path) !== null )
+		if ( $infobox === null )
+		{
+			self::$logger->info('Infobox \'' . $infoboxName . '\' not found.');
+
+			// Early 404 return
+			return $errorResponse( 404, 'Infobox doesn\'t exist' );
+		}
+
+		self::$logger->info('Found infobox \'' . $infoboxName . '\'');
+
+		$infoboxStructureText = $infobox->getRawText();
+
+		return $response->withJSON([
+			'infobox_structure_text' => $infoboxStructureText
+		], 200, \JSON_UNESCAPED_UNICODE);
+	}
+
+	public static function createInfobox( Response $response, string $infoboxName ): Response
+	{
+		self::$logger->info('Attempting to create infobox');
+
+		// Convenience wrapper for error response
+		$errorResponse = function($errorCode, $error) use ($response)
+		{
+			return ResponseUtilities::respondWithError($response, $errorCode, $error);
+		};
+
+		self::$logger->info('Checking whether infobox exists...');
+
+		if ( Infobox::retrieveInfoboxByName($infoboxName) !== null )
 			return $errorResponse(403, 'Page already exists.');
 
-		self::$logger->addInfo('WikiPage doesn\'t exist, creating WikiPage...');
+		self::$logger->info('Infobox doesn\'t exist, creating infobox...');
 
-		$wikiPage = WikiPage::createWikiPage($path, $title);
+		$infobox = Infobox::createInfobox( $infoboxName, '' );
 
-		if ( $wikiPage === null )
+		if ( $infobox === null )
 			return $errorResponse(500, 'Failed to insert into database.');
 
-		self::$logger->addInfo('Created WikiPage, returning 201...');
+		self::$logger->info('Created infobox, returning 201...');
 		return $response->withStatus(201);
 	}
 
-	public static function modifyWikiPage($response, $path, $title, $wikitext)
+	public static function modifyInfobox( Response $response, string $infoboxName, $structure ): Response
 	{
-		self::$logger->addInfo('Attempting to modify WikiPage');
+		self::$logger->info('Attempting to modify infobox');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -74,31 +88,32 @@ class InfoboxController extends Controller
 			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
-		self::$logger->addInfo('Retrieving WikiPage...');
+		self::$logger->info('Retrieving infobox...');
 
-		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
+		$infobox = Infobox::retrieveInfoboxByName($infoboxName);
 
-		self::$logger->addInfo('Ensuring it exists...');
+		self::$logger->info('Ensuring it exists...');
 
-		if ( $wikiPage === null )
+		if ( $infobox === null )
 			return $errorResponse(404, 'Page not found.');
 
-		self::$logger->addInfo('Ensuring the wikitext parses...');
+		self::$logger->info('Ensuring the infobox structure parses...');
 
-		if ( !WikitextParser::checkParse($wikitext) )
-			return $errorResponse(400, 'Failed to parse wikitext.');
+		$infoboxItems = InfoboxParser::parse( $structure );
+		if ( ! $infoboxItems )
+			return $errorResponse(400, 'Failed to parse infobox structure.');
 
-		self::$logger->addInfo('Updating the WikiPage');
+		self::$logger->info('Updating the infobox structure');
 
-		$wikiPage->updateWikiPage($title, $wikitext);
+		$infobox->setInfoboxItems( $infoboxItems );
 
-		self::$logger->addInfo('Returning with status 204.');
+		self::$logger->info('Returning with status 204.');
 		return $response->withStatus(204);
 	}
 
-	public static function deleteWikiPage($response, $path)
+	public static function deleteInfobox( Response $response, string $infoboxName ): Response
 	{
-		self::$logger->addInfo('Attempting to delete WikiPage');
+		self::$logger->info('Attempting to delete infobox');
 
 		// Convenience wrapper for error response
 		$errorResponse = function($errorCode, $error) use ($response)
@@ -106,20 +121,20 @@ class InfoboxController extends Controller
 			return ResponseUtilities::respondWithError($response, $errorCode, $error);
 		};
 
-		self::$logger->addInfo('Retrieving WikiPage...');
+		self::$logger->info('Retrieving infobox...');
 
-		$wikiPage = WikiPage::retrieveWikiPageByUrlPath($path);
+		$infobox = Infobox::retrieveInfoboxByName( $infoboxName );
 
-		self::$logger->addInfo('Ensuring it exists...');
+		self::$logger->info('Ensuring it exists...');
 
-		if ( $wikiPage === null )
-			return $errorResponse(404, 'Page not found.');
+		if ( $infobox === null )
+			return $errorResponse(404, 'Infobox not found.');
 
-		self::$logger->addInfo('Deleting the WikiPage');
+		self::$logger->info('Deleting the infobox');
 
-		$wikiPage->delete();
+		$infobox->delete();
 
-		self::$logger->addInfo('Returning with status 204.');
+		self::$logger->info('Returning with status 204.');
 		return $response->withStatus(204);
 	}
 }

@@ -280,7 +280,7 @@ blockLine =
 header =
 	anySpacing '==' extrasLeft:'='* inner:$inlineText<header>
 	rpnPermissionsString:(
-		'|' anySpacing rpnPermissionsStr:( permissionsExpression / '' ) anySpacing { 
+		'|' anySpacing rpnPermissionsStr:( permissionsExpression / '' ) anySpacing {
 			return $rpnPermissionsStr;
 		}
 	)?
@@ -376,7 +376,7 @@ trimmedInlineLine =
 // an inline break.
 // Returns an array of tokens.
 inlineLine =
-	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+ 
+	content:( !inlineBreak element:(inlineElement / .) { return $element; } )+
 	{
 		// This code deals with multiple inline tokens, such as italics and links, and avoids adding
 		// unnecessary beginning or ending text tokens.
@@ -527,7 +527,7 @@ endOfLine =
 	newLine
 	/ endOfFile
 
-newLine = 
+newLine =
 	'\n' { return [ new NewLineToken() ]; }
 	/ '\r\n' { return [ new NewLineToken() ]; }
 
@@ -554,7 +554,7 @@ permissionsExpression =
 orExpressionGroup =
 	firstAndExpression:andExpressionGroup
 	others:(
-		anySpacing orOperation:orBooleanOperator anySpacing andGroup:andExpressionGroup { 
+		anySpacing orOperation:orBooleanOperator anySpacing andGroup:andExpressionGroup {
 			return [ $orOperation, $andGroup ];
 		}
 	)* {
@@ -566,9 +566,9 @@ orExpressionGroup =
 	}
 
 andExpressionGroup =
-	firstPermissionGroup:permissionGroup 
+	firstPermissionGroup:permissionGroup
 	others:(
-		anySpacing andOperation:andBooleanOperator anySpacing permGroup:permissionGroup { 
+		anySpacing andOperation:andBooleanOperator anySpacing permGroup:permissionGroup {
 			return [ $andOperation, $permGroup ];
 		}
 	)* {
@@ -587,7 +587,7 @@ permission =
 	$inlineText<permission>
 
 orBooleanOperator =
-	( 'or'i / '||' ) { return '||'; } 
+	( 'or'i / '||' ) { return '||'; }
 
 andBooleanOperator =
 	( 'and'i / '&&' ) { return '&&'; }

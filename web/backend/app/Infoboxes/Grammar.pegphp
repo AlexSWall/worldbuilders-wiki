@@ -47,34 +47,34 @@ infoboxStructure = items:(
 	)*
 	{
 		return $items;
-	} 
+	}
 
 item =
 	header
 	/ horizontalLine
 	/ image
 	/ caption
-	/ entry 
+	/ entry
 
 header = "==" "="* headerChars:(char:[^=]* { return $char; } ) "==" "="* anySpacing &newLine
 	{
 		return new InfoboxHeader(trim(implode('', $headerChars)));
-	} 
+	}
 
 horizontalLine = "---" "-"* anySpacing &newLine
 	{
 		return new InfoboxHorizontalLine();
-	} 
+	}
 
 image = "Image " key:key &newLine
 	{
 		return new InfoboxImage($key);
-	} 
+	}
 
 caption = "Caption " key:key &newLine
 	{
 		return new InfoboxCaption($key);
-	} 
+	}
 
 entry = keys:entryKeys someSpacing keyTitles:entryKeyTitles
 	{
@@ -97,7 +97,7 @@ entryKeys =
 		{
 			return otherKey;
 		}
-	)* 
+	)*
 	{
 		return array_merge([$firstKey], $otherKeys);
 	}
@@ -153,7 +153,7 @@ endOfLine =
 	newLine
 	/ endOfFile
 
-newLine = 
+newLine =
 	'\n' { return [ new NewLineToken() ]; }
 	/ '\r\n' { return [ new NewLineToken() ]; }
 
