@@ -79,7 +79,7 @@ class Auth
 
 		$response = FigResponseCookies::set(
 			$response,
-			$this->createRememberMeCookie("{$rememberIdentifier}___{$rememberToken}", '+1 week')
+			$this->createRememberMeCookie("{$rememberIdentifier}___{$rememberToken}", '+10 years')
 		);
 
 		return $response;

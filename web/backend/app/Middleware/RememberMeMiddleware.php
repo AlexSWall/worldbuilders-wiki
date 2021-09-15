@@ -16,12 +16,26 @@ use Slim\Http\ServerRequest as Request;
 
 class RememberMeMiddleware extends Middleware
 {
-	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
+	static \App\Logging\Logger $logger;
+
+	private function getRememberMeToken( Request $request ): ?Cookie
 	{
 		$cookies = Cookies::fromRequest( $request );
+		self::$logger->dump($cookies);
+
 		$rememberMeCookieKey = $this->container->get( 'settings' )[ 'auth' ][ 'remember' ];
+		self::$logger->dump($rememberMeCookieKey);
 
 		$rememberMeCookie = $cookies->get( $rememberMeCookieKey );
+		self::$logger->dump($rememberMeCookie);
+
+		return $rememberMeCookie;
+	}
+
+	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
+	{
+		$rememberMeCookie = $this->getRememberMeToken( $request );
+
 		FrontEndParametersFacade::setHasRememberMeCookie( $rememberMeCookie !== null );
 
 		if ( ! $this->auth->isAuthenticated() && $this->attemptLogin( $rememberMeCookie ) )
