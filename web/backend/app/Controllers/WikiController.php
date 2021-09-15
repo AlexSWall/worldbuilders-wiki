@@ -11,7 +11,7 @@ use Slim\Http\ServerRequest as Request;
 
 class WikiController extends Controller
 {
-	private static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	/* GET request with path of the form /#{pageName} */
 	public function serveWikiApp(

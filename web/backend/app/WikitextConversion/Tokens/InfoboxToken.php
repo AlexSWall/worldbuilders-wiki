@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\WikitextConversion\Tokens;
 
@@ -6,7 +8,7 @@ use App\Models\Infobox;
 
 class InfoboxToken extends BaseToken
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	private string $infoboxType;
 	/** [
@@ -27,7 +29,7 @@ class InfoboxToken extends BaseToken
 
 	public function toHtml(): string
 	{
-		$infoboxStructure = Infobox::retrieveInfoboxByName($this->infoboxType);
+		$infoboxStructure = Infobox::retrieveInfoboxByName( $this->infoboxType );
 		/** [ AbstractInfoboxItem ] */
 		$infoboxStructureItems = $infoboxStructure->getInfoboxItems();
 
@@ -36,12 +38,12 @@ class InfoboxToken extends BaseToken
 		$html .= '<aside class="infobox">';
 
 		$titleEntryValue = $this->values['title'];
-		if ( count($titleEntryValue) === 1 && is_a($titleEntryValue[0], TextToken::class) )
+		if ( count( $titleEntryValue ) === 1 && is_a( $titleEntryValue[0], TextToken::class ) )
 		{
 			$title = $titleEntryValue[0]->toHtml();
-		}
-		else
+		} else {
 			$title = 'Infobox Title';
+		}
 
 		$html .= '<h2 class="infobox-title">' . $title . '</h2>';
 
@@ -62,40 +64,39 @@ class InfoboxToken extends BaseToken
 			{
 				if ( $infoboxStructureItem->isContent() )
 				{
-					$itemHtml = $infoboxStructureItem->getHtml($this->values);
+					$itemHtml = $infoboxStructureItem->getHtml( $this->values );
 
-					if ( $itemHtml === null )
+					if ( $itemHtml === null ) {
 						continue;
+					}
 
 					if ( $priorHeader !== null )
 					{
-						if ( $inSection )
+						if ( $inSection ) {
 							$html .= '</section>';
+						}
 
 						$html .= '<section>';
 						$inSection = true;
 
-						$html .= $priorHeader->getHtml($this->values);
+						$html .= $priorHeader->getHtml( $this->values );
 						$priorHeader = null;
 						$priorHorizontalRule = null;
-					}
-					else if ( $priorHorizontalRule !== null )
+	            } elseif ( $priorHorizontalRule !== null )
 					{
-						$html .= $priorHorizontalRule->getHtml($this->values);
+						$html .= $priorHorizontalRule->getHtml( $this->values );
 						$priorHorizontalRule = null;
 					}
 
 					$html .= $itemHtml;
 					$sectionHasContent = true;
-				}
-				else if ( $infoboxStructureItem->getTypeString() === 'Subheading' )
+				} elseif ( $infoboxStructureItem->getTypeString() === 'Subheading' )
 				{
 					$priorHeader = $infoboxStructureItem;
 					$sectionHasContent = false;
 
 					continue;
-				}
-				else if ( $infoboxStructureItem->getTypeString() === 'HorizontalRule' )
+				} elseif ( $infoboxStructureItem->getTypeString() === 'HorizontalRule' )
 				{
 					if ( $sectionHasContent )
 					{
@@ -104,18 +105,17 @@ class InfoboxToken extends BaseToken
 					}
 
 					continue;
-				}
-				else
-				{
-					self::$logger->info("InfoboxToken::toHtml else statement: shouldn't get here");
+				} else {
+					self::$logger->info( "InfoboxToken::toHtml else statement: shouldn't get here" );
 				}
 			}
 
-			if ( $inSection )
+			if ( $inSection ) {
 				$html .= '</section>';
+			}
 		}
 
-		self::$logger->info( 'HTML produced: ' . print_r($html, true) );
+		self::$logger->info( 'HTML produced: ' . print_r( $html, true ) );
 
 		$html .= '</aside>';
 

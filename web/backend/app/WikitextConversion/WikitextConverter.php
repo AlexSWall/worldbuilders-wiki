@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\WikitextConversion;
 
@@ -13,9 +15,9 @@ class WikitextConverter
 	{
 		$this->tokenProcessor = new TokenProcessor();
 
-		$tokens = WikitextParser::parse($wikitext);
+		$tokens = WikitextParser::parse( $wikitext );
 
-		$this->htmlBlocks = $this->tokenProcessor->process($tokens, 'top-level');
+		$this->htmlBlocks = $this->tokenProcessor->process( $tokens, 'top-level' );
 
 		$this->html = null;
 	}
@@ -28,8 +30,9 @@ class WikitextConverter
 	public function getHtml(): string
 	{
 		// Set cache member variable if necessary
-		if ($this->html === null)
+		if ( $this->html === null ) {
 			$this->html = $this->tokenProcessor->getHtml();
+		}
 
 		// Read from cache member variable
 		return $this->html;

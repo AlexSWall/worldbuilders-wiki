@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -9,12 +11,12 @@ use App\Utilities\ArrayBasedSet;
 class Character extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
-	
+
 	protected static function getTableName(): string
 	{
 		return 'Characters';
 	}
-	
+
 	protected static function getPrimaryKey(): string
 	{
 		return 'CharacterId';
@@ -34,22 +36,22 @@ class Character extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	public static function createCharacter(int $UserId, string $fullName): ?Character
+	public static function createCharacter( int $UserId, string $fullName ): ?Character
 	{
-	    return self::createModelWithEntries([
+	    return self::createModelWithEntries( [
 			'UserId' => $UserId,
 			'FullName' => $fullName
-		]);
+		] );
 	}
 
-	public static function retrieveCharacterByCharacterId(int $characterId): ?Character
+	public static function retrieveCharacterByCharacterId( int $characterId ): ?Character
 	{
-		return self::retrieveModelWithEntries(['CharacterId' => $characterId]);
+		return self::retrieveModelWithEntries( ['CharacterId' => $characterId] );
 	}
 
-	public static function retrieveCharactersByUserId(int $userId): array
+	public static function retrieveCharactersByUserId( int $userId ): array
 	{
-		return self::retrieveModelsWithEntries(['UserId' => $userId]);
+		return self::retrieveModelsWithEntries( ['UserId' => $userId] );
 	}
 
 
@@ -57,27 +59,28 @@ class Character extends DatabaseEncapsulator
 
 	public function getCharacterId(): int
 	{
-		return $this->get('CharacterId');
+		return $this->get( 'CharacterId' );
 	}
 
 	public function getUserId(): int
 	{
-		return $this->get('UserId');
+		return $this->get( 'UserId' );
 	}
 
 
 	/* == Character Details == */
 
-	public function createCharacterDetails(string $fullName): void
+	public function createCharacterDetails( string $fullName ): void
 	{
-		CharacterDetails::createCharacterDetails($this->getCharacterId(), $fullName);
+		CharacterDetails::createCharacterDetails( $this->getCharacterId(), $fullName );
 	}
 
 	public function getCharacterDetails(): CharacterDetails
 	{
 	    /* Lazy instantiation. */
-		if ( !$this->CharacterDetails )
-		    $this->CharacterDetails = CharacterDetails::retrieveCharacterDetailsByCharacterId($this->getCharacterId());
+		if ( !$this->CharacterDetails ) {
+		    $this->CharacterDetails = CharacterDetails::retrieveCharacterDetailsByCharacterId( $this->getCharacterId() );
+		}
 		return $this->CharacterDetails;
 	}
 
@@ -86,8 +89,9 @@ class Character extends DatabaseEncapsulator
 
 	private function setPermissionsFieldIfNeeded(): void
 	{
-		if ( !$this->permissions )
-			$this->permissions = CharacterPermissionsQueries::getCharacterPermissions($this->getCharacterId());
+		if ( !$this->permissions ) {
+			$this->permissions = CharacterPermissionsQueries::getCharacterPermissions( $this->getCharacterId() );
+		}
 	}
 
 	public function getPermissions(): ArrayBasedSet
@@ -96,39 +100,38 @@ class Character extends DatabaseEncapsulator
 		return $this->permissions;
 	}
 
-	public function addPermissions(array $permissions): void
+	public function addPermissions( array $permissions ): void
 	{
 		$this->setPermissionsFieldIfNeeded();
-		$this->permissions->addAll($permissions);
-		CharacterPermissionsQueries::addCharacterPermissions($this->getCharacterId(), $permissions);
+		$this->permissions->addAll( $permissions );
+		CharacterPermissionsQueries::addCharacterPermissions( $this->getCharacterId(), $permissions );
 	}
 
-	public function removePermissions(array $permissions): void
+	public function removePermissions( array $permissions ): void
 	{
 		$this->setPermissionsFieldIfNeeded();
-		$this->permissions->removeAll($permissions);
-		CharacterPermissionsQueries::removeCharacterPermissions($this->getCharacterId(), $permissions);
+		$this->permissions->removeAll( $permissions );
+		CharacterPermissionsQueries::removeCharacterPermissions( $this->getCharacterId(), $permissions );
 	}
 
-	public function hasPermissions(array $permissions): bool
+	public function hasPermissions( array $permissions ): bool
 	{
 		$this->setPermissionsFieldIfNeeded();
-		return $this->permissions->has($permissions);
+		return $this->permissions->has( $permissions );
 	}
 
-	public function addPermission(string $permission): void
+	public function addPermission( string $permission ): void
 	{
-		$this->addPermissions([ $permission ]);
+		$this->addPermissions( [ $permission ] );
 	}
 
-	public function removePermission(string $permission): void
+	public function removePermission( string $permission ): void
 	{
-		$this->removePermissions([ $permission ]);
+		$this->removePermissions( [ $permission ] );
 	}
 
-	public function hasPermission(string $permission): bool
+	public function hasPermission( string $permission ): bool
 	{
-		return $this->hasPermissions([ $permission ]);
+		return $this->hasPermissions( [ $permission ] );
 	}
-
 }

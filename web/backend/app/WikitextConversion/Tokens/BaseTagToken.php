@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\WikitextConversion\Tokens;
 
@@ -30,28 +32,30 @@ abstract class BaseTagToken extends BaseToken
 	{
 		$attributePairStrings = array();
 
-		foreach( $this->attributes as $key => $value )
+		foreach ( $this->attributes as $key => $value )
 		{
-			$safeKey = $this->removeSpecialHtmlTagCharacters($key);
+			$safeKey = $this->removeSpecialHtmlTagCharacters( $key );
 
 			$pairString = '';
-			if ( is_bool($value) && $value )
+			if ( is_bool( $value ) && $value ) {
 				$pairString = $safeKey;
-			else
-				$strValue = strval($value);
-				$pairString .= $safeKey . '=\'' . $this->removeSpecialHtmlTagCharacters($strValue) . '\'';
+			} else {
+				$strValue = strval( $value );
+			}
+				$pairString .= $safeKey . '=\'' . $this->removeSpecialHtmlTagCharacters( $strValue ) . '\'';
 
-			if ( $pairString !== '' )
+			if ( $pairString !== '' ) {
 				$attributePairStrings[] = $pairString;
+			}
 		}
 
-		$attributesString = implode(' ', $attributePairStrings);
+		$attributesString = implode( ' ', $attributePairStrings );
 		return $attributesString;
 	}
 
 	public function hasAttributes(): bool
 	{
-		return sizeof($this->attributes) > 0;
+		return sizeof( $this->attributes ) > 0;
 	}
 
 	public function jsonSerialize(): array

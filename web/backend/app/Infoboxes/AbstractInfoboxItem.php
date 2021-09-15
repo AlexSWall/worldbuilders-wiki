@@ -1,11 +1,13 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Infoboxes;
 
 abstract class AbstractInfoboxItem
 {
-	public abstract function getHtml(array $args): ?string;
-	public abstract function getTypeString(): string;
-	public abstract function getData(): array;
-	public abstract function isContent(): bool;
+	abstract public function getHtml( array $args ): ?string;
+	abstract public function getTypeString(): string;
+	abstract public function getData(): array;
+	abstract public function isContent(): bool;
 }

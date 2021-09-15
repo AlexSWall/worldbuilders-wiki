@@ -1,30 +1,33 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Infoboxes;
 
 class InfoboxImage extends AbstractInfoboxItem
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	private string $key;
 
-	public function __construct(string $key)
+	public function __construct( string $key )
 	{
 		$this->key = $key;
 	}
 
-	public function getHtml(array $args): ?string
+	public function getHtml( array $args ): ?string
 	{
 		/* // TODO: Get arguments array for InfoboxInfo */
 		/* if ( !array_key_exists($this->key, $args) ) */
 		/* 	return null; */
 		/* $myArgs = $args[$this->key]; */
 
-		$filenameToken = InfoboxUtilities::getEntryValueForKey($args, $this->key, 'is_array');
-		if ( $filenameToken === null )
+		$filenameToken = InfoboxUtilities::getEntryValueForKey( $args, $this->key, 'is_array' );
+		if ( $filenameToken === null ) {
 			return null;
+		}
 
-		$filename = InfoboxUtilities::unpackTextToken($filenameToken);
+		$filename = InfoboxUtilities::unpackTextToken( $filenameToken );
 
 		// TODO: Extract width
 		$width = '270';

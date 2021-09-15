@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Infoboxes;
 
@@ -6,12 +8,12 @@ class InfoboxSubheading extends AbstractInfoboxItem
 {
 	private string $subheadingText;
 
-	public function __construct(string $subheadingText)
+	public function __construct( string $subheadingText )
 	{
 		$this->subheadingText = $subheadingText;
 	}
 
-	public function getHtml(array $args): string
+	public function getHtml( array $args ): string
 	{
 		$html = '';
 		$html .= '<h2 class="infobox-subheading">';

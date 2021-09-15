@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Utilities;
 
@@ -10,11 +12,11 @@ use Slim\Http\ServerRequest as Request;
 
 class APIUtilities
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
-	static $isStringValidator;
-	static $isNonEmptyStringValidator;
-	static $isBooleanValidator;
+	public static $isStringValidator;
+	public static $isNonEmptyStringValidator;
+	public static $isBooleanValidator;
 
 	public static function __initialize()
 	{
@@ -49,27 +51,29 @@ class APIUtilities
 	 */
 	public static function createPostAPIEntryPoint( string $name, array $actionStructures ): callable
 	{
-		return function( Request $request, Response $response ) use ( $name, $actionStructures ): Response
+		return function ( Request $request, Response $response ) use ( $name, $actionStructures ): Response
 		{
 			$parsedBody = $request->getParsedBody();
 			$action = $parsedBody['action'];
 			$data = $parsedBody['data'];
 
-			self::$logger->info('Received \'' . $name . '\' POST request with action \'' . $action . '\'');
+			self::$logger->info( 'Received \'' . $name . '\' POST request with action \'' . $action . '\'' );
 
 			// Convenience wrapper for error response
-			$errorResponse = function($errorCode, $error) use ($response)
+			$errorResponse = function ( $errorCode, $error ) use ( $response )
 			{
-				return ResponseUtilities::respondWithError($response, $errorCode, $error);
+				return ResponseUtilities::respondWithError( $response, $errorCode, $error );
 			};
 
 			// -- Validate --
 
-			if (!DataUtilities::isNonEmptyString($action))
-				return $errorResponse(400, "'action' must be a non-empty string");
+			if ( !DataUtilities::isNonEmptyString( $action ) ) {
+				return $errorResponse( 400, "'action' must be a non-empty string" );
+			}
 
-			if (!is_array($data))
-				return $errorResponse(400, "'data' must be a JSON object/array");
+			if ( !is_array( $data ) ) {
+				return $errorResponse( 400, "'data' must be a JSON object/array" );
+			}
 
 			// -- Act --
 
@@ -88,22 +92,21 @@ class APIUtilities
 
 					// Get whether validation returns a requirement string.
 					$validationRequirement = $validator( $arg );
-					if ( $validationRequirement )
-						return $errorResponse(400, "'{$action}' action needs data with '{$key}' key and {$validationRequirement} value");
+					if ( $validationRequirement ) {
+						return $errorResponse( 400, "'{$action}' action needs data with '{$key}' key and {$validationRequirement} value" );
+					}
 
 					// No requirement string: validation succeeded, add to list of args
 					$args[] = $arg;
 				}
 
 				return $handler( $response, ...$args );
-			}
-			else
-			{
-				return $errorResponse(400, "Invalid action");
+			} else {
+				return $errorResponse( 400, "Invalid action" );
 			}
 
 			// This should be unreachable
-			return $errorResponse(500, "Server error");
+			return $errorResponse( 500, "Server error" );
 		};
 	}
 }

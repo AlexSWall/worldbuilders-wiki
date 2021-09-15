@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Mail;
 
@@ -8,22 +10,22 @@ class Message
 {
 	protected PHPMailer $mailer;
 
-	public function __construct(PHPMailer $mailer)
+	public function __construct( PHPMailer $mailer )
 	{
 		$this->mailer = $mailer;
 	}
 
-	public function to(string $address, string $name): void
+	public function to( string $address, string $name ): void
 	{
-		$this->mailer->addAddress($address, $name);
+		$this->mailer->addAddress( $address, $name );
 	}
 
-	public function subject(string $subject): void
+	public function subject( string $subject ): void
 	{
 		$this->mailer->Subject = $subject;
 	}
 
-	public function body(string $body): void
+	public function body( string $body ): void
 	{
 		$this->mailer->Body = $body;
 	}

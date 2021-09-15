@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\WikitextConversion\Tokens;
 
@@ -31,7 +33,7 @@ class MetaToken extends BaseToken
 
 	public function toHtml(): string
 	{
-		throw new \Exception('Cannot convert a meta token to HTML.');
+		throw new \Exception( 'Cannot convert a meta token to HTML.' );
 		return '';
 	}
 

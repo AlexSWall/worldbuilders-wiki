@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -13,7 +15,7 @@ use App\Utilities\ArrayBasedSet;
 
 class WikiPage extends DatabaseEncapsulator
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	/* == Required Abstract Methods == */
 
@@ -21,12 +23,12 @@ class WikiPage extends DatabaseEncapsulator
 	{
 		return 'WikiPages';
 	}
-	
+
 	protected static function getPrimaryKey(): string
 	{
 		return 'WikiPageId';
 	}
-	
+
 	protected static function getDefaults(): array
 	{
 		return [
@@ -40,28 +42,28 @@ class WikiPage extends DatabaseEncapsulator
 	/* == Instance Variables == */
 
 	private ?array $wikiPagePermissionBlocks = null;
-	
+
 
 	/* == Creators, Retrievers & Deleter == */
 
 	public static function createWikiPage( string $path, string $title ): ?WikiPage
 	{
-		self::$logger->info('Creating WikiPage with title \'' . $title . '\' and path \'' . $path);
+		self::$logger->info( 'Creating WikiPage with title \'' . $title . '\' and path \'' . $path );
 
-		return self::createModelWithEntries([
+		return self::createModelWithEntries( [
 			'Title' => $title,
 			'UrlPath' => $path,
-		]);
+		] );
 	}
 
 	public static function retrieveWikiPageById( int $id ): ?WikiPage
 	{
-		return self::retrieveModelWithEntries(['WikiPageId' => $id]);
+		return self::retrieveModelWithEntries( ['WikiPageId' => $id] );
 	}
 
 	public static function retrieveWikiPageByUrlPath( string $urlPath ): ?WikiPage
 	{
-		return self::retrieveModelWithEntries(['UrlPath' => $urlPath]);
+		return self::retrieveModelWithEntries( ['UrlPath' => $urlPath] );
 	}
 
 	public function delete(): void
@@ -73,22 +75,22 @@ class WikiPage extends DatabaseEncapsulator
 
 	public function getWikiPageId(): int
 	{
-		return $this->get('WikiPageId');
+		return $this->get( 'WikiPageId' );
 	}
 
 	public function getTitle(): string
 	{
-		return $this->get('Title');
+		return $this->get( 'Title' );
 	}
 
 	public function getUrlPath(): string
 	{
-		return $this->get('UrlPath');
+		return $this->get( 'UrlPath' );
 	}
 
 	public function getWikiText(): string
 	{
-		return $this->get('WikiText');
+		return $this->get( 'WikiText' );
 	}
 
 	public function getAllHtml(): string
@@ -108,11 +110,11 @@ class WikiPage extends DatabaseEncapsulator
 	public function getHtmlForPermissions( ?ArrayBasedSet $permissions ): string
 	{
 		// Get array of WikiPagePermissionBlocks
-		self::$logger->info('Getting viewable blocks');
+		self::$logger->info( 'Getting viewable blocks' );
 		$viewableBlocks = PermissionsUtilities::getViewableBlocks( $permissions, $this->getPermissionBlocks() );
 
 		// Convert them to HTML
-		self::$logger->info('Converting them to HTML');
+		self::$logger->info( 'Converting them to HTML' );
 		return WikiPagePermissionBlock::convertBlocksToHtml( $viewableBlocks );
 	}
 
@@ -125,10 +127,10 @@ class WikiPage extends DatabaseEncapsulator
 			$html = $converter->getHtml();
 		}
 
-		$this->set('Title', $title);
-		$this->set('WikiText', $wikiText);
-		$this->set('Html', $html);
-		$this->setPermissionBlocks($permissionBlocks);
+		$this->set( 'Title', $title );
+		$this->set( 'WikiText', $wikiText );
+		$this->set( 'Html', $html );
+		$this->setPermissionBlocks( $permissionBlocks );
 	}
 
 	/* == WikiPage Permission Blocks == */
@@ -150,11 +152,12 @@ class WikiPage extends DatabaseEncapsulator
 	private function getPermissionBlocks(): array
 	{
 		// Check whether cache private member variable is already populated.
-		if ( !$this->wikiPagePermissionBlocks )
+		if ( !$this->wikiPagePermissionBlocks ) {
 			// If not, populate it.
 			$this->setPermissionBlocks(
 				WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks( $this->getWikiPageId() )
 			);
+		}
 
 		// Return it
 		return $this->wikiPagePermissionBlocks;

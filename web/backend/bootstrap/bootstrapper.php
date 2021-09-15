@@ -16,38 +16,47 @@ require_once BASE_PATH . '/app/Logging/Logger.php';
 
 /* == Set up logging == */
 
-$logger_names = ['logger' => \App\Logging\LoggerRegistry::GENERAL_LOGGER];
+$loggerNames = ['logger' => \App\Logging\LoggerRegistry::GENERAL_LOGGER];
 
-foreach ($config['loggers'] as $logger_ref => $logger_config)
+foreach ($config['loggers'] as $loggerRef => $loggerConfig)
 {
-	\App\Logging\LoggerRegistry::addLoggerFromConfig($logger_ref, $logger_config);
-	$logger_names[$logger_config['logger_name']] = $logger_ref;
+	\App\Logging\LoggerRegistry::addLoggerFromConfig($loggerRef, $loggerConfig);
+	$loggerNames[$loggerConfig['logger_name']] = $loggerRef;
 }
 
 $loggers = [];
-foreach ( $logger_names as $logger_name => $logger_ref )
-	$loggers[$logger_name] = \App\Logging\LoggerRegistry::get($logger_ref);
+foreach ( $loggerNames as $loggerName => $loggerRef )
+	$loggers[$loggerName] = \App\Logging\LoggerRegistry::get($loggerRef);
 
 
 $logger = \App\Logging\LoggerRegistry::get(\App\Logging\LoggerRegistry::SETUP_LOGGER);
 
-spl_autoload_register( function( string $class_name ) use ($logger, $logger_names, &$setupFinished): void
+spl_autoload_register( function( string $className ) use ( $logger, $loggerNames, &$setupFinished ): void
 {
-	$class_path = BASE_PATH . '/' . str_replace('\\', '/', $class_name) . '.php';
+	$classPath = BASE_PATH . '/' . str_replace( '\\', '/', $className ) . '.php';
 
-	$class_path = str_replace('/App/', '/app/', $class_path);
+	$classPath = str_replace( '/App/', '/app/', $classPath );
 
-	if ( file_exists($class_path) )
+	if ( file_exists($classPath) )
 	{
 		if ( $setupFinished )
-			$logger->info('Including ' . $class_name);
+			$logger->info( 'Including ' . $className );
 
-		include $class_path; /* No need for include_once; if it had been included, we wouldn't be here. */
+		include $classPath; /* No need for include_once; if it had been included, we wouldn't be here. */
 
 		/* Logging black magic: initialising the static loggers after autoloading classes. */
-		foreach ( $logger_names as $logger_name => $logger_ref )
-			if ( property_exists($class_name, $logger_name) )
-				$class_name::$$logger_name = \App\Logging\LoggerRegistry::get($logger_ref);
+		foreach ( $loggerNames as $loggerName => $loggerRef )
+		{
+			if ( property_exists( $className, $loggerName ) )
+			{
+				// TODO: May be slow; benchmark
+				// Required to get around `private` properly of static loggers.
+				/* $reflectionProperty = new \ReflectionProperty( $className, $loggerName ); */
+				/* $reflectionProperty->setAccessible( true ); */
+				/* $reflectionProperty->setValue( $className, \App\Logging\LoggerRegistry::get( $loggerRef ) ); */
+				$className::$$loggerName = \App\Logging\LoggerRegistry::get($loggerRef);
+			}
+		}
 	}
 } );
 

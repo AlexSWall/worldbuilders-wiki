@@ -1,8 +1,10 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Logging;
 
-use \App\Logging\Logger;
+use App\Logging\Logger;
 
 class LoggerRegistry
 {
@@ -17,43 +19,45 @@ class LoggerRegistry
 	private static array $allowedKeys;
 
 	/* Called immediately after class definition to populate $allowedKeys. */
-	public static function __init__()
+	public static function __initialize()
 	{
-		self::$allowedKeys = (new \ReflectionClass(__CLASS__))->getConstants();
+		self::$allowedKeys = (new \ReflectionClass( __CLASS__ ))->getConstants();
 	}
 
 	private static array $storedValues = [];
 
-	private static function checkKey(string $key): void
+	private static function checkKey( string $key ): void
 	{
-		if ( !in_array($key, self::$allowedKeys) )
-			throw new \InvalidArgumentException('Invalid key given');
-		if ( in_array($key, self::$storedValues) )
-			throw new \InvalidArgumentException("Registry's key already set");
+		if ( !in_array( $key, self::$allowedKeys ) ) {
+			throw new \InvalidArgumentException( 'Invalid key given' );
+		}
+		if ( in_array( $key, self::$storedValues ) ) {
+			throw new \InvalidArgumentException( "Registry's key already set" );
+		}
 	}
 
-	public static function addLogger(string $name, Logger $logger): void
+	public static function addLogger( string $name, Logger $logger ): void
 	{
-		self::set($name, $logger);
+		self::set( $name, $logger );
 	}
 
-	public static function addLoggerFromConfig(string $name, array $config): void
+	public static function addLoggerFromConfig( string $name, array $config ): void
 	{
-		$logger = new Logger($config);
-		self::set($name, $logger);
+		$logger = new Logger( $config );
+		self::set( $name, $logger );
 	}
 
-	public static function set(string $key, Logger $value): void
+	public static function set( string $key, Logger $value ): void
 	{
-		self::checkKey($key); /* Throws on failure */
+		self::checkKey( $key ); /* Throws on failure */
 		self::$storedValues[$key] = $value;
 	}
 
-	public static function get(string $key): Logger
+	public static function get( string $key ): Logger
 	{
-		self::checkKey($key); /* Throws on failure */
+		self::checkKey( $key ); /* Throws on failure */
 		return self::$storedValues[$key];
 	}
 }
 
-LoggerRegistry::__init__();
+LoggerRegistry::__initialize();

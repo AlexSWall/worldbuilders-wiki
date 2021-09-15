@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Permissions;
 
@@ -26,8 +28,9 @@ class WikiPagePermissionBlock
 	public static function convertBlocksToHtml( array $blocks ): string
 	{
 		$html = '';
-		foreach ( $blocks as $block )
+		foreach ( $blocks as $block ) {
 			$html .= $block->getHtml();
+		}
 		return $html;
 	}
 }

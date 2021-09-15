@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Globals;
 
@@ -12,78 +14,78 @@ class FrontEndParametersFacade
 		$GLOBALS['FrontEndParameters'] = new FrontEndParameters();
 	}
 
-	private static function setter(string $key, mixed $value): void
+	private static function setter( string $key, mixed $value ): void
 	{
-		$GLOBALS['FrontEndParameters']->_setter($key, $value);
+		$GLOBALS['FrontEndParameters']->_setter( $key, $value );
 	}
 
-	private static function getter(string $key): mixed
+	private static function getter( string $key ): mixed
 	{
-		return $GLOBALS['FrontEndParameters']->_getter($key);
+		return $GLOBALS['FrontEndParameters']->_getter( $key );
 	}
 
 	/* == Setters == */
 
-	public static function setBaseUrl(string $url): void
+	public static function setBaseUrl( string $url ): void
 	{
-		self::setter('baseUrl', $url);
+		self::setter( 'baseUrl', $url );
 	}
 
-	public static function setIsAuthenticated(bool $value): void
+	public static function setIsAuthenticated( bool $value ): void
 	{
-		self::setter('isAuthenticated', $value);
+		self::setter( 'isAuthenticated', $value );
 	}
 
-	public static function setHashingUtilities(HashingUtilities $hashingUtilities): void
+	public static function setHashingUtilities( HashingUtilities $hashingUtilities ): void
 	{
-		self::setter('hashingUtilities', $hashingUtilities);
+		self::setter( 'hashingUtilities', $hashingUtilities );
 	}
 
 	private ?HashingUtilities $hashUtilities;
-	public static function setCsrfTokens(array $tokens): void
+	public static function setCsrfTokens( array $tokens ): void
 	{
-		self::setter('csrfTokens', $tokens);
+		self::setter( 'csrfTokens', $tokens );
 	}
 
-	public static function setUserData(User $data): void
+	public static function setUserData( User $data ): void
 	{
-		self::setter('userData', $data);
+		self::setter( 'userData', $data );
 	}
 
-	public static function setHasRememberMeCookie(bool $hasRememberMeCookie): void
+	public static function setHasRememberMeCookie( bool $hasRememberMeCookie ): void
 	{
-		self::setter('hasRememberMeCookie', $hasRememberMeCookie);
+		self::setter( 'hasRememberMeCookie', $hasRememberMeCookie );
 	}
 
 	/* == Getters == */
 
 	public static function getBaseUrl(): ?string
 	{
-		return self::getter('baseUrl');
+		return self::getter( 'baseUrl' );
 	}
 
 	public static function getIsAuthenticated(): ?bool
 	{
-		return self::getter('isAuthenticated');
+		return self::getter( 'isAuthenticated' );
 	}
 
 	public static function getHashingUtilities(): ?HashingUtilities
 	{
-		return self::getter('hashingUtilities');
+		return self::getter( 'hashingUtilities' );
 	}
 
 	public static function getCsrfTokens(): ?array
 	{
-		return self::getter('csrfTokens');
+		return self::getter( 'csrfTokens' );
 	}
 
 	public static function getUserData(): ?User
 	{
-		return self::getter('userData');
+		return self::getter( 'userData' );
 	}
 
 	public static function getHasRememberMeCookie(): bool
 	{
-		return self::getter('hasRememberMeCookie');
+		return self::getter( 'hasRememberMeCookie' );
 	}
 }

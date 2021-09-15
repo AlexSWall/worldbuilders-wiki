@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Infoboxes;
 
@@ -8,7 +10,7 @@ class InfoboxHorizontalRule extends AbstractInfoboxItem
 	{
 	}
 
-	public function getHtml(array $args): string
+	public function getHtml( array $args ): string
 	{
 		return '<hr>';
 	}

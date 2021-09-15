@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Utilities;
 
@@ -9,7 +11,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 	public function __construct( array $arr = [] )
 	{
 		$this->data = array();
-		foreach ($arr as $item) {
+		foreach ( $arr as $item ) {
 			$this->data[$item] = self::CONTAINED;
 		}
 	}
@@ -21,7 +23,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function has( mixed $item ): bool
 	{
-		return isset($this->data[$item]);
+		return isset( $this->data[$item] );
 	}
 
 	public function add( mixed $item ): void
@@ -29,21 +31,23 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 		$this->data[$item] = self::CONTAINED;
 	}
 
-	public function addAll( Iterable $items ): void
+	public function addAll( iterable $items ): void
 	{
-		foreach ( $items as $item )
+		foreach ( $items as $item ) {
 			$this->data[$item] = self::CONTAINED;
+		}
 	}
 
 	public function delete( mixed $item ): void
 	{
-		unset($this->data[$item]);
+		unset( $this->data[$item] );
 	}
 
-	public function deleteAll( Iterable $items ): void
+	public function deleteAll( iterable $items ): void
 	{
-		foreach ( $items as $item )
-			unset($this->data[$item]);
+		foreach ( $items as $item ) {
+			unset( $this->data[$item] );
+		}
 	}
 
 	public function clear(): void
@@ -53,7 +57,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function values(): array
 	{
-		return array_keys($this->data);
+		return array_keys( $this->data );
 	}
 
 
@@ -90,7 +94,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function valid(): bool
 	{
-		return isset($this->array[$this->position]);
+		return isset( $this->array[$this->position] );
 	}
 
 
@@ -98,6 +102,6 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function count(): int
 	{
-		return @count($this->data);
+		return @count( $this->data );
 	}
 }

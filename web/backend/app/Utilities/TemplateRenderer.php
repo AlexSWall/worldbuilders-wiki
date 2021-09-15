@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Utilities;
 
@@ -10,7 +12,7 @@ use Psr\Container\ContainerInterface;
  *
  * The following should be escaped if one is trying to match the character:
  *     \ ^ . $ | ( ) [ ] * + ? { } ,
- * 
+ *
  * == Special Character Definitions ==
  *   \ Quote the next metacharacter
  *   ^ Match the beginning of the line
@@ -62,23 +64,23 @@ class TemplateRenderer
 {
 	protected ContainerInterface $container;
 
-	public function __construct(ContainerInterface $container)
+	public function __construct( ContainerInterface $container )
 	{
 		$this->container = $container;
 	}
 
-	public static function renderTemplate(string $pageName, string $templateContent): string
+	public static function renderTemplate( string $pageName, string $templateContent ): string
 	{
-		$workingContent = htmlspecialchars($templateContent, ENT_QUOTES, 'UTF-8');
-		$workingContent = str_replace("\r", '', $workingContent);
+		$workingContent = htmlspecialchars( $templateContent, ENT_QUOTES, 'UTF-8' );
+		$workingContent = str_replace( "\r", '', $workingContent );
 
 		if ( false )
 		{
 			/* Add only if four headings exist. */
-			if ( stripos($workingContent, '[[Table of Contents]]' ) !== false )
+			if ( stripos( $workingContent, '[[Table of Contents]]' ) !== false )
 			{
-				[$workingContent, $tableOfContents] 
-						= TemplateRenderer::addTableOfContents('/#' . $pageName, $workingContent);
+				[$workingContent, $tableOfContents]
+						= TemplateRenderer::addTableOfContents( '/#' . $pageName, $workingContent );
 
 				$workingContent = preg_replace(
 					'/\[\[Table of Contents\]\]/i',
@@ -91,7 +93,7 @@ class TemplateRenderer
 		return $workingContent;
 	}
 
-	public static function addTableOfContents(string $url, string $content)
+	public static function addTableOfContents( string $url, string $content )
 	{
 		$toc = "<h2>Table of Contents</h2>";
 		$prevLevel = 1;
@@ -99,25 +101,27 @@ class TemplateRenderer
 
 		$generatedContent = preg_replace_callback(
 			'/<h([2-6])>([^<]+)<\/h([2-6])>/i',
-			function ($match) use ($url, &$toc, &$prevLevel, &$isEmpty)
+			function ( $match ) use ( $url, &$toc, &$prevLevel, &$isEmpty )
 			{
 				[$str, $openLevel, $titleText, $closeLevel] = $match;
-				$openLevel = intval($openLevel);
-				$closeLevel = intval($closeLevel);
+				$openLevel = intval( $openLevel );
+				$closeLevel = intval( $closeLevel );
 
-				if ($openLevel != $closeLevel)
+				if ( $openLevel != $closeLevel ) {
 					return $str;
+					}
 
 				$isEmpty = false;
 
-				if ($openLevel > $prevLevel)
-					$toc .= str_repeat("<ul>", $openLevel - $prevLevel);
-				else if ($openLevel < $prevLevel)
-					$toc .= str_repeat("</ul>", $prevLevel - $openLevel);
+				if ( $openLevel > $prevLevel ) {
+					$toc .= str_repeat( "<ul>", $openLevel - $prevLevel );
+				} elseif ( $openLevel < $prevLevel ) {
+					$toc .= str_repeat( "</ul>", $prevLevel - $openLevel );
+					}
 
 				$prevLevel = $openLevel;
 
-				$anchor = preg_replace('/ /', '_', $titleText);
+				$anchor = preg_replace( '/ /', '_', $titleText );
 				$toc .= "<li><a href=\"{$url}#{$anchor}\">{$titleText}</a></li>";
 
 				return "<h{$openLevel}><a class=\"anchor\" id=\"{$anchor}\">{$titleText}</a></h{$closeLevel}>";
@@ -125,13 +129,14 @@ class TemplateRenderer
 			$content
 		);
 
-		if (!$isEmpty)
+		if ( !$isEmpty )
 		{
-			if ($prevLevel > 0) 
-				$toc .= str_repeat("</ul>", $prevLevel);
-		}
-		else
+			if ( $prevLevel > 0 ) {
+				$toc .= str_repeat( "</ul>", $prevLevel );
+			}
+		} else {
 			$toc = "";
+		}
 
 		return [$generatedContent, $toc];
 	}

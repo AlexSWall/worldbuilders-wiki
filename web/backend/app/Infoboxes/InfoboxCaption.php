@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Infoboxes;
 
@@ -8,18 +10,19 @@ class InfoboxCaption extends AbstractInfoboxItem
 {
 	private string $key;
 
-	public function __construct(string $key)
+	public function __construct( string $key )
 	{
 		$this->key = $key;
 	}
 
-	public function getHtml(array $args): ?string
+	public function getHtml( array $args ): ?string
 	{
-		$captionTokens = InfoboxUtilities::getEntryValueForKey($args, $this->key, 'is_array');
-		if ( $captionTokens === null )
+		$captionTokens = InfoboxUtilities::getEntryValueForKey( $args, $this->key, 'is_array' );
+		if ( $captionTokens === null ) {
 			return null;
+		}
 
-		$captionHtml = (new TokenProcessor())->process($captionTokens, 'inline');
+		$captionHtml = (new TokenProcessor())->process( $captionTokens, 'inline' );
 
 		// Create HTML
 		$html = '';

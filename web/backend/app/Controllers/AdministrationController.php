@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -10,8 +12,8 @@ use Slim\Http\ServerRequest as Request;
 
 class AdministrationController extends Controller
 {
-	public function index(Request $request, Response $response)
+	public function index( Request $request, Response $response )
 	{
-		return FrontEndDataUtilities::getEntryPointResponse(	$this->view, $response, 'administration' );
+		return FrontEndDataUtilities::getEntryPointResponse( $this->view, $response, 'administration' );
 	}
 }

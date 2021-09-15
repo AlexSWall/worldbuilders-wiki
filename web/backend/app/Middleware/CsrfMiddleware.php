@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Middleware;
 
@@ -14,17 +16,17 @@ use Slim\Http\ServerRequest as Request;
 
 class CsrfMiddleware extends Middleware
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	private Guard $csrf;
 
-	public function __construct(ContainerInterface $container, Guard $csrf)
+	public function __construct( ContainerInterface $container, Guard $csrf )
 	{
-		parent::__construct($container);
+		parent::__construct( $container );
 		$this->csrf = $csrf;
 	}
 
-	public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface
+	public function route( Request $request, RequestHandlerInterface $handler ): ResponseInterface
 	{
 		$csrf = $this->csrf;
 
@@ -33,12 +35,12 @@ class CsrfMiddleware extends Middleware
 			$csrf->getTokenValueKey() => $csrf->getTokenValue()
 		];
 
-		FrontEndParametersFacade::setCsrfTokens($tokens);
+		FrontEndParametersFacade::setCsrfTokens( $tokens );
 
-		self::$logger->info('CSRF Tokens:');
-		self::$logger->dump($tokens);
+		self::$logger->info( 'CSRF Tokens:' );
+		self::$logger->dump( $tokens );
 
-		$response = $handler->handle($request);
+		$response = $handler->handle( $request );
 		return $response;
 	}
 }

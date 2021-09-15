@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Validation;
 
 class Validator
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	/**
 	 * Given a valdiation array, checks whether each value satisfies its rules
@@ -24,29 +26,29 @@ class Validator
 	{
 		$errors = [];
 
-		foreach( $validationArray as $field => [ $rules, $value ] )
+		foreach ( $validationArray as $field => [ $rules, $value ] )
 		{
-			assert(is_iterable($rules), 'Validation array rules must be an iterable of callables');
+			assert( is_iterable( $rules ), 'Validation array rules must be an iterable of callables' );
 
-			self::$logger->info('Trying validation rules for ' . $field);
+			self::$logger->info( 'Trying validation rules for ' . $field );
 
-			foreach( $rules as $rule )
+			foreach ( $rules as $rule )
 			{
-				assert(is_callable($rule), 'Rules in validation array must be callable');
+				assert( is_callable( $rule ), 'Rules in validation array must be callable' );
 
-				$errorString = $rule($value);
+				$errorString = $rule( $value );
 				if ( $errorString !== null )
 				{
 					// Validation error found for field; set it as the first
 					// validation error and finish attempting validation for this
 					// field.
-					self::$logger->info("Failed to validate {$field}; error string: ${errorString}");
+					self::$logger->info( "Failed to validate {$field}; error string: ${errorString}" );
 					$errors[$field] = $errorString;
 					break;
 				}
 			}
 
-			self::$logger->info('Validated ' . $field);
+			self::$logger->info( 'Validated ' . $field );
 		}
 
 		return $errors;

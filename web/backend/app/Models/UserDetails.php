@@ -1,21 +1,23 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Models;
 
 class UserDetails extends DatabaseEncapsulator
 {
 	/* == Required Abstract Methods == */
-	
+
 	protected static function getTableName(): string
 	{
 		return 'UserDetails';
 	}
-	
+
 	protected static function getPrimaryKey(): string
 	{
 		return 'Id';
 	}
-	
+
 	protected static function getDefaults(): array
 	{
 		return [
@@ -30,17 +32,17 @@ class UserDetails extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	public static function createUserDetails(int $userId, string $preferredName): ?UserDetails
+	public static function createUserDetails( int $userId, string $preferredName ): ?UserDetails
 	{
-	    return self::createModelWithEntries([
+	    return self::createModelWithEntries( [
 			'UserId' => $userId,
 			'PreferredName' => $preferredName
-		]);
+		] );
 	}
 
-	public static function retrieveUserDetailsByUserId(int $userId): ?UserDetails
+	public static function retrieveUserDetailsByUserId( int $userId ): ?UserDetails
 	{
-		return self::retrieveModelWithEntries(['UserId' => $userId]);
+		return self::retrieveModelWithEntries( ['UserId' => $userId] );
 	}
 
 
@@ -48,16 +50,16 @@ class UserDetails extends DatabaseEncapsulator
 
 	public function getUserId(): int
 	{
-		return $this->get('UserId');
+		return $this->get( 'UserId' );
 	}
 
 	public function getPreferredName(): string
 	{
-		return $this->get('PreferredName');
+		return $this->get( 'PreferredName' );
 	}
 
 	public function getDescription(): string
 	{
-		return $this->get('Description');
+		return $this->get( 'Description' );
 	}
 }

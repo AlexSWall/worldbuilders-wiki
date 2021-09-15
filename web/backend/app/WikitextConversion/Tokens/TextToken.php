@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\WikitextConversion\Tokens;
 
@@ -13,22 +15,22 @@ class TextToken extends BaseToken
 
 	public function trim(): void
 	{
-		$this->text = trim($this->text);
+		$this->text = trim( $this->text );
 	}
 
 	public function ltrim(): void
 	{
-		$this->text = ltrim($this->text);
+		$this->text = ltrim( $this->text );
 	}
 
 	public function rtrim(): void
 	{
-		$this->text = rtrim($this->text);
+		$this->text = rtrim( $this->text );
 	}
 
 	public function toHTML(): string
 	{
-		return htmlspecialchars($this->text);
+		return htmlspecialchars( $this->text );
 	}
 
 	public function jsonSerialize(): array

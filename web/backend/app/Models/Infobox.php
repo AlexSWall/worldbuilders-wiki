@@ -1,4 +1,6 @@
-<?php declare( strict_types = 1 );
+<?php
+
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -33,17 +35,17 @@ class Infobox extends DatabaseEncapsulator
 
 	/* == Creators, Retrievers & Deleter == */
 
-	public static function createInfobox(string $name, string $rawText): ?Infobox
+	public static function createInfobox( string $name, string $rawText ): ?Infobox
 	{
-	    return self::createModelWithEntries([
+	    return self::createModelWithEntries( [
 			'Name' => $name,
 			'RawText' => $rawText
-		]);
+		] );
 	}
 
-	public static function retrieveInfoboxByName(string $name): ?Infobox
+	public static function retrieveInfoboxByName( string $name ): ?Infobox
 	{
-		return self::retrieveModelWithEntries(['Name' => $name]);
+		return self::retrieveModelWithEntries( ['Name' => $name] );
 	}
 
 	public function delete(): void
@@ -56,37 +58,38 @@ class Infobox extends DatabaseEncapsulator
 
 	public function getInfoboxId(): int
 	{
-		return $this->get('InfoboxId');
+		return $this->get( 'InfoboxId' );
 	}
 
 	public function getName(): string
 	{
-		return $this->get('Name');
+		return $this->get( 'Name' );
 	}
 
-	public function setName(string $name): void
+	public function setName( string $name ): void
 	{
-		$this->set('Name', $name);
+		$this->set( 'Name', $name );
 	}
 
 	public function getRawText(): string
 	{
-		return $this->get('RawText');
+		return $this->get( 'RawText' );
 	}
 
-	public function setRawText(string $rawText): void
+	public function setRawText( string $rawText ): void
 	{
-		$this->set('RawText', $rawText);
+		$this->set( 'RawText', $rawText );
 	}
 
 	public function getInfoboxItems(): array
 	{
 		// Check whether cache private member variable is already populated.
-		if ( !$this->infoboxItems )
+		if ( !$this->infoboxItems ) {
 			// If not, populate it.
 			$this->setInfoboxItems(
 				InfoboxQueries::getInfoboxItems( $this->getInfoboxId() )
 			);
+		}
 
 		// Return it
 		return $this->infoboxItems;

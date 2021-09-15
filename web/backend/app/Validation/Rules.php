@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Validation;
 
@@ -6,7 +8,7 @@ use App\Models\User;
 
 class Rules
 {
-	static \App\Logging\Logger $logger;
+	public static \App\Logging\Logger $logger;
 
 	// == Core Rules (Callables) ==
 
@@ -14,10 +16,11 @@ class Rules
 	{
 		$failureString = $failureString ?: "Required";
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
-			if ( ! $input )
+			if ( ! $input ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -26,25 +29,26 @@ class Rules
 	{
 		if ( ! $failureString )
 		{
-			if ( $minLength && $maxLength )
+			if ( $minLength && $maxLength ) {
 				$failureString = "Must be between {$minLength} and {$maxLength} characters long";
-
-			else if ( $minLength )
+			} elseif ( $minLength ) {
 				$failureString = "Must be {$minLength} characters long";
-
-			else if ( $maxLength )
+			} elseif ( $maxLength ) {
 				$failureString = "Must be no more than {$maxLength} characters long";
+			}
 		}
 
-		return function( string $input ) use ( $minLength, $maxLength, $failureString ): ?string
+		return function ( string $input ) use ( $minLength, $maxLength, $failureString ): ?string
 		{
 			$inputLen = strlen( $input );
 
-			if ( $minLength && $inputLen < $minLength )
+			if ( $minLength && $inputLen < $minLength ) {
 				return $failureString;
+			}
 
-			if ( $maxLength && $inputLen > $maxLength )
+			if ( $maxLength && $inputLen > $maxLength ) {
 				return $failureString;
+			}
 
 			return null;
 		};
@@ -54,10 +58,11 @@ class Rules
 	{
 		$failureString = $failureString ?: "Must be only letters and spaces" ;
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
-			if ( ! preg_match( '/^[a-zA-Z ]*$/', $input ) )
+			if ( ! preg_match( '/^[a-zA-Z ]*$/', $input ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -66,10 +71,11 @@ class Rules
 	{
 		$failureString = $failureString ?: "Must be only letters and numbers" ;
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
-			if ( ! ctype_alnum( $input ) )
+			if ( ! ctype_alnum( $input ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -78,11 +84,12 @@ class Rules
 	{
 		$failureString = $failureString ?: "Must be a valid email address" ;
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
 			// TODO: Add more precise email validation via EmailValidator
-			if ( ! filter_var( $input, FILTER_VALIDATE_EMAIL ) )
+			if ( ! filter_var( $input, FILTER_VALIDATE_EMAIL ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -91,10 +98,11 @@ class Rules
 	{
 		$failureString = $failureString ?: "Username is already in use" ;
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
-			if ( ! is_null( User::retrieveUserByUsername( $input ) ) )
+			if ( ! is_null( User::retrieveUserByUsername( $input ) ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -103,10 +111,11 @@ class Rules
 	{
 		$failureString = $failureString ?: "Email is already in use";
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
-			if ( ! is_null( User::retrieveUserByEmail( $input ) ) )
+			if ( ! is_null( User::retrieveUserByEmail( $input ) ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -115,10 +124,11 @@ class Rules
 	{
 		$failureString = $failureString ?: "Email is not in use";
 
-		return function( string $input ) use ( $failureString ): ?string
+		return function ( string $input ) use ( $failureString ): ?string
 		{
-			if ( is_null( User::retrieveUserByEmail( $input ) ) )
+			if ( is_null( User::retrieveUserByEmail( $input ) ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -127,11 +137,12 @@ class Rules
 	{
 		$failureString = $failureString ?: "Incorrect password";
 
-		return function( string $input ) use ( $passwordHash, $failureString ): ?string
+		return function ( string $input ) use ( $passwordHash, $failureString ): ?string
 		{
 			$hashingUtilities = \App\Globals\FrontEndParametersFacade::getHashingUtilities();
-			if ( ! $hashingUtilities->checkPassword( $input, $passwordHash ) )
+			if ( ! $hashingUtilities->checkPassword( $input, $passwordHash ) ) {
 				return $failureString;
+			}
 			return null;
 		};
 	}
@@ -140,7 +151,7 @@ class Rules
 
 	public static function usernameRules(): array
 	{
-		return [ self::required(), self::alphaNumeric(), self::length(4, 20) ];
+		return [ self::required(), self::alphaNumeric(), self::length( 4, 20 ) ];
 	}
 
 	public static function emailRules(): array
@@ -150,7 +161,7 @@ class Rules
 
 	public static function passwordRules(): array
 	{
-		return [ self::required(), self::length(8, null) ];
+		return [ self::required(), self::length( 8, null ) ];
 	}
 
 	public static function usernameAvailableRules(): array
@@ -175,6 +186,6 @@ class Rules
 
 	public static function preferredNameRules()
 	{
-		return [ self::length(null, 20) ];
+		return [ self::length( null, 20 ) ];
 	}
 }
