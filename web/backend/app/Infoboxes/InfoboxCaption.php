@@ -8,7 +8,7 @@ class InfoboxCaption extends AbstractInfoboxItem
 {
 	private string $key;
 
-	function __construct(string $key)
+	public function __construct(string $key)
 	{
 		$this->key = $key;
 	}

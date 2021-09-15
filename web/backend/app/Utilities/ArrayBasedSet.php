@@ -17,7 +17,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	/* == Set == */
 
-	private const CONTAINED = TRUE;
+	private const CONTAINED = true;
 
 	public function has( mixed $item ): bool
 	{
@@ -85,7 +85,7 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function next(): void
 	{
-		++ $this->position;
+		++$this->position;
 	}
 
 	public function valid(): bool

@@ -9,11 +9,11 @@ interface SetInterface extends \Traversable, \Countable
 
 	public function add(mixed $item): void;
 
-	public function addAll(Iterable $items): void;
+	public function addAll(iterable $items): void;
 
 	public function delete(mixed $item): void;
 
-	public function deleteAll(Iterable $items): void;
+	public function deleteAll(iterable $items): void;
 
 	public function clear(): void;
 

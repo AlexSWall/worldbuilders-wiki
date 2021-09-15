@@ -21,7 +21,7 @@ class AuthenticatedMiddleware extends Middleware
 
 			// TODO
 			//$this->container->get('flash')->addMessage('error', 'Please sign in before doing that.');
-			return (new Response)->withHeader('Location', $this->container->router->pathFor('auth.signin'))->withStatus(302);
+			return (new Response())->withHeader('Location', $this->container->router->pathFor('auth.signin'))->withStatus(302);
 		}
 
 		$logger->info('Is authenticated so proceeding');

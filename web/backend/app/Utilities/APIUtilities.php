@@ -16,7 +16,7 @@ class APIUtilities
 	static $isNonEmptyStringValidator;
 	static $isBooleanValidator;
 
-	public static function __init__()
+	public static function __initialize()
 	{
 		self::$isStringValidator = self::createValidator( 'is_string', 'string' );
 		self::$isNonEmptyStringValidator = self::createValidator( '\App\Helpers\DataUtilities::isNonEmptyString', 'non-empty string' );
@@ -106,4 +106,6 @@ class APIUtilities
 			return $errorResponse(500, "Server error");
 		};
 	}
-} APIUtilities::__init__();
+}
+
+APIUtilities::__initialize();

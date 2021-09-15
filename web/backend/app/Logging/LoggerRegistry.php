@@ -6,12 +6,12 @@ use \App\Logging\Logger;
 
 class LoggerRegistry
 {
-	const SETUP_LOGGER = 'setup';
-	const GENERAL_LOGGER = 'general';
-	const NETWORK_LOGGER = 'network';
-	const DATABASE_LOGGER = 'database';
-	const SECURITY_LOGGER = 'security';
-	const DEBUG_LOGGER = 'debug';
+	public const SETUP_LOGGER = 'setup';
+	public const GENERAL_LOGGER = 'general';
+	public const NETWORK_LOGGER = 'network';
+	public const DATABASE_LOGGER = 'database';
+	public const SECURITY_LOGGER = 'security';
+	public const DEBUG_LOGGER = 'debug';
 
 	/* Populated by init immediately after class definition. */
 	private static array $allowedKeys;
@@ -54,4 +54,6 @@ class LoggerRegistry
 		self::checkKey($key); /* Throws on failure */
 		return self::$storedValues[$key];
 	}
-} LoggerRegistry::__init__();
+}
+
+LoggerRegistry::__init__();

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use \App\Models\SpecialisedQueries\InfoboxQueries;
+use App\Models\SpecialisedQueries\InfoboxQueries;
 
 class Infobox extends DatabaseEncapsulator
 {

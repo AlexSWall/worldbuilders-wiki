@@ -34,5 +34,5 @@ abstract class Middleware implements MiddlewareInterface
 		return $this->route($request, $handler);
 	}
 
-	public abstract function route(Request $request, RequestHandlerInterface $handler): ResponseInterface;
+	abstract public function route(Request $request, RequestHandlerInterface $handler): ResponseInterface;
 }

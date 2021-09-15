@@ -13,8 +13,11 @@ class FrontEndParameters
 
 	public function _setter(string $field, mixed $value): void
 	{
-		if ( !is_null($this->$field) )
+		if ( $this->$field !== null )
+		{
 			throw new SettingDefinedGlobalException($field, $this->$field, $value);
+		}
+
 		$this->$field = $value;
 	}
 
@@ -26,10 +29,10 @@ class FrontEndParameters
 
 class SettingDefinedGlobalException extends \Exception
 {
-    public function __construct(string $fieldName, mixed $oldValue, mixed $newValue)
-	 {
-    	$message = 'Attempted to set global variable ' . $fieldName
-    		. ' with old value of ' . $oldValue . ' to new value ' . $newValue . '.';
-        parent::__construct($message, 0, null);
-    }
+	public function __construct(string $fieldName, mixed $oldValue, mixed $newValue)
+	{
+		$message = 'Attempted to set global variable ' . $fieldName
+			. ' with old value of ' . $oldValue . ' to new value ' . $newValue . '.';
+		parent::__construct($message, 0, null);
+	}
 }

@@ -4,7 +4,7 @@ namespace App\Infoboxes;
 
 class InfoboxHorizontalRule extends AbstractInfoboxItem
 {
-	function __construct()
+	public function __construct()
 	{
 	}
 

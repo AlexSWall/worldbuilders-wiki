@@ -23,7 +23,7 @@ class InfoboxQueries
 		$result = DB::table('InfoboxItems AS e')
 				->select(['e.Position', 'e.ItemKey', 'eTypes.TypeString', 'eData.DataName', 'eData.DataValue'])
 				->join('InfoboxItemTypes AS eTypes', 'e.InfoboxItemTypeId', '=', 'eTypes.InfoboxItemTypeId')
-				->leftJoin('InfoboxItemData AS eData',   'e.InfoboxItemId',     '=', 'eData.infoboxItemId')
+				->leftJoin('InfoboxItemData AS eData', 'e.InfoboxItemId', '=', 'eData.infoboxItemId')
 				->where('e.InfoboxId', $infoboxId)
 				->orderBy('e.Position', 'asc')
 				->get()->groupBy('Position')->all();

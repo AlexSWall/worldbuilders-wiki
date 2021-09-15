@@ -11,7 +11,7 @@ class InfoboxEntry extends AbstractInfoboxItem
 	private string $key;
 	private string $keyText;
 
-	function __construct(string $key, string $keyText)
+	public function __construct(string $key, string $keyText)
 	{
 		$this->key = $key;
 		$this->keyText = $keyText;

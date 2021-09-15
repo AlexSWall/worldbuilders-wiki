@@ -41,15 +41,15 @@ class LogRequestMiddleware extends Middleware
 	}
 
 	/* Redact any information which is keyed with a key which contains the phrase 'password'. */
-	static private function getCleanedPOSTParameters(?array $restParams): array
+	private static function getCleanedPOSTParameters(?array $restParams): array
 	{
-		if (is_null($restParams))
+		if ($restParams === null)
 			return [];
 
 		foreach ($restParams as $key => $value)
 			if ( is_string($value) && (stristr($value, 'password') || stristr($key, 'password') ) )
 				$restParams[$key] = '<REDACTED>';
-			else if ( is_array($value) )
+			elseif ( is_array($value) )
 				$restParams[$key] = self::getCleanedPOSTParameters($value);
 		return $restParams;
 	}

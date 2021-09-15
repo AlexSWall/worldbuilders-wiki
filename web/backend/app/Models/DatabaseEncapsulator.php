@@ -11,7 +11,7 @@ abstract class DatabaseEncapsulator
 
 	private $model;
 
-	protected static abstract function getTableName(): string;
+	abstract protected static function getTableName(): string;
 	protected static abstract function getPrimaryKey(): string;
 	protected static abstract function getDefaults(): array;
 
@@ -56,7 +56,7 @@ abstract class DatabaseEncapsulator
 	{
 		self::$db_logger->info(
 			'Retrieving entry from ' . static::getTableName()
-			.' table with args ' . json_encode($args)
+			. ' table with args ' . json_encode($args)
 		);
 
 		return self::createIfNotNull(self::getTable()->where($args)->first());
@@ -76,7 +76,7 @@ abstract class DatabaseEncapsulator
 	}
 
 	protected function set(string $key, mixed $value): void
-{
+	{
 		$this->model->$key = $value;
 		$this->update([
 			$key => $value

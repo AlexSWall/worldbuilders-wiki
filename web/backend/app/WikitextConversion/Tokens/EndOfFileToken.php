@@ -9,3 +9,4 @@ class EndOfFileToken extends BasePlainToken
 		return '';
 	}
 }
+

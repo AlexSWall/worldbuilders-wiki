@@ -6,7 +6,7 @@ class InfoboxSubheading extends AbstractInfoboxItem
 {
 	private string $subheadingText;
 
-	function __construct(string $subheadingText)
+	public function __construct(string $subheadingText)
 	{
 		$this->subheadingText = $subheadingText;
 	}

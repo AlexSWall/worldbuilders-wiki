@@ -30,7 +30,7 @@ class Auth
 
 	public function checkUserExists(string $identity): bool
 	{
-		return !is_null(User::retrieveUserByIdentity($identity));
+		return User::retrieveUserByIdentity($identity) !== null;
 	}
 
 	public function checkActivated(string $identity): bool
@@ -48,21 +48,21 @@ class Auth
 		if ( !$this->hashUtilities->checkPassword($password, $user->getPasswordHash()) )
 			return false;
 
-		$_SESSION[$this->authConfig['session']] = $user->getUserId();
+		$_SESSION[ $this->authConfig[ 'session' ] ] = $user->getUserId();
 
 		$characters = Character::retrieveCharactersByUserId($user->getUserId());
 		if ( $characters )
-			$_SESSION[$this->authConfig['characterId']] = $characters[0]->getCharacterId();
+			$_SESSION[ $this->authConfig[ 'characterId' ] ] = $characters[0]->getCharacterId();
 
 		return true;
 	}
 
 	private function createRememberMeCookie(string $value, string $expiry_str): SetCookie
 	{
-		return SetCookie::create($this->authConfig['remember'])
+		return SetCookie::create( $this->authConfig[ 'remember' ] )
 			->withValue($value)
-			->withExpires(Carbon::parse($expiry_str)->timestamp)
-			->withPath('/');
+			->withExpires( Carbon::parse( $expiry_str )->timestamp )
+			->withPath( '/' );
 	}
 
 	public function setRememberMeCookie(Response $response, string $identity): Response
@@ -87,12 +87,12 @@ class Auth
 
 	public function isAuthenticated(): bool
 	{
-		return isset($_SESSION[$this->authConfig['session']]);
+		return isset( $_SESSION[ $this->authConfig[ 'session' ] ] );
 	}
 
 	public function getUser(): User
 	{
-		return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
+		return User::retrieveUserByUserId($_SESSION[ $this->authConfig[ 'session' ] ] );
 	}
 
 	public function getCharacter(): ?Character
@@ -104,10 +104,10 @@ class Auth
 		$character = null;
 
 		// Find character if possible.
-		$characterIdKey = $this->authConfig['characterId'];
+		$characterIdKey = $this->authConfig[ 'characterId' ];
 		if (array_key_exists($characterIdKey, $_SESSION))
 		{
-			$characterId = $_SESSION[$this->authConfig['characterId']];
+			$characterId = $_SESSION[ $this->authConfig[ 'characterId' ] ];
 			if ($characterId)
 				$character = Character::retrieveCharacterByCharacterId($characterId);
 		}
@@ -121,7 +121,7 @@ class Auth
 	public function getUserSafely(): ?User
 	{
 		if ( $this->isAuthenticated() )
-			return User::retrieveUserByUserId($_SESSION[$this->authConfig['session']]);
+			return User::retrieveUserByUserId($_SESSION[ $this->authConfig[ 'session' ] ]);
 
 		return null;
 	}
@@ -137,7 +137,7 @@ class Auth
 			$response = FigResponseCookies::set($response, $this->createRememberMeCookie('', '-1 week'));
 		}
 
-		unset($_SESSION[$this->authConfig['session']]);
+		unset($_SESSION[ $this->authConfig[ 'session' ] ]);
 
 		return $response;
 	}

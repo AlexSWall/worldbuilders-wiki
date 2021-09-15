@@ -45,7 +45,7 @@ class TokenProcessor
 		$this->initialise();
 
 		// Process all tokens
-		foreach ( self::array_flatten($tokens) as $token )
+		foreach ( self::arrayFlatten($tokens) as $token )
 			$this->processToken($token);
 
 		if ( $this->usePermissionBlocks )
@@ -94,6 +94,7 @@ class TokenProcessor
 		assert( is_a($token, 'App\WikitextConversion\Tokens\BaseToken') );
 
 		if ( is_a($token, 'App\WikitextConversion\Tokens\MetaToken') )
+		{
 			switch ( $token->getName() )
 			{
 				case 'permissions-specifier':
@@ -107,6 +108,7 @@ class TokenProcessor
 
 					break;
 			}
+		}
 		else
 			$this->html .= $token->toHTML();
 	}
@@ -116,7 +118,7 @@ class TokenProcessor
 		$this->blocks[] = new WikiPagePermissionBlock( $permissionsExpression, $html );
 	}
 
-	private static function array_flatten( array $array = null ): array
+	private static function arrayFlatten( array $array = null ): array
 	{
 		$result = [];
 
@@ -130,7 +132,7 @@ class TokenProcessor
 			if ($value === null)
 				continue;
 			if (is_array($value))
-				$result = array_merge($result, self::array_flatten($value));
+				$result = array_merge($result, self::arrayFlatten($value));
 			else
 				$result = array_merge($result, array($key => $value));
 		}
