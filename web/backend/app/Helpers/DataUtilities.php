@@ -13,7 +13,8 @@ class DataUtilities
 	public static function decodeJSONArray( string $str ): mixed
 	{
 		$json = json_decode( $str );
-		if ( $json && $str != $json ) {
+		if ( $json && $str != $json )
+		{
 			return $json;
 		}
 		return null;

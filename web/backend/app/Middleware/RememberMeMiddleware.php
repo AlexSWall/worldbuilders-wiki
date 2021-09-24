@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use App\Models\User;
 use App\Globals\FrontEndParametersFacade;
+use App\Helpers\ResponseUtilities;
+use App\Models\User;
 
 use Dflydev\FigCookies\Cookie;
 use Dflydev\FigCookies\Cookies;
@@ -13,7 +14,6 @@ use Dflydev\FigCookies\Cookies;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use Slim\Psr7\Response as PsrResponse;
 use Slim\Http\ServerRequest as Request;
 
 class RememberMeMiddleware extends Middleware
@@ -40,9 +40,11 @@ class RememberMeMiddleware extends Middleware
 
 		FrontEndParametersFacade::setHasRememberMeCookie( $rememberMeCookie !== null );
 
-		if ( ! $this->auth->isAuthenticated() && $this->attemptLogin( $rememberMeCookie ) ) {
-			/* The request should be resent to include the new session cookie in rendering the page. */
-			return ( new PsrResponse() )->withHeader( 'Location', $request->getUri()->getPath() )->withStatus( 302 );
+		if ( ! $this->auth->isAuthenticated() && $this->attemptLogin( $rememberMeCookie ) )
+		{
+			// The request should be resent to include the new session cookie in
+			// rendering the page.
+			return ResponseUtilities::respondWithRedirect( null, $request->getUri()->getPath() );
 		}
 
 		$response = $handler->handle( $request );

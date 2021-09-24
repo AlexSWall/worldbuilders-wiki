@@ -37,8 +37,10 @@ abstract class DatabaseEncapsulator
 
 	private static function createEntryWithDefaults( array $values ): array
 	{
-		foreach ( $values as &$value ) {
-			if ( !isset( $value ) ) {
+		foreach ( $values as &$value )
+		{
+			if ( !isset( $value ) )
+			{
 				$value = null;
 			}
 		}
@@ -50,7 +52,8 @@ abstract class DatabaseEncapsulator
 	protected static function createModelWithEntries( array $entries ): ?static
 	{
 		$success = self::getTable()->insert( self::createEntryWithDefaults( $entries ) );
-		if ( !$success ) {
+		if ( !$success )
+		{
 			return null;
 		}
 
@@ -70,7 +73,8 @@ abstract class DatabaseEncapsulator
 	protected static function retrieveModelsWithEntries( array $args ): array
 	{
 		$models = array();
-		foreach ( self::getTable()->where( $args )->get()->getIterator() as $bareModel ) {
+		foreach ( self::getTable()->where( $args )->get()->getIterator() as $bareModel )
+		{
 			$models[] = self::createIfNotNull( $bareModel );
 		}
 		return $models;

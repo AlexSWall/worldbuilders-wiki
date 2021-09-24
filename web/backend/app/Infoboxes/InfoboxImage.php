@@ -23,7 +23,8 @@ class InfoboxImage extends AbstractInfoboxItem
 		/* $myArgs = $args[$this->key]; */
 
 		$filenameToken = InfoboxUtilities::getEntryValueForKey( $args, $this->key, 'is_array' );
-		if ( $filenameToken === null ) {
+		if ( $filenameToken === null )
+		{
 			return null;
 		}
 

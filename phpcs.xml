@@ -33,6 +33,7 @@
 		or entire standards via name="Generic"
 	-->
 	<rule ref="PSR12">
+		<!-- Rules that we're excluding... -->
 		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
 		<exclude name="PSR12.Files.FileHeader.SpacingInsideBlock"/>
 		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.NewlineBeforeOpenBrace"/>
@@ -44,12 +45,16 @@
 		<exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
 		<exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>
 		<exclude name="PSR2.Methods.FunctionCallSignature.Indent"/>
+		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace"/>
+		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword"/>
 
 
-
+		<!-- Rules that we're sometimes including... -->
 		<exclude name="Generic.Files.LineLength.MaxExceeded"/>
 		<exclude name="Generic.Commenting.Todo.CommentFound"/>
 		<exclude name="Generic.Commenting.Todo.TaskFound"/>
+
+		<!-- Rules that we're including... -->
 		<!--
 		<exclude name="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterOpen"/>
 		<exclude name="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterClose"/>
@@ -68,7 +73,6 @@
 		<exclude name="PSR2.ControlStructures.ControlStructureSpacing.requiredSpacesBeforeClose"/>
 		<exclude name="Generic.ControlStructures.InlineControlStructure.NotAllowed"/>
 		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace"/>
-		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword"/>
 		<exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine"/>
 		<exclude name="PSR2.Methods.MethodDeclaration.AbstractAfterVisibility"/>
 		<exclude name="PSR12.Operators.OperatorSpacing.NoSpaceAfter"/>

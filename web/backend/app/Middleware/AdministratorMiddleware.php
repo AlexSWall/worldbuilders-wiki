@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Helpers\ResponseUtilities;
+
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 use Slim\Http\ServerRequest as Request;
-use Slim\Psr7\Response as PsrResponse;
 
 class AdministratorMiddleware extends Middleware
 {
@@ -26,15 +27,21 @@ class AdministratorMiddleware extends Middleware
 	{
 		$logger = $this->loggers['logger'];
 
-		if ( !$this->container->get( 'auth' )->isAuthenticated() || !$this->container->get( 'auth' )->getUser()->isAdmin() )
+		$auth = $this->container->get( 'auth' );
+
+		if ( ! $auth->isAuthenticated() || ! $auth->getUser()->isAdmin() )
 		{
 			$logger->info( 'Failed to authenticate as an admin' );
 
 			if ( $this->isApiRoute )
 			{
-				return (new PsrResponse())->withHeader( 'Location', [], 401, JSON_UNESCAPED_UNICODE )->withStatus( 302 );
-			} else {
-				return (new PsrResponse())->withHeader( 'Location', $this->container->get( 'router' )->pathFor( 'home' ) )->withStatus( 302 );
+				return ResponseUtilities::getApiErrorResponse( null, 401, 'Not authenticated as an admin' );
+			}
+			else
+			{
+				$path = $this->container->router->pathFor( 'home' );
+
+				return ResponseUtilities::respondWithRedirect( null, $path );
 			}
 		}
 

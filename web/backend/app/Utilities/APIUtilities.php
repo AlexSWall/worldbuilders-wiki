@@ -62,16 +62,18 @@ class APIUtilities
 			// Convenience wrapper for error response
 			$errorResponse = function ( $errorCode, $error ) use ( $response )
 			{
-				return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+				return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 			};
 
 			// -- Validate --
 
-			if ( !DataUtilities::isNonEmptyString( $action ) ) {
+			if ( !DataUtilities::isNonEmptyString( $action ) )
+			{
 				return $errorResponse( 400, "'action' must be a non-empty string" );
 			}
 
-			if ( !is_array( $data ) ) {
+			if ( !is_array( $data ) )
+			{
 				return $errorResponse( 400, "'data' must be a JSON object/array" );
 			}
 
@@ -92,7 +94,8 @@ class APIUtilities
 
 					// Get whether validation returns a requirement string.
 					$validationRequirement = $validator( $arg );
-					if ( $validationRequirement ) {
+					if ( $validationRequirement )
+					{
 						return $errorResponse( 400, "'{$action}' action needs data with '{$key}' key and {$validationRequirement} value" );
 					}
 
@@ -101,7 +104,9 @@ class APIUtilities
 				}
 
 				return $handler( $response, ...$args );
-			} else {
+			}
+			else
+			{
 				return $errorResponse( 400, "Invalid action" );
 			}
 

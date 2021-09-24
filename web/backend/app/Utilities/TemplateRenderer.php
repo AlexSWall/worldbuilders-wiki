@@ -107,17 +107,21 @@ class TemplateRenderer
 				$openLevel = intval( $openLevel );
 				$closeLevel = intval( $closeLevel );
 
-				if ( $openLevel != $closeLevel ) {
+				if ( $openLevel != $closeLevel )
+				{
 					return $str;
-					}
+				}
 
 				$isEmpty = false;
 
-				if ( $openLevel > $prevLevel ) {
+				if ( $openLevel > $prevLevel )
+				{
 					$toc .= str_repeat( "<ul>", $openLevel - $prevLevel );
-				} elseif ( $openLevel < $prevLevel ) {
+				}
+				elseif ( $openLevel < $prevLevel )
+				{
 					$toc .= str_repeat( "</ul>", $prevLevel - $openLevel );
-					}
+				}
 
 				$prevLevel = $openLevel;
 
@@ -131,10 +135,13 @@ class TemplateRenderer
 
 		if ( !$isEmpty )
 		{
-			if ( $prevLevel > 0 ) {
+			if ( $prevLevel > 0 )
+			{
 				$toc .= str_repeat( "</ul>", $prevLevel );
 			}
-		} else {
+		}
+		else
+		{
 			$toc = "";
 		}
 

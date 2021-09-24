@@ -40,7 +40,9 @@ class WikiPageController extends Controller
 			}
 
 			$returnCode = 404;
-		} else {
+		}
+		else
+		{
 			self::$logger->info( 'WikiPage found' );
 		}
 
@@ -66,26 +68,28 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
-		if ( $path === null ) {
-			$errorResponse( 400, 'WikiPage path not supplied.' );
+		if ( $path === null )
+		{
+			return $errorResponse( 400, 'WikiPage path not supplied.' );
 		}
 
 		self::$logger->info( 'Checking whether WikiPage exists...' );
 
 		$wikiPage = WikiPage::retrieveWikiPageByUrlPath( $path );
 
-		if ( $wikiPage === null ) {
-			$errorResponse( 404, 'WikiPage not found.' );
+		if ( $wikiPage === null )
+		{
+			return $errorResponse( 404, 'WikiPage not found.' );
 		}
 
 		self::$logger->info( 'WikiPage exists, returning wikitext...' );
 
-		return $response->withJSON( [
+		return ResponseUtilities::getApiResponse( $response, 200, [
 			'wikitext' => $wikiPage->getWikiText()
-		], 200, \JSON_UNESCAPED_UNICODE );
+		] );
 	}
 
 	public static function createWikiPage( Response $response, string $path, string $title ): Response
@@ -95,12 +99,13 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$logger->info( 'Checking whether WikiPage exists...' );
 
-		if ( WikiPage::retrieveWikiPageByUrlPath( $path ) !== null ) {
+		if ( WikiPage::retrieveWikiPageByUrlPath( $path ) !== null )
+		{
 			return $errorResponse( 403, 'Page already exists.' );
 		}
 
@@ -108,7 +113,8 @@ class WikiPageController extends Controller
 
 		$wikiPage = WikiPage::createWikiPage( $path, $title );
 
-		if ( $wikiPage === null ) {
+		if ( $wikiPage === null )
+		{
 			return $errorResponse( 500, 'Failed to insert into database.' );
 		}
 
@@ -123,7 +129,7 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$logger->info( 'Retrieving WikiPage...' );
@@ -132,13 +138,15 @@ class WikiPageController extends Controller
 
 		self::$logger->info( 'Ensuring it exists...' );
 
-		if ( $wikiPage === null ) {
+		if ( $wikiPage === null )
+		{
 			return $errorResponse( 404, 'Page not found.' );
 		}
 
 		self::$logger->info( 'Ensuring the wikitext parses...' );
 
-		if ( !WikitextParser::checkParse( $wikitext ) ) {
+		if ( !WikitextParser::checkParse( $wikitext ) )
+		{
 			return $errorResponse( 400, 'Failed to parse wikitext.' );
 		}
 
@@ -157,7 +165,7 @@ class WikiPageController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$logger->info( 'Retrieving WikiPage...' );
@@ -166,7 +174,8 @@ class WikiPageController extends Controller
 
 		self::$logger->info( 'Ensuring it exists...' );
 
-		if ( $wikiPage === null ) {
+		if ( $wikiPage === null )
+		{
 			return $errorResponse( 404, 'Page not found.' );
 		}
 

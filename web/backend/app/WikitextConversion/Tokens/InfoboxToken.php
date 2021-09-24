@@ -41,7 +41,9 @@ class InfoboxToken extends BaseToken
 		if ( count( $titleEntryValue ) === 1 && is_a( $titleEntryValue[0], TextToken::class ) )
 		{
 			$title = $titleEntryValue[0]->toHtml();
-		} else {
+		}
+		else
+		{
 			$title = 'Infobox Title';
 		}
 
@@ -66,13 +68,15 @@ class InfoboxToken extends BaseToken
 				{
 					$itemHtml = $infoboxStructureItem->getHtml( $this->values );
 
-					if ( $itemHtml === null ) {
+					if ( $itemHtml === null )
+					{
 						continue;
 					}
 
 					if ( $priorHeader !== null )
 					{
-						if ( $inSection ) {
+						if ( $inSection )
+						{
 							$html .= '</section>';
 						}
 
@@ -82,7 +86,8 @@ class InfoboxToken extends BaseToken
 						$html .= $priorHeader->getHtml( $this->values );
 						$priorHeader = null;
 						$priorHorizontalRule = null;
-	            } elseif ( $priorHorizontalRule !== null )
+					}
+					elseif ( $priorHorizontalRule !== null )
 					{
 						$html .= $priorHorizontalRule->getHtml( $this->values );
 						$priorHorizontalRule = null;
@@ -90,13 +95,15 @@ class InfoboxToken extends BaseToken
 
 					$html .= $itemHtml;
 					$sectionHasContent = true;
-				} elseif ( $infoboxStructureItem->getTypeString() === 'Subheading' )
+				}
+				elseif ( $infoboxStructureItem->getTypeString() === 'Subheading' )
 				{
 					$priorHeader = $infoboxStructureItem;
 					$sectionHasContent = false;
 
 					continue;
-				} elseif ( $infoboxStructureItem->getTypeString() === 'HorizontalRule' )
+				}
+				elseif ( $infoboxStructureItem->getTypeString() === 'HorizontalRule' )
 				{
 					if ( $sectionHasContent )
 					{
@@ -105,12 +112,15 @@ class InfoboxToken extends BaseToken
 					}
 
 					continue;
-				} else {
+				}
+				else
+				{
 					self::$logger->info( "InfoboxToken::toHtml else statement: shouldn't get here" );
 				}
 			}
 
-			if ( $inSection ) {
+			if ( $inSection )
+			{
 				$html .= '</section>';
 			}
 		}

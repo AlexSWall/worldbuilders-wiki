@@ -19,7 +19,8 @@ class WikiPagePermissionBlockQueries
 				->get()->all();
 
 		$wikiPagePermissionBlocksArray = array();
-		foreach ( $queryResults as $queryResult ) {
+		foreach ( $queryResults as $queryResult )
+		{
 			$wikiPagePermissionBlocksArray[$queryResult->BlockPosition] = new WikiPagePermissionBlock(
 				$queryResult->PermissionsExpression,
 				$queryResult->Html
@@ -33,7 +34,8 @@ class WikiPagePermissionBlockQueries
 	{
 		self::clearPermissionBlocksForWikiPage( $wikiPageId );
 
-		if ( count( $blockArray ) == 0 ) {
+		if ( count( $blockArray ) == 0 )
+		{
 			return;
 		}
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Slim\Psr7\Response;
+use App\Helpers\ResponseUtilities;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -21,7 +21,9 @@ class GuestMiddleware extends Middleware
 		{
 			$logger->info( 'Failed to proceed as not a guest' );
 
-			return (new Response())->withHeader( 'Location', $this->container->router->pathFor( 'home' ) )->withStatus( 302 );
+			$path = $this->container->router->pathFor( 'home' );
+
+			return ResponseUtilities::respondWithRedirect( null, $path );
 		}
 
 		$logger->info( 'Is a guest so proceeding' );

@@ -78,7 +78,8 @@ class Character extends DatabaseEncapsulator
 	public function getCharacterDetails(): CharacterDetails
 	{
 	    /* Lazy instantiation. */
-		if ( !$this->CharacterDetails ) {
+		if ( !$this->CharacterDetails )
+		{
 		    $this->CharacterDetails = CharacterDetails::retrieveCharacterDetailsByCharacterId( $this->getCharacterId() );
 		}
 		return $this->CharacterDetails;
@@ -89,7 +90,8 @@ class Character extends DatabaseEncapsulator
 
 	private function setPermissionsFieldIfNeeded(): void
 	{
-		if ( !$this->permissions ) {
+		if ( !$this->permissions )
+		{
 			$this->permissions = CharacterPermissionsQueries::getCharacterPermissions( $this->getCharacterId() );
 		}
 	}

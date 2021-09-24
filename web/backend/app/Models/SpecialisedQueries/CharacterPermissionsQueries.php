@@ -27,7 +27,8 @@ class CharacterPermissionsQueries
 
 		$permissionsSet = new ArrayBasedSet();
 
-		foreach ( $permissionNameStdClassArray as $permissionNameStdClass ) {
+		foreach ( $permissionNameStdClassArray as $permissionNameStdClass )
+		{
 			$permissionsSet->add( $permissionNameStdClass->PermissionName );
 		}
 
@@ -39,11 +40,13 @@ class CharacterPermissionsQueries
 	 */
 	public static function addCharacterPermissions( string|int $characterId, array|ArrayBasedSet $permissions ): void
 	{
-		if ( count( $permissions ) == 0 ) {
+		if ( count( $permissions ) == 0 )
+		{
 			return;
 		}
 
-		if ( is_a( $permissions, 'App\Utilities\SetInterface' ) ) {
+		if ( is_a( $permissions, 'App\Utilities\SetInterface' ) )
+		{
 			$permissions = $permissions->values();
 		}
 
@@ -53,7 +56,8 @@ class CharacterPermissionsQueries
 				->get()->all();
 
 		$insertion = array();
-		foreach ( $permissionIdStdClassArray as $permissionIdStdClass ) {
+		foreach ( $permissionIdStdClassArray as $permissionIdStdClass )
+		{
 			$insertion[] = ['CharacterId' => $characterId, 'PermissionId' => $permissionIdStdClass->PermissionId ];
 		}
 
@@ -69,11 +73,13 @@ class CharacterPermissionsQueries
 	 */
 	public static function removeCharacterPermissions( string|int $characterId, array|ArrayBasedSet $permissions ): void
 	{
-		if ( count( $permissions ) == 0 ) {
+		if ( count( $permissions ) == 0 )
+		{
 			return;
 		}
 
-		if ( is_a( $permissions, 'App\Utilities\SetInterface' ) ) {
+		if ( is_a( $permissions, 'App\Utilities\SetInterface' ) )
+		{
 			$permissions = $permissions->values();
 		}
 

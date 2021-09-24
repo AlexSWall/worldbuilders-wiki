@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Slim\Psr7\Response;
+use App\Helpers\ResponseUtilities;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -22,8 +22,14 @@ class AuthenticatedMiddleware extends Middleware
 			$logger->info( 'Failed to proceed as not authenticated' );
 
 			// TODO
-			//$this->container->get('flash')->addMessage('error', 'Please sign in before doing that.');
-			return (new Response())->withHeader( 'Location', $this->container->router->pathFor( 'auth.signin' ) )->withStatus( 302 );
+			//$this->container->get('flash')->addMessage(
+			//	'error',
+			//	'Please sign in before doing that.'
+			//);
+
+			$route = $this->container->router->pathFor( 'auth.signin' );
+
+			return ResponseUtilities::respondWithRedirect( null, $route );
 		}
 
 		$logger->info( 'Is authenticated so proceeding' );

@@ -29,11 +29,16 @@ class Rules
 	{
 		if ( ! $failureString )
 		{
-			if ( $minLength && $maxLength ) {
+			if ( $minLength && $maxLength )
+			{
 				$failureString = "Must be between {$minLength} and {$maxLength} characters long";
-			} elseif ( $minLength ) {
+			}
+			elseif ( $minLength )
+			{
 				$failureString = "Must be {$minLength} characters long";
-			} elseif ( $maxLength ) {
+			}
+			elseif ( $maxLength )
+			{
 				$failureString = "Must be no more than {$maxLength} characters long";
 			}
 		}

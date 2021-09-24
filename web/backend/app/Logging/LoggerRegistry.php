@@ -28,10 +28,13 @@ class LoggerRegistry
 
 	private static function checkKey( string $key ): void
 	{
-		if ( !in_array( $key, self::$allowedKeys ) ) {
+		if ( !in_array( $key, self::$allowedKeys ) )
+		{
 			throw new \InvalidArgumentException( 'Invalid key given' );
 		}
-		if ( in_array( $key, self::$storedValues ) ) {
+
+		if ( in_array( $key, self::$storedValues ) )
+		{
 			throw new \InvalidArgumentException( "Registry's key already set" );
 		}
 	}

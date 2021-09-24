@@ -11,7 +11,8 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 	public function __construct( array $arr = [] )
 	{
 		$this->data = array();
-		foreach ( $arr as $item ) {
+		foreach ( $arr as $item )
+		{
 			$this->data[$item] = self::CONTAINED;
 		}
 	}
@@ -33,7 +34,8 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function addAll( iterable $items ): void
 	{
-		foreach ( $items as $item ) {
+		foreach ( $items as $item )
+		{
 			$this->data[$item] = self::CONTAINED;
 		}
 	}
@@ -45,7 +47,8 @@ final class ArrayBasedSet implements \Iterator, SetInterface
 
 	public function deleteAll( iterable $items ): void
 	{
-		foreach ( $items as $item ) {
+		foreach ( $items as $item )
+		{
 			unset( $this->data[$item] );
 		}
 	}

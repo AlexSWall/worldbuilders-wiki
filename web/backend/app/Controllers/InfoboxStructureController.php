@@ -32,7 +32,7 @@ class InfoboxController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		$infobox = Infobox::retrieveInfoboxByName( $infoboxName );
@@ -61,12 +61,13 @@ class InfoboxController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$logger->info( 'Checking whether infobox exists...' );
 
-		if ( Infobox::retrieveInfoboxByName( $infoboxName ) !== null ) {
+		if ( Infobox::retrieveInfoboxByName( $infoboxName ) !== null )
+		{
 			return $errorResponse( 403, 'Page already exists.' );
 		}
 
@@ -74,7 +75,8 @@ class InfoboxController extends Controller
 
 		$infobox = Infobox::createInfobox( $infoboxName, '' );
 
-		if ( $infobox === null ) {
+		if ( $infobox === null )
+		{
 			return $errorResponse( 500, 'Failed to insert into database.' );
 		}
 
@@ -89,7 +91,7 @@ class InfoboxController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$logger->info( 'Retrieving infobox...' );
@@ -98,14 +100,16 @@ class InfoboxController extends Controller
 
 		self::$logger->info( 'Ensuring it exists...' );
 
-		if ( $infobox === null ) {
+		if ( $infobox === null )
+		{
 			return $errorResponse( 404, 'Page not found.' );
 		}
 
 		self::$logger->info( 'Ensuring the infobox structure parses...' );
 
 		$infoboxItems = InfoboxParser::parse( $structure );
-		if ( ! $infoboxItems ) {
+		if ( ! $infoboxItems )
+		{
 			return $errorResponse( 400, 'Failed to parse infobox structure.' );
 		}
 
@@ -124,7 +128,7 @@ class InfoboxController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$logger->info( 'Retrieving infobox...' );
@@ -133,7 +137,8 @@ class InfoboxController extends Controller
 
 		self::$logger->info( 'Ensuring it exists...' );
 
-		if ( $infobox === null ) {
+		if ( $infobox === null )
+		{
 			return $errorResponse( 404, 'Infobox not found.' );
 		}
 

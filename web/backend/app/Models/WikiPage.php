@@ -152,7 +152,8 @@ class WikiPage extends DatabaseEncapsulator
 	private function getPermissionBlocks(): array
 	{
 		// Check whether cache private member variable is already populated.
-		if ( !$this->wikiPagePermissionBlocks ) {
+		if ( !$this->wikiPagePermissionBlocks )
+		{
 			// If not, populate it.
 			$this->setPermissionBlocks(
 				WikiPagePermissionBlockQueries::getWikiPagePermissionBlocks( $this->getWikiPageId() )

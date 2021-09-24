@@ -15,14 +15,16 @@ class InfoboxUtilities
 	 */
 	public static function getEntryValueForKey( array $args, string $entryKey, ?callable $typeCheckFunction = null ): mixed
 	{
-		if ( !array_key_exists( $entryKey, $args ) ) {
+		if ( !array_key_exists( $entryKey, $args ) )
+		{
 			return null;
 		}
 
 		// Key exists in args; obtain its value;
 		$entryValue = $args[$entryKey];
 
-		if ( $typeCheckFunction && ! $typeCheckFunction( $entryValue ) ) {
+		if ( $typeCheckFunction && ! $typeCheckFunction( $entryValue ) )
+		{
 			throw new \InvalidArgumentException( 'Entry\'s value failed to satisfy type checking function.' );
 		}
 
@@ -35,9 +37,12 @@ class InfoboxUtilities
 	 */
 	public static function unpackTextToken( array $tokens ): string
 	{
-		if ( count( $tokens ) === 1 && is_a( $tokens[0], TextToken::class ) ) {
+		if ( count( $tokens ) === 1 && is_a( $tokens[0], TextToken::class ) )
+		{
 			return $tokens[0]->toHtml();
-		} else {
+		}
+		else
+		{
 			throw new \InvalidArgumentException( 'Input is not a length-one array containing only a TextToken.' );
 		}
 	}

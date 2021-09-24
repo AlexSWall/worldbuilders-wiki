@@ -30,7 +30,8 @@ class WikitextConverter
 	public function getHtml(): string
 	{
 		// Set cache member variable if necessary
-		if ( $this->html === null ) {
+		if ( $this->html === null )
+		{
 			$this->html = $this->tokenProcessor->getHtml();
 		}
 

@@ -47,7 +47,8 @@ class TokenProcessor
 		$this->initialise();
 
 		// Process all tokens
-		foreach ( self::arrayFlatten( $tokens ) as $token ) {
+		foreach ( self::arrayFlatten( $tokens ) as $token )
+		{
 			$this->processToken( $token );
 		}
 
@@ -55,13 +56,17 @@ class TokenProcessor
 		{
 			// Finished iterating through tokens; if there is any HTML left to add to
 			// a permission block, add it now.
-			if ( $this->html !== '' ) {
+			if ( $this->html !== '' )
+			{
 				$this->addHtmlBlock( $this->currentPermissionsExpression, $this->html );
 			}
 
 			$return = $this->blocks;
-		} else {
-			if ( ! empty( $this->blocks ) ) {
+		}
+		else
+		{
+			if ( ! empty( $this->blocks ) )
+			{
 				throw new \InvalidArgumentException( '$mode requires no permission blocks but permission meta-token given.' );
 			}
 
@@ -78,7 +83,8 @@ class TokenProcessor
 	public function getHtml(): string
 	{
 		$entireHtml = '';
-		foreach ( $this->blocks as $htmlBlock ) {
+		foreach ( $this->blocks as $htmlBlock )
+		{
 			$entireHtml .= $htmlBlock->getHtml();
 		}
 		return $entireHtml;
@@ -112,7 +118,9 @@ class TokenProcessor
 
 					break;
 			}
-		} else {
+		}
+		else
+		{
 			$this->html .= $token->toHTML();
 		}
 	}
@@ -133,12 +141,16 @@ class TokenProcessor
 
 		foreach ( $array as $key => $value )
 		{
-			if ( $value === null ) {
+			if ( $value === null )
+			{
 				continue;
 			}
-			if ( is_array( $value ) ) {
+			if ( is_array( $value ) )
+			{
 				$result = array_merge( $result, self::arrayFlatten( $value ) );
-			} else {
+			}
+			else
+			{
 				$result = array_merge( $result, array($key => $value) );
 			}
 		}

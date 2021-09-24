@@ -18,7 +18,8 @@ class InfoboxCaption extends AbstractInfoboxItem
 	public function getHtml( array $args ): ?string
 	{
 		$captionTokens = InfoboxUtilities::getEntryValueForKey( $args, $this->key, 'is_array' );
-		if ( $captionTokens === null ) {
+		if ( $captionTokens === null )
+		{
 			return null;
 		}
 

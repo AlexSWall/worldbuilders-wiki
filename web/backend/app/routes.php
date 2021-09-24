@@ -5,6 +5,7 @@ declare(strict_types=1);
 /* use App\Middleware\GuestMiddleware; */
 /* use App\Middleware\AuthenticatedMiddleware; */
 use App\Middleware\AdministratorMiddleware;
+use App\Helpers\ResponseUtilities;
 
 use Psr\Container\ContainerInterface;
 
@@ -31,7 +32,7 @@ $app->get( '/', 'WikiController:serveWikiApp' )->setName( 'home' );
 
 /* 302: /<PageName> -> /#<PageName> */
 $app->get( '/{wikipage}', function ( Request $request, Response $response, array $args ) {
-	return $response->withStatus( 302 )->withHeader( 'Location', '/#' . $args['wikipage'] );
+	return ResponseUtilities::respondWithRedirect( $response, '/#' . $args['wikipage'] );
 } );
 
 

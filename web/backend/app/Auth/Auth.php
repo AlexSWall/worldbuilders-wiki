@@ -9,11 +9,9 @@ use App\Models\Character;
 use App\Globals\FrontEndParametersFacade;
 
 use Slim\Http\Response;
-use Slim\Http\ServerRequest as Request;
 
 use Dflydev\FigCookies\SetCookie;
 use Dflydev\FigCookies\FigResponseCookies;
-use Dflydev\FigCookies\FigRequestCookies;
 use Carbon\Carbon;
 
 class Auth
@@ -44,18 +42,21 @@ class Auth
 	{
 		$user = User::retrieveUserByIdentity( $identity );
 
-		if ( !$user ) {
+		if ( !$user )
+		{
 			return false;
 		}
 
-		if ( !$this->hashUtilities->checkPassword( $password, $user->getPasswordHash() ) ) {
+		if ( !$this->hashUtilities->checkPassword( $password, $user->getPasswordHash() ) )
+		{
 			return false;
 		}
 
 		$_SESSION[ $this->authConfig[ 'session' ] ] = $user->getUserId();
 
 		$characters = Character::retrieveCharactersByUserId( $user->getUserId() );
-		if ( $characters ) {
+		if ( $characters )
+		{
 			$_SESSION[ $this->authConfig[ 'characterId' ] ] = $characters[0]->getCharacterId();
 		}
 
@@ -102,7 +103,8 @@ class Auth
 
 	public function getCharacter(): ?Character
 	{
-		if ( ! $this->isAuthenticated() ) {
+		if ( ! $this->isAuthenticated() )
+		{
 			return null;
 		}
 
@@ -114,21 +116,26 @@ class Auth
 		if ( array_key_exists( $characterIdKey, $_SESSION ) )
 		{
 			$characterId = $_SESSION[ $this->authConfig[ 'characterId' ] ];
-			if ( $characterId ) {
+			if ( $characterId )
+			{
 				$character = Character::retrieveCharacterByCharacterId( $characterId );
 			}
 		}
 
-		if ( $user && $character && $user->getUserId() === $character->getUserId() ) {
+		if ( $user && $character && $user->getUserId() === $character->getUserId() )
+		{
 			return $character;
-		} else {
+		}
+		else
+		{
 			return null;
 		}
 	}
 
 	public function getUserSafely(): ?User
 	{
-		if ( $this->isAuthenticated() ) {
+		if ( $this->isAuthenticated() )
+		{
 			return User::retrieveUserByUserId( $_SESSION[ $this->authConfig[ 'session' ] ] );
 		}
 
@@ -140,7 +147,8 @@ class Auth
 		if ( FrontEndParametersFacade::getHasRememberMeCookie() )
 		{
 			$user = $this->getUser();
-			if ( $user ) {
+			if ( $user )
+			{
 				$user->removeRememberMeCredentials();
 			}
 

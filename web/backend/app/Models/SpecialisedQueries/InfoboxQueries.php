@@ -50,7 +50,8 @@ class InfoboxQueries
 			foreach ( $groupedRows as $row )
 			{
 				$name = $row->DataName;
-				if ( $name === null ) {
+				if ( $name === null )
+				{
 					continue;
 				}
 				$value = $row->DataValue;
@@ -66,7 +67,8 @@ class InfoboxQueries
 					break;
 
 				case 'Entry':
-					if ( !array_key_exists( 'key-text', $args ) ) {
+					if ( !array_key_exists( 'key-text', $args ) )
+					{
 						// TODO
 						return null;
 					}
@@ -84,7 +86,8 @@ class InfoboxQueries
 					break;
 
 				case 'Subheading':
-					if ( !array_key_exists( 'subheading-text', $args ) ) {
+					if ( !array_key_exists( 'subheading-text', $args ) )
+					{
 						// TODO
 						return null;
 					}
@@ -133,7 +136,8 @@ class InfoboxQueries
 				'ItemKey' => $itemKey
 			] );
 
-			foreach ( $data as $dataName => $dataValue ) {
+			foreach ( $data as $dataName => $dataValue )
+			{
 				$infoboxItemDataTableValues[] = [
 					'InfoboxId' => $infoboxId,
 					'InfoboxItemId' => $infoboxItemId,

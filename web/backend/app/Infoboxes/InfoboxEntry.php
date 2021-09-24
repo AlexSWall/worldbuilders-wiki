@@ -22,7 +22,8 @@ class InfoboxEntry extends AbstractInfoboxItem
 	public function getHtml( array $args ): ?string
 	{
 		$entryValueTokens = InfoboxUtilities::getEntryValueForKey( $args, $this->key, 'is_array' );
-		if ( $entryValueTokens === null ) {
+		if ( $entryValueTokens === null )
+		{
 			return null;
 		}
 

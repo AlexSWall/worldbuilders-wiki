@@ -84,7 +84,8 @@ class Infobox extends DatabaseEncapsulator
 	public function getInfoboxItems(): array
 	{
 		// Check whether cache private member variable is already populated.
-		if ( !$this->infoboxItems ) {
+		if ( !$this->infoboxItems )
+		{
 			// If not, populate it.
 			$this->setInfoboxItems(
 				InfoboxQueries::getInfoboxItems( $this->getInfoboxId() )

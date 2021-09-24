@@ -61,7 +61,8 @@ class User extends DatabaseEncapsulator
 	public static function retrieveUserByIdentity( string $identity ): ?User
 	{
 		$user = self::retrieveUserByUsername( $identity );
-		if ( !$user ) {
+		if ( !$user )
+		{
 			$user = self::retrieveUserByEmail( $identity );
 		}
 		return $user;
@@ -180,7 +181,8 @@ class User extends DatabaseEncapsulator
 	public function getUserPermissions(): UserPermissions
 	{
 		/* Lazy instantiation. */
-		if ( !$this->userPermissions ) {
+		if ( !$this->userPermissions )
+		{
 			$this->userPermissions = UserPermissions::retrieveUserPermissionsByUserId( $this->getUserId() );
 		}
 		return $this->userPermissions;
@@ -202,7 +204,8 @@ class User extends DatabaseEncapsulator
 	public function getUserDetails(): UserDetails
 	{
 	    /* Lazy instantiation. */
-		if ( !$this->userDetails ) {
+		if ( !$this->userDetails )
+		{
 		    $this->userDetails = UserDetails::retrieveUserDetailsByUserId( $this->getUserId() );
 		}
 		return $this->userDetails;

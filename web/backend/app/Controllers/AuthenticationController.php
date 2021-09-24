@@ -86,7 +86,7 @@ class AuthenticationController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error, $extraErrorData ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error, $extraErrorData );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error, $extraErrorData );
 		};
 
 		$preferredName = trim( preg_replace( '/\s+/', ' ', $preferredName ) );
@@ -98,7 +98,8 @@ class AuthenticationController extends Controller
 			'password'       => [ Rules::passwordRules(),          $password      ]
 		] );
 
-		if ( ! empty( $errors ) ) {
+		if ( ! empty( $errors ) )
+		{
 			return $errorResponse( 400, 'Validation failure', ['validation_errors' => $errors] );
 		}
 
@@ -135,36 +136,41 @@ class AuthenticationController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$debug_logger->info( 'Checking that client is not already authenticated...' );
 
-		if ( $this->auth->isAuthenticated() ) {
+		if ( $this->auth->isAuthenticated() )
+		{
 			return $errorResponse( 400, 'Already signed in' );
 		}
 
 		self::$debug_logger->info( 'Checking that user exists...' );
 
-		if ( ! $this->auth->checkUserExists( $identity ) ) {
+		if ( ! $this->auth->checkUserExists( $identity ) )
+		{
 			return $errorResponse( 401, 'Identity not in use' );
 		}
 
 		self::$debug_logger->info( 'User exists, checking they\'re activated...' );
 
-		if ( !$this->auth->checkActivated( $identity ) ) {
+		if ( !$this->auth->checkActivated( $identity ) )
+		{
 			return $errorResponse( 401, 'Not activated' );
 		}
 
 		self::$debug_logger->info( 'User activated, checking authentication succeeds...' );
 
-		if ( !$this->auth->attempt( $identity, $password ) ) {
+		if ( !$this->auth->attempt( $identity, $password ) )
+		{
 			return $errorResponse( 401, 'Identity in use but authentication failed' );
 		}
 
 		self::$debug_logger->info( 'User successfully logged in' );
 
-		if ( $rememberMe ) {
+		if ( $rememberMe )
+		{
 			$response = $this->auth->setRememberMeCookie( $response, $identity );
 		}
 
@@ -178,12 +184,13 @@ class AuthenticationController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error );
 		};
 
 		self::$debug_logger->info( 'Checking that client is authenticated...' );
 
-		if ( ! $this->auth->isAuthenticated() ) {
+		if ( ! $this->auth->isAuthenticated() )
+		{
 			return $errorResponse( 400, 'Not signed in' );
 		}
 
@@ -199,10 +206,11 @@ class AuthenticationController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error, $extraErrorData = [] ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error, $extraErrorData );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error, $extraErrorData );
 		};
 
-		if ( !$this->auth->isAuthenticated() ) {
+		if ( !$this->auth->isAuthenticated() )
+		{
 			return $errorResponse( 400, 'Not signed in' );
 		}
 
@@ -215,7 +223,8 @@ class AuthenticationController extends Controller
 			'password_new' => [ Rules::passwordRules(), $newPassword ]
 		] );
 
-		if ( !empty( $errors ) ) {
+		if ( !empty( $errors ) )
+		{
 			return $errorResponse( 400, 'Validation failure', ['validation_errors' => $errors] );
 		}
 
@@ -236,7 +245,7 @@ class AuthenticationController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error, $extraErrorData = [] ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error, $extraErrorData );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error, $extraErrorData );
 		};
 
 		self::$logger->info( 'Validating supplied email address' );
@@ -245,7 +254,8 @@ class AuthenticationController extends Controller
 			'email' => [ Rules::emailInUseRules(), $email ]
 		] );
 
-		if ( !empty( $errors ) ) {
+		if ( !empty( $errors ) )
+		{
 			return $errorResponse( 400, 'Validation failure', ['validation_errors' => $errors] );
 		}
 
@@ -253,7 +263,8 @@ class AuthenticationController extends Controller
 
 		$user = User::retrieveUserByIdentity( $email );
 
-		if ( $user === null ) {
+		if ( $user === null )
+		{
 			return $errorResponse( 400, 'Failed to retrieve user via email address' );
 		}
 
@@ -281,24 +292,27 @@ class AuthenticationController extends Controller
 		// Convenience wrapper for error response
 		$errorResponse = function ( $errorCode, $error, $extraErrorData = [] ) use ( $response )
 		{
-			return ResponseUtilities::respondWithError( $response, $errorCode, $error, $extraErrorData );
+			return ResponseUtilities::getApiErrorResponse( $response, $errorCode, $error, $extraErrorData );
 		};
 
 		self::$logger->info( 'Attempting to retrieve user by email' );
 
 		$user = User::retrieveUserByIdentity( $email );
 
-		if ( ! $user ) {
+		if ( ! $user )
+		{
 			return $errorResponse( 400, 'Failed to find user' );
 		}
 
-		if ( ! $user->getPasswordRecoveryHash() ) {
+		if ( ! $user->getPasswordRecoveryHash() )
+		{
 			return $errorResponse( 400, 'Password recovery identifier expired' );
 		}
 
 		$hashedIdentifier = $this->HashingUtilities->hash( $identifier );
 
-		if ( ! $this->HashingUtilities->checkHash( $user->getPasswordRecoveryHash(), $hashedIdentifier ) ) {
+		if ( ! $this->HashingUtilities->checkHash( $user->getPasswordRecoveryHash(), $hashedIdentifier ) )
+		{
 			return $errorResponse( 400, 'Incorrect password recovery hash supplied' );
 		}
 
@@ -308,7 +322,8 @@ class AuthenticationController extends Controller
 			'password_new' => [ Rules::passwordRules(), $newPassword ]
 		] );
 
-		if ( !empty( $errors ) ) {
+		if ( !empty( $errors ) )
+		{
 			return $errorResponse( 400, 'Validation failure', ['validation_errors' => $errors] );
 		}
 
@@ -339,11 +354,13 @@ class AuthenticationController extends Controller
 		$email = $request->getParam( 'email' );
 		$identifier = $request->getParam( 'identifier' );
 
-		if ( ! $email ) {
+		if ( ! $email )
+		{
 			return $makeResponse( 'error', '\'email\' GET parameter required' );
 		}
 
-		if ( ! $identifier ) {
+		if ( ! $identifier )
+		{
 			return $makeResponse( 'error', '\'identifier\' GET parameter required' );
 		}
 
@@ -351,7 +368,8 @@ class AuthenticationController extends Controller
 
 		$user = User::retrieveInactiveUserByEmail( $email );
 
-		if ( ! $user ) {
+		if ( ! $user )
+		{
 			return $makeResponse( 'error', "Inactivate user with email '{$email}' could not be found" );
 		}
 
@@ -359,7 +377,8 @@ class AuthenticationController extends Controller
 
 		$hashedIdentifier = $this->HashingUtilities->hash( $identifier );
 
-		if ( !$this->HashingUtilities->checkHash( $user->getActiveHash(), $hashedIdentifier ) ) {
+		if ( !$this->HashingUtilities->checkHash( $user->getActiveHash(), $hashedIdentifier ) )
+		{
 			return $makeResponse( 'error', "Identifier incorrect" );
 		}
 
