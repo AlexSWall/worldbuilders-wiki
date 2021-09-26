@@ -25,7 +25,7 @@ class ResponseUtilities
 			$response = new PsrResponse();
 		}
 
-		$response->getBody->write( json_encode( $responseData ) );
+		$response->getBody()->write( json_encode( $responseData ) );
 
 		return $response->withStatus( $statusCode );
 	}
@@ -44,7 +44,7 @@ class ResponseUtilities
 			$response = new PsrResponse();
 		}
 
-		$response->getBody->write( json_encode( array_merge( [
+		$response->getBody()->write( json_encode( array_merge( [
 			'error' => $error
 		], $extraErrorData ) ) );
 
