@@ -13,7 +13,8 @@ logs/
 
 setup/
 
-web/backend/app/WikitextConversion/Grammar.php
+Grammar.php
+
 web/backend/composer.lock
 web/backend/vendor
 
