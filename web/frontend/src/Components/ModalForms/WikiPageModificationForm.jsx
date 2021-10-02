@@ -117,7 +117,7 @@ export default function WikiPageModificationForm({ closeModal })
 							/>
 
 							<SubmitButton disabled={ Object.keys(errors).length > 0 } />
-							
+
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
 								: null }
