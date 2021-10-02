@@ -4,16 +4,29 @@ declare(strict_types=1);
 
 namespace App\Infoboxes;
 
+use Wikimedia\WikiPEG\SyntaxError;
+
 class InfoboxParser
 {
 	public static \App\Logging\Logger $logger;
 
-	public static function parse( string $infoboxStructureText ): array
+	public static function parse( string $infoboxStructureText ): ?array
 	{
 		self::$logger->info( 'Parsing infobox structure text' );
 
 		$grammarParser = Grammar::getNewGrammarParser();
-		$parseResult = $grammarParser->parse( $infoboxStructureText );
+
+		try
+		{
+			$parseResult = $grammarParser->parse( $infoboxStructureText );
+		}
+		catch ( SyntaxError $e )
+		{
+			self::$logger->info('Failed to parse infobox structure: ' . $e->getMessage() );
+			self::$logger->info('Was trying to parse: <<<' . $infoboxStructureText . '>>>' );
+			self::$logger->dump(json_encode($e->jsonSerialize()));
+			return null;
+		}
 
 		self::$logger->info( 'Finished parsing; returning array of items' );
 		return $parseResult;

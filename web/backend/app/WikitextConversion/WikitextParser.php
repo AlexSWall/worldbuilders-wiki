@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\WikitextConversion;
 
+use Wikimedia\WikiPEG\SyntaxError;
+
 class WikitextParser
 {
 	public static \App\Logging\Logger $logger;
@@ -16,7 +18,18 @@ class WikitextParser
 		self::$logger->info( 'Parsing wikitext' );
 
 		$grammarParser = Grammar::getNewGrammarParser();
-		$parseResult = $grammarParser->parse( $wikitext );
+
+		try
+		{
+			self::$logger->info('Trying to parse: <<<' . $wikitext . '>>>' );
+			$parseResult = $grammarParser->parse( $wikitext );
+		}
+		catch ( SyntaxError $e )
+		{
+			self::$logger->info('Failed to parse infobox structure: ' . $e->getMessage() );
+			self::$logger->dump(json_encode($e->jsonSerialize()));
+			return null;
+		}
 
 		self::$logger->info( 'Post-processing parsed wikitext tokens' );
 		$tokensArray = self::postProcess( $parseResult );

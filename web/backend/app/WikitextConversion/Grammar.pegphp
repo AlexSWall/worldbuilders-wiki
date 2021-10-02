@@ -23,6 +23,8 @@ class Grammar
 		return new PEGParser();
 	}
 }
+
+// This must be on a separate line
 }
 /* ----------------------------------------------------------- */ {
 
@@ -498,7 +500,7 @@ stringBreak =
 	/ & <infoboxKey> & ( "=" )
 
 remainderOfLine =
-	$ (!newLine .)*
+	$ (!endOfLine .)*
 
 word =
 	$ (!spacingOrEOL .)+
