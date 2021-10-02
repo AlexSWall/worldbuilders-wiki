@@ -1,27 +1,54 @@
 import React from 'react';
 
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 
-import SelectOption from './SelectOption';
-
-export default function SelectDropdown({ formId, labelText, setFieldTouched, handleChange, children, defaultText = '' })
+export default function SelectDropdown({ formId, labelText, width, setFieldTouched, handleChange, handleBlur, value, options, defaultText = '' })
 {
 	return (
-		<div className='form-select'>
+		<div className='form-group'>
 			<label htmlFor={ formId }>{ labelText }</label>
 			<Field
 				name={ formId }
 				id={ formId }
-				as={ select }
+				list={ formId + '-list' }
 				className={ 'form-select' }
 				onChange={ e => {
 					setFieldTouched(formId);
 					handleChange(e);
 				} }
-			>
-				<SelectOption isDisabled={ true } value='' text={ defaultText }/>
-				{ children }
-			</Field>
+			/>
+			<datalist id={ formId + '-list' } >
+				{ options.map( ( option ) => {
+					return (
+						<option
+							value={ option }
+							key={ option }
+						>
+							{ option }
+						</option>
+					);
+				})}
+			</datalist>
+			<ErrorMessage name={ formId } component='span' className='form-error' style={ { width: width } } />
 		</div>
 	);
 }
+
+
+
+			// <Select
+			// 	name={ formId }
+			// 	id={ formId }
+			// 	className='form-select'
+			// 	placeholder={ defaultText }
+			// 	value={ value }
+			// 	onBlur={ handleBlur }
+			// 	onChange={ selectedOption => {
+			// 		let event = { target : { name: formId, value: selectedOption } };
+			// 		handleChange(event);
+			// 	} }
+			// 	onBlur={ () => {
+			// 		handleBlur( { target: { name: formId } } );
+			// 	} }
+			// 	options={ options }
+			// />

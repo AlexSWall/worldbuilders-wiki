@@ -11,7 +11,7 @@ import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
 
 const schema = Yup.object().shape({
-	name: Yup.string()
+	selected_infobox_name: Yup.string()
 		.required('Required'),
 	infobox_structure: Yup.string()
 });
@@ -20,23 +20,32 @@ export default function InfoboxModificationForm({ closeModal })
 {
 	const globals = useContext(GlobalsContext);
 
-	const [infobox_structure, setInfoboxStructure] = useState('');
-	const [submissionError, setSubmissionError] = useState(null);
+	const [ infoboxNames, setInfoboxNames ] = useState( null );
+	const [ initialInfoboxStructure, setInitialInfoboxStructure ] = useState( '' );
+	const [ submissionError, setSubmissionError ] = useState( null );
 
-	const hash = window.location.hash.substring(1);
-	const [infoboxPath,] = hash.split('#');
+	{
+		// Check infobox of page and set currently-selected infobox dropdown to
+		// have the value of that infobox name...
+		const hash = window.location.hash.substring(1);
+		const [ wikiPagePath, ] = hash.split('#');
+		// TODO: Finish
+	}
 
-	fetch('/a/infobox?infobox=' + infoboxPath, {
-		headers: {
-			'Accept': 'application/json',
-		}
-	}) .then(res => res.json())
-		.then(res => setInfoboxStructure(res.infobox_structure));
+	if ( infoboxNames == null )
+	{
+		fetch('/a/infobox', {
+			headers: {
+				'Accept': 'application/json',
+			}
+		}).then( res => res.json() )
+		  .then( res => setInfoboxNames( res.infobox_names ) );
+	}
 
-	return (infobox_structure === null)
-		? ( <i> Fetching and loading content...  </i> )
+	return (infoboxNames === null)
+		? ( <i> Fetching and loading the list of infoboxes to modify...  </i> )
 		: ( <Formik
-			initialValues={ { title: title, infobox_structure: infobox_structure } }
+			initialValues={ { selected_infobox_name: '', infobox_structure: initialInfoboxStructure } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting }) => {
 				console.log('Submitting...')
@@ -48,10 +57,9 @@ export default function InfoboxModificationForm({ closeModal })
 					},
 					body: JSON.stringify(Object.assign({}, {
 						action: 'modify',
-						page_path: infoboxPath,
 						data: {
-							title: values.title,
-							content: values.infobox_structure
+							infobox_name: values.selected_infobox_name,
+							structure: values.infobox_structure
 						},
 					}, globals.csrfTokens))
 				}).then(async res => {
@@ -86,22 +94,43 @@ export default function InfoboxModificationForm({ closeModal })
 				});
 			} }
 		>
-			{ ({ touched, setFieldTouched, handleChange, initialValues, errors }) => (
-				<div className='card'>
+			{ ({ touched, setFieldTouched, setFieldValue, handleChange, handleBlur, initialValues, values, errors }) => {
+				return <div className='card'>
 					<div className='card-header'>
 						Edit Infobox Structure
 					</div>
 					<div className='card-body'>
 						<Form className='form'>
 							<SelectDropdown
-								formId='infobox'
-								labelText='Infobox Title'
+								formId='selected_infobox_name'
+								labelText='Infobox Name'
+								width={ 250 }
 								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
+								handleChange={ e => {
+									console.log(e);
+									fetch('/a/infobox?' + new URLSearchParams({
+											infobox: e.target.value
+										}),
+										{
+											headers: {
+												'Accept': 'application/json',
+											}
+										}
+									).then( res => res.json() )
+									  .then( res => {
+											const structureText = res.infobox_structure_text;
+											setInitialInfoboxStructure( structureText );
+											setFieldValue( 'infobox_structure', structureText );
+											setFieldTouched( 'infobox_structure' );
+											console.log( structureText );
+										});
+									handleChange(e);
+								} }
+								handleBlur={ handleBlur }
+								value={ values.infobox }
+								options={ infoboxNames }
 								defaultText={ 'Choose an infobox...' }
-							>
-								<SelectOption value='foo' text='asdasd'/>
-							</SelectDropdown>
+							/>
 
 							<WikiTextArea
 								formId='infobox_structure'
@@ -114,14 +143,14 @@ export default function InfoboxModificationForm({ closeModal })
 							/>
 
 							<SubmitButton disabled={ Object.keys(errors).length > 0 } />
-							
+
 							{ submissionError
 								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
 								: null }
 						</Form>
 					</div>
-				</div>
-			) }
+				</div>;
+			} }
 		</Formik>
 	);
 }
