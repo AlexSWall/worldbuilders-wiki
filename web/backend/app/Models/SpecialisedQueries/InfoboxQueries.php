@@ -114,37 +114,36 @@ class InfoboxQueries
 
 		$infoboxItemDataTableValues = array();
 
+		self::$logger->info( 'Setting infobox items in database for infobox ID ' . $infoboxId );
+		self::$logger->dump( $infoboxItems );
+
 		// Position starts at 1 as title goes at 0, so set as 0 and increment
 		// immediately.
 		$position = 0;
-		foreach ( $infoboxItems as $infoboxItem )
+		foreach ( $infoboxItems as $infoboxItemsForPosition )
 		{
 			$position += 1;
 
-			$infoboxItemTypeId = $typeIdLookupArray[$infoboxItem->getTypeString()];
+			self::$logger->dump( $infoboxItemsForPosition );
 
-			$data = $infoboxItem->getData();
-			$itemKey = $data['key'];
-			unset( $data['key'] );
-
-			// Insert now to get the InfoboxItemId value for the item data table
-			// insertion... :(
-			$infoboxItemId = DB::table( 'InfoboxItems' )->insertGetId( [
-				'InfoboxId' => $infoboxId,
-				'InfoboxItemTypeId' => $infoboxItemTypeId,
-				'Position' => $position,
-				'ItemKey' => $itemKey
-			] );
-
-			foreach ( $data as $dataName => $dataValue )
+			// If the loop variable is a single infobox item, wrap it into a
+			// one-element array to act as a single infobox for the position.
+			if ( ! is_array( $infoboxItemsForPosition ) )
 			{
-				$infoboxItemDataTableValues[] = [
-					'InfoboxId' => $infoboxId,
-					'InfoboxItemId' => $infoboxItemId,
-					'InfoboxItemTypeId' => $infoboxItemTypeId,
-					'DataName' => $dataName,
-					'DataValue' => $dataValue
-				];
+				$infoboxItemsForPosition = [ $infoboxItemsForPosition ];
+			}
+
+			// For each infobox item in this position...
+			foreach ( $infoboxItemsForPosition as $infoboxItem )
+			{
+				// Insert infobox item, get the item's ID, and then add to item data
+				// table values array.
+				array_push($infoboxItemDataTableValues, ...self::insertInfoboxItem(
+					$infoboxId,
+					$typeIdLookupArray[$infoboxItem->getTypeString()],
+					$position,
+					$infoboxItem->getData()
+				));
 			}
 		}
 
@@ -160,10 +159,19 @@ class InfoboxQueries
 
 	public static function getInfoboxNames(): array
 	{
-		return DB::table( 'Infoboxes' )
+		$namesResult = DB::table( 'Infoboxes' )
 			->select( [ 'Name' ] )
 			->orderBy( 'Name', 'asc' )
 			->get()->all();
+
+		// TODO: Do in a more sensible way once you have an internet connection...
+		$names = [];
+		foreach ( $namesResult as $nameResult )
+		{
+			$names[] = $nameResult->Name;
+		}
+
+		return $names;
 	}
 
 
@@ -189,5 +197,39 @@ class InfoboxQueries
 		}
 
 		return $typeStringToTypeId;
+	}
+
+	private static function insertInfoboxItem(
+		int $infoboxId,
+		int $infoboxItemTypeId,
+		int $position,
+		array $data
+	): array
+	{
+		$itemKey = $data['key'];
+		unset( $data['key'] );
+
+		// Insert now to get the InfoboxItemId value for the item data table
+		// insertion... :(
+		$infoboxItemId = DB::table( 'InfoboxItems' )->insertGetId( [
+			'InfoboxId' => $infoboxId,
+			'InfoboxItemTypeId' => $infoboxItemTypeId,
+			'Position' => $position,
+			'ItemKey' => $itemKey
+		] );
+
+		$infoboxItemDataTableValues = [];
+		foreach ( $data as $dataName => $dataValue )
+		{
+			$infoboxItemDataTableValues[] = [
+				'InfoboxId' => $infoboxId,
+				'InfoboxItemId' => $infoboxItemId,
+				'InfoboxItemTypeId' => $infoboxItemTypeId,
+				'DataName' => $dataName,
+				'DataValue' => $dataValue
+			];
+		}
+
+		return $infoboxItemDataTableValues;
 	}
 }
