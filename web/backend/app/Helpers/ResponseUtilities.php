@@ -25,6 +25,8 @@ class ResponseUtilities
 			$response = new PsrResponse();
 		}
 
+		$response = $response->withHeader('Content-Type', 'application/json');
+
 		$response->getBody()->write( json_encode( $responseData ) );
 
 		return $response->withStatus( $statusCode );
@@ -43,6 +45,8 @@ class ResponseUtilities
 		{
 			$response = new PsrResponse();
 		}
+
+		$response = $response->withHeader('Content-Type', 'application/json');
 
 		$response->getBody()->write( json_encode( array_merge( [
 			'error' => $error
