@@ -86,22 +86,23 @@ class Infobox extends DatabaseEncapsulator
 		// Check whether cache private member variable is already populated.
 		if ( !$this->infoboxItems )
 		{
-			// If not, populate it.
-			$this->setInfoboxItems(
-				InfoboxQueries::getInfoboxItems( $this->getInfoboxId() )
-			);
+			// Update cache private member variable.
+			$this->infoboxItems = InfoboxQueries::getInfoboxItems( $this->getInfoboxId() );
 		}
 
 		// Return it
 		return $this->infoboxItems;
 	}
 
-	public function setInfoboxItems( array $infoboxItems ): void
+	public function setInfoboxItems( array $infoboxItems, ?string $structure ): void
 	{
 		// Update cache private member variable.
 		$this->infoboxItems = $infoboxItems;
 
 		// Update the database.
 		InfoboxQueries::setInfoboxItems( $this->getInfoboxId(), $infoboxItems );
+
+		// Set raw infobox structure text
+		$this->setRawText( $structure );
 	}
 }
