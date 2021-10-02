@@ -53,7 +53,7 @@ services:
                         echo "Running \`npm install\`" &&
                         npm install > /dev/null &&
                         echo "Running \`npm run build\`" &&
-                        npm run build > /dev/null &&
+                        ( npm run build > /dev/null || echo "Finished `npm run build` with non-zero exit code" ) &&
                         echo "Running \`gem install sass compass\`" &&
                         gem install sass compass > /dev/null &&
                         echo "Frontend dev setup done; watching..." &&
