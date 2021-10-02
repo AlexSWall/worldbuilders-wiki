@@ -34,31 +34,13 @@ services:
         volumes:
             - "./web/backend:/app"
         command: install
-    frontend-dev:
-        image: node:14
-        container_name: frontend-dev
-        working_dir: /app/frontend
-        environment:
-            - NODE_ENV=development
+    dev:
+        build:
+            context: .
+            dockerfile: ./dev/Dockerfile
+        container_name: dev
         volumes:
-            - "./web:/app"
-        command: sh -c 'echo "Running \`apt-get update\`" &&
-                        apt-get update > /dev/null &&
-                        echo "Running \`apt-get install inotify-tools expect ruby-full\`" &&
-                        apt-get install inotify-tools expect ruby-full -y > /dev/null &&
-                        echo "Running \`npm install -g\`" &&
-                        npm install -g npm@7 > /dev/null &&
-                        echo "Running \`npm install -g webpack webpack-cli wikipeg\`" &&
-                        npm install -g webpack webpack-cli wikipeg > /dev/null &&
-                        echo "Running \`npm install\`" &&
-                        npm install > /dev/null &&
-                        echo "Running \`npm run build\`" &&
-                        ( npm run build > /dev/null || echo "Finished `npm run build` with non-zero exit code" ) &&
-                        echo "Running \`gem install sass compass\`" &&
-                        gem install sass compass > /dev/null &&
-                        echo "Frontend dev setup done; watching..." &&
-                        ./watch'
-                        # tail -F anything'
+            - ".:/app"
     mysqldb:
         image: mysql:8
         platform: linux/x86_64

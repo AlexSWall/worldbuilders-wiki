@@ -24,7 +24,6 @@ function watchjs() {
 }
 
 function watchpegparser() {
-	cd ../backend/app/WikitextConversion >/dev/null
 	unbuffer echo 'Compiling PEG Parser...'
 	unbuffer wikipeg Grammar.pegphp Grammar.php
 	unbuffer echo 'Compiled PEG Parser'
@@ -40,8 +39,21 @@ function watchpegparser() {
 
 esc=$(printf '\033'); WHITE='[1;37m'; GREEN='[1;32m'; BLUE='[1;34m'; COLOUR='[1;36m'
 
-trap 'kill %1 %2' SIGINT
-watchjs | sed -e "s/^/${esc}${GREEN}[Webpack]${esc}${WHITE} /" & watchscss | sed -e "s/^/${esc}${BLUE}[Compass]${esc}${WHITE} /" & watchpegparser | sed -e "s/^/${esc}${COLOUR}[Parser] ${esc}${WHITE} /"
+echo 'Watching...'
 
-trap - SIGINT
-echo
+#trap 'kill %1 %2' SIGINT
+
+# Watch Javascript (npm run watch)
+( cd /app/web/frontend/; watchjs | sed -e "s/^/${esc}${GREEN}[Webpack]${esc}${WHITE} /" ) & \
+
+# Watch SCSS (inotifywait and compass compile)
+( cd /app/web/frontend/; watchscss | sed -e "s/^/${esc}${BLUE}[Compass]${esc}${WHITE} /" ) & \
+
+# Watch Wikitext grammar (inotifywait and wikipeg compile)
+( cd /app/web/backend/app/WikitextConversion; watchpegparser | sed -e "s/^/${esc}${COLOUR}[Wikitext Parser] ${esc}${WHITE} /" ) & \
+
+# Watch Infobox grammar (inotifywait and wikipeg compile)
+( cd /app/web/backend/app/Infoboxes; watchpegparser | sed -e "s/^/${esc}${COLOUR}[Infobox Parser] ${esc}${WHITE} /" )
+
+#trap - SIGINT
+#echo
