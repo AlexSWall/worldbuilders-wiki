@@ -6,7 +6,7 @@ namespace App\Logging;
 
 class Logger extends \Monolog\Logger
 {
-	private const FORMAT = '[%datetime%] %channel%.%level_name%: %message% %context% %extra%' . "\n";
+	private const FORMAT = '[%datetime%] %channel%.%level_name%: %message% %context% %extra%' . ";\n";
 	private const DATEFORMAT = "Y-m-d\tH:i:s.u";
 
 	public function __construct( array $logger_config )
@@ -30,5 +30,10 @@ class Logger extends \Monolog\Logger
 		ob_end_clean();
 		$this->debug( $content );
 		return $content;
+	}
+
+	public function json_dump( mixed $obj ): void
+	{
+		$this->debug( json_encode($obj) );
 	}
 }
