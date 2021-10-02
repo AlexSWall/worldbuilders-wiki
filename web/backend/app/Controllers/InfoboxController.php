@@ -20,6 +20,9 @@ class InfoboxController extends Controller
 
 		$infoboxNames = \App\Models\SpecialisedQueries\InfoboxQueries::getInfoboxNames();
 
+		self::$logger->info( 'Got infobox structure names' );
+		self::$logger->dump( json_encode( $infoboxNames ) );
+
 		return $response->withJSON( [
 			'infobox_names' => $infoboxNames
 		], 200, \JSON_UNESCAPED_UNICODE );
@@ -84,7 +87,7 @@ class InfoboxController extends Controller
 		return $response->withStatus( 201 );
 	}
 
-	public static function modifyInfobox( Response $response, string $infoboxName, $structure ): Response
+	public static function modifyInfobox( Response $response, string $infoboxName, string $structure ): Response
 	{
 		self::$logger->info( 'Attempting to modify infobox' );
 
@@ -115,7 +118,7 @@ class InfoboxController extends Controller
 
 		self::$logger->info( 'Updating the infobox structure' );
 
-		$infobox->setInfoboxItems( $infoboxItems );
+		$infobox->setInfoboxItems( $infoboxItems, $structure );
 
 		self::$logger->info( 'Returning with status 204.' );
 		return $response->withStatus( 204 );

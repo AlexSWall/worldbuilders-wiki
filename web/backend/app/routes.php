@@ -51,7 +51,7 @@ $app->group( '', function () use ( $app )
 	$app->post( '/a/wiki', 'WikiController:serveModifyWikiContentPostRequest' );
 
 	/* Infobox Structure APIs */
-	$app->get( '/a/infobox', 'WikiController:serveEditInfoboxStructureGetRequest' );
+	$app->get( '/a/infobox', 'WikiController:serveInfoboxStructureGetRequest' );
 	$app->post( '/a/infobox', 'WikiController:serveModifyInfoboxStructurePostRequest' );
 } )->add( new AdministratorMiddleware( $container, true ) );
 

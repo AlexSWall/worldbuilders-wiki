@@ -95,22 +95,22 @@ class WikiController extends Controller
 		return $entryFunc( $request, $response );
 	}
 
-	/* GET request with path of the form /a/wiki */
-	public function serveGetInfoboxStructureNamesGetRequest(
+	/* GET request with path of the form /a/infobox[&infobox=<infobox name>] */
+	public function serveInfoboxStructureGetRequest(
 		Request $request,
 		Response $response
 	): Response
 	{
-		return InfoboxController::getInfoboxStructureNamesResponse( $response );
-	}
+		$params = $request->getQueryParams();
 
-	public function serveGetInfoboxStructureGetRequest(
-		Request $request,
-		Response $response
-	): Response
-	{
-		$infoboxName = $request->getQueryParam( 'infobox_name' );
+		if ( ! array_key_exists( 'infobox', $params ) )
+		{
+			// Have a specific infobox name, get its structure
+			return InfoboxController::getInfoboxStructureNamesResponse( $response );
+		}
 
+		// Have a specific infobox name, get its structure
+		$infoboxName = $params['infobox'];
 		return InfoboxController::getInfoboxStructureResponse( $response, $infoboxName );
 	}
 
