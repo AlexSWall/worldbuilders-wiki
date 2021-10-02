@@ -9,8 +9,11 @@ namespace App\Infoboxes;
 
 class Grammar
 {
+	static $logger;
+
 	static function getNewGrammarParser()
 	{
+		PEGParser::$logger = self::$logger;
 		return new PEGParser();
 	}
 }
@@ -18,6 +21,8 @@ class Grammar
 // This must be on a separate line
 }
 /* ----------------------------------------------------------- */ {
+
+static $logger;
 
 private function startOffset()
 {
@@ -34,15 +39,23 @@ private function endOffset()
 /* == Top-level Rules == */
 
 start "start" =
-	startOfFile $items:infoboxStructure endOfFile
+	startOfFile items:infoboxStructure anySpacing endOfFile
 	{
-		return $items;
+		// Remove null values and return the items that remain
+		return array_values( array_filter(
+			$items,
+			fn($e) => !is_null( $e )
+		) );
 	}
 
 infoboxStructure = items:(
-		anySpacing i:item newLine
+		anySpacing i:item endOfLine
 		{
 			return $i;
+		}
+		/ anySpacing newLine
+		{
+			return null;
 		}
 	)*
 	{
@@ -56,33 +69,33 @@ item =
 	/ caption
 	/ entry
 
-header = "==" "="* headerChars:(char:[^=]* { return $char; } ) "==" "="* anySpacing &newLine
+header = "==" "="* headerChars:(char:[^=]* { return $char; } ) "==" "="* anySpacing &endOfLine
 	{
-		return new InfoboxHeader(trim(implode('', $headerChars)));
+		return new InfoboxSubheading(trim(implode('', $headerChars)));
 	}
 
-horizontalLine = "---" "-"* anySpacing &newLine
+horizontalLine = "---" "-"* anySpacing &endOfLine
 	{
-		return new InfoboxHorizontalLine();
+		return new InfoboxHorizontalRule();
 	}
 
-image = "Image " key:key &newLine
+image = "Image " key:key &endOfLine
 	{
 		return new InfoboxImage($key);
 	}
 
-caption = "Caption " key:key &newLine
+caption = "Caption " key:key &endOfLine
 	{
 		return new InfoboxCaption($key);
 	}
 
-entry = keys:entryKeys someSpacing keyTitles:entryKeyTitles
+entry = keys:entryKeys keyTitles:entryKeyTitles &endOfLine
 	{
 		$entries = [];
 
 		$numEntries = min(count($keys), count($keyTitles));
 
-		foreach( range(1, $numEntries) as $i )
+		foreach( range(0, $numEntries - 1) as $i )
 		{
 			$entries[] = new InfoboxEntry($keys[$i], $keyTitles[$i]);
 		}
@@ -90,12 +103,13 @@ entry = keys:entryKeys someSpacing keyTitles:entryKeyTitles
 		return $entries;
 	}
 
+// entryKeys eats up trailing space and trims it, because key does so.
 entryKeys =
 	firstKey:key
 	otherKeys:(
-		anySpacing "/" anySpacing otherKey:key
+		"/" anySpacing otherKey:key
 		{
-			return otherKey;
+			return $otherKey;
 		}
 	)*
 	{
@@ -107,7 +121,7 @@ entryKeyTitles =
 	otherTitles:(
 		anySpacing "/" anySpacing otherTitle:entryKeyTitle
 		{
-			return otherTitle;
+			return $otherTitle;
 		}
 	)*
 	{
@@ -115,12 +129,16 @@ entryKeyTitles =
 	}
 
 entryKeyTitle =
-	'"' chars:([^'"']*) '"'
-	/ "'" chars:([^"'"]*) "'"
+	'"' chars:([^"]*) '"'
+	{
+		return trim(implode('', $chars));
+	}
+	/ "'" chars:([^']*) "'"
 	{
 		return trim(implode('', $chars));
 	}
 
+// eats up trailing space and trims it
 key = chars:([a-zA-Z0-9_ -]+)
 	{
 		return trim(implode('', $chars));
@@ -154,8 +172,7 @@ endOfLine =
 	/ endOfFile
 
 newLine =
-	'\n' { return [ new NewLineToken() ]; }
-	/ '\r\n' { return [ new NewLineToken() ]; }
+	'\n' / '\r\n'
 
 
 /* == Positional Rules == */
