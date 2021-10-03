@@ -139,6 +139,7 @@ export default function InfoboxModificationForm({ closeModal })
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 								initialValue={ initialValues.infobox_structure }
+								value={ values.infobox_structure }
 							/>
 
 							<SubmitButton disabled={ Object.keys(errors).length > 0 } />

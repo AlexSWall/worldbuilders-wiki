@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function WikiTextArea({ formId, labelText, size, hasError, setFieldTouched, handleChange, initialValue=undefined})
+export default function WikiTextArea({ formId, labelText, size, hasError, setFieldTouched, handleChange, initialValue=undefined, value })
 {
 	const [ isEmpty, setIsEmpty ] = useState(initialValue === undefined || initialValue === '');
+
+	if ( isEmpty && value )
+	{
+		setIsEmpty(false);
+	}
 
 	return (
 		<div className='form-group'>
