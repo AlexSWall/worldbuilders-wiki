@@ -15,7 +15,9 @@ export default function WikiTextArea({ formId, labelText, size, hasError, setFie
 		<div className='form-group'>
 			<div style={ { display: 'inline-block' } }>
 				<div className='form-input-wrapper'>
-					<Field name={ formId }
+					<Field
+						name={ formId }
+						id={ formId }
 						className={ (hasError ? 'form-input-has-error ' : '') + (! isEmpty ? 'has-content ' : '' ) + 'form-input' }
 						style={ {
 							// Using inline-block surrounded by block to avoid
@@ -35,7 +37,7 @@ export default function WikiTextArea({ formId, labelText, size, hasError, setFie
 							handleChange(e);
 						} }
 					/>
-					<label>{ labelText }</label>
+					<label htmlFor={ formId }>{ labelText }</label>
 					<span className="focus-border">
 						<i></i>
 					</span>
