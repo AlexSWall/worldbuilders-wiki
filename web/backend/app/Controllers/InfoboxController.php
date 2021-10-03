@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Helpers\ResponseUtilities;
+use App\Helpers\WikiUtilities;
 use App\Infoboxes\InfoboxParser;
 use App\Models\Infobox;
 
@@ -119,6 +120,10 @@ class InfoboxController extends Controller
 		self::$logger->info( 'Updating the infobox structure' );
 
 		$infobox->setInfoboxItems( $infoboxItems, $structure );
+
+		// Recompile all wikipages to ensure they're up to date with the new
+		// infobox structure.
+		WikiUtilities::recompileAllWikiPages();
 
 		self::$logger->info( 'Returning with status 204.' );
 		return $response->withStatus( 204 );

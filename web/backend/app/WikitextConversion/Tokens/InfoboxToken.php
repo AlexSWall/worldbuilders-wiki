@@ -30,6 +30,12 @@ class InfoboxToken extends BaseToken
 	public function toHtml(): string
 	{
 		$infoboxStructure = Infobox::retrieveInfoboxByName( $this->infoboxType );
+
+		if ( $infoboxStructure === null )
+		{
+			return '';
+		}
+
 		/** [ AbstractInfoboxItem ] */
 		$infoboxStructureItems = $infoboxStructure->getInfoboxItems();
 

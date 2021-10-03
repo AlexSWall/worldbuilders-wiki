@@ -120,6 +120,8 @@ class WikiController extends Controller
 		Response $response
 	): Response
 	{
+		self::$logger->info('Serving \'modify infobox structure\' POST request');
+
 		$stringCheck = \App\Utilities\APIUtilities::$isStringValidator;
 		$nonEmptyStringCheck = \App\Utilities\APIUtilities::$isNonEmptyStringValidator;
 
