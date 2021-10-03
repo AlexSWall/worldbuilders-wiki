@@ -1,22 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function SelectDropdown({ formId, labelText, width, setFieldTouched, handleChange, handleBlur, value, options, defaultText = '' })
+export default function SelectDropdown({ formId, labelText, width, hasError, setFieldTouched, handleChange, handleBlur, value, options, defaultText = '' })
 {
+	const [ isEmpty, setIsEmpty ] = useState( false );
+
 	return (
 		<div className='form-group'>
-			<label htmlFor={ formId }>{ labelText }</label>
-			<Field
-				name={ formId }
-				id={ formId }
-				list={ formId + '-list' }
-				className={ 'form-select' }
-				onChange={ e => {
-					setFieldTouched(formId);
-					handleChange(e);
-				} }
-			/>
+			<div className='form-input-wrapper'>
+				<Field
+					name={ formId }
+					id={ formId }
+					list={ formId + '-list' }
+					className={ (hasError ? 'form-input-has-error ' : '') + (! isEmpty ? 'has-content ' : '' ) + 'form-input' }
+					onChange={ e => {
+						console.log(e.target.value);
+						setIsEmpty(e.target.value === '');
+						setFieldTouched(formId);
+						handleChange(e);
+					} }
+				/>
+				<label htmlFor={ formId }>{ labelText }</label>
+				<span className="focus-border">
+					<i></i>
+				</span>
+			</div>
+			<ErrorMessage name={ formId } component='span' className='form-error' style={ { width: width } } />
 			<datalist id={ formId + '-list' } >
 				{ options && options.map( ( option ) => {
 					return (
@@ -29,7 +39,6 @@ export default function SelectDropdown({ formId, labelText, width, setFieldTouch
 					);
 				})}
 			</datalist>
-			<ErrorMessage name={ formId } component='span' className='form-error' style={ { width: width } } />
 		</div>
 	);
 }

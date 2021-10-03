@@ -104,6 +104,7 @@ export default function InfoboxModificationForm({ closeModal })
 								formId='selected_infobox_name'
 								labelText='Infobox Name'
 								width={ 250 }
+								hasError={ touched.selected_infobox_name && errors.selected_infobox_name }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ e => {
 									console.log(e);
