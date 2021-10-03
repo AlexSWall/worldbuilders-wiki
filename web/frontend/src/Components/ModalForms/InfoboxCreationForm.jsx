@@ -34,8 +34,9 @@ export default function InfoboxCreationForm({ closeModal })
 					},
 					body: JSON.stringify(Object.assign({}, {
 						action: 'create',
-						infobox_name: values.infobox_name,
-						data: {},
+						data: {
+							infobox_name: values.infobox_name,
+						}
 					}, globals.csrfTokens))
 				}).then( async res => {
 					if (res.ok)

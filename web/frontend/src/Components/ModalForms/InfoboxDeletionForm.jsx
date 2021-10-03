@@ -37,8 +37,9 @@ export default function InfoboxDeletionForm({ closeModal })
 					},
 					body: JSON.stringify(Object.assign({}, {
 						action: 'delete',
-						page_path: values.page_path,
-						data: {},
+						data: {
+							infobox_name: values.infobox_name,
+						}
 					}, globals.csrfTokens))
 				}).then(async res => {
 					if (res.ok)
