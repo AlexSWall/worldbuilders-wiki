@@ -6,6 +6,16 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 {
 	const [ isEmpty, setIsEmpty ] = useState( false );
 
+	if ( isEmpty && value )
+	{
+		setIsEmpty(false);
+	}
+	else if ( ! isEmpty && ! value )
+	{
+		console.log(value);
+		setIsEmpty(true);
+	}
+
 	return (
 		<div className='form-group'>
 			<div className='form-input-wrapper'>

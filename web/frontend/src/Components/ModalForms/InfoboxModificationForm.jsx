@@ -131,7 +131,7 @@ export default function InfoboxModificationForm({ closeModal })
 									handleChange(e);
 								} }
 								handleBlur={ handleBlur }
-								value={ values.infobox }
+								value={ values.selected_infobox_name }
 								options={ infoboxNames }
 								defaultText={ 'Choose an infobox...' }
 							/>
