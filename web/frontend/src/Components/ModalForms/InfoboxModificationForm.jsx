@@ -42,9 +42,8 @@ export default function InfoboxModificationForm({ closeModal })
 		  .then( res => setInfoboxNames( res.infobox_names ) );
 	}
 
-	return (infoboxNames === null)
-		? ( <i> Fetching and loading the list of infoboxes to modify...  </i> )
-		: ( <Formik
+	return (
+		<Formik
 			initialValues={ { selected_infobox_name: '', infobox_structure: initialInfoboxStructure } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting }) => {

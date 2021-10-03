@@ -18,7 +18,7 @@ export default function SelectDropdown({ formId, labelText, width, setFieldTouch
 				} }
 			/>
 			<datalist id={ formId + '-list' } >
-				{ options.map( ( option ) => {
+				{ options && options.map( ( option ) => {
 					return (
 						<option
 							value={ option }
