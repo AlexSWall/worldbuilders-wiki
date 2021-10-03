@@ -89,6 +89,11 @@ class APIUtilities
 
 				foreach ( $argsData as $key => $validator )
 				{
+					if ( ! array_key_exists( $key, $data ) )
+					{
+						return $errorResponse( 400, "'{$action}' action needs data with '{$key}' key" );
+					}
+
 					// Get required argument from API data key's value.
 					$arg = $data[$key];
 
