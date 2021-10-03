@@ -21,7 +21,7 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 						handleChange(e);
 					} }
 				/>
-				<label htmlFor={ formId }>{ labelText }</label>
+				<label htmlFor={ formId } style={ { pointerEvents: 'none' } }>{ labelText }</label>
 				<span className="focus-border">
 					<i></i>
 				</span>
