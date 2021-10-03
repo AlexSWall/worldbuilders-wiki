@@ -107,23 +107,27 @@ export default function InfoboxModificationForm({ closeModal })
 								hasError={ touched.selected_infobox_name && errors.selected_infobox_name }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ e => {
-									console.log(e);
-									fetch('/a/infobox?' + new URLSearchParams({
-											infobox: e.target.value
-										}),
-										{
-											headers: {
-												'Accept': 'application/json',
+									const selectedInfoboxName = e.target.value;
+									if ( infoboxNames && infoboxNames.includes( selectedInfoboxName ) )
+									{
+										fetch('/a/infobox?' + new URLSearchParams({
+												infobox: selectedInfoboxName
+											}),
+											{
+												headers: {
+													'Accept': 'application/json',
+												}
 											}
-										}
-									).then( res => res.json() )
-									  .then( res => {
-											const structureText = res.infobox_structure_text;
-											setInitialInfoboxStructure( structureText );
-											setFieldValue( 'infobox_structure', structureText );
-											setFieldTouched( 'infobox_structure' );
-											console.log( structureText );
-										});
+										)	.then( res => res.json() )
+											.then( res => {
+												const structureText = res.infobox_structure_text;
+												setInitialInfoboxStructure( structureText );
+												setFieldValue( 'infobox_structure', structureText );
+												setFieldTouched( 'infobox_structure' );
+												console.log( structureText );
+											}
+										);
+									}
 									handleChange(e);
 								} }
 								handleBlur={ handleBlur }
