@@ -112,7 +112,7 @@ class InfoboxController extends Controller
 		self::$logger->info( 'Ensuring the infobox structure parses...' );
 
 		$infoboxItems = InfoboxParser::parse( $structure );
-		if ( ! $infoboxItems )
+		if ( $infoboxItems === null )
 		{
 			return $errorResponse( 400, 'Failed to parse infobox structure.' );
 		}
