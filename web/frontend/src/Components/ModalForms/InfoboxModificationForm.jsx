@@ -21,6 +21,7 @@ export default function InfoboxModificationForm({ closeModal })
 	const globals = useContext(GlobalsContext);
 
 	const [ infoboxNames, setInfoboxNames ] = useState( null );
+	const [ infoboxValidation, setInfoboxValidation ] = useState( schema );
 	const [ initialInfoboxStructure, setInitialInfoboxStructure ] = useState( '' );
 	const [ submissionError, setSubmissionError ] = useState( null );
 
@@ -39,13 +40,24 @@ export default function InfoboxModificationForm({ closeModal })
 				'Accept': 'application/json',
 			}
 		}).then( res => res.json() )
-		  .then( res => setInfoboxNames( res.infobox_names ) );
+		  .then( res => {
+				const infoboxNames = res.infobox_names;
+
+				setInfoboxNames( infoboxNames );
+
+				setInfoboxValidation( Yup.object().shape({
+					selected_infobox_name: Yup.string()
+						.required('Required')
+						.oneOf( infoboxNames, 'Must be an existing infobox' ),
+					infobox_structure: Yup.string()
+				}) );
+			});
 	}
 
 	return (
 		<Formik
 			initialValues={ { selected_infobox_name: '', infobox_structure: initialInfoboxStructure } }
-			validationSchema={ schema }
+			validationSchema={ infoboxValidation }
 			onSubmit={ (values, { setSubmitting }) => {
 				console.log('Submitting...')
 				fetch('/a/infobox', {
