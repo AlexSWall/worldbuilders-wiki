@@ -118,32 +118,27 @@ export default function InfoboxModificationForm({ closeModal })
 								width={ 250 }
 								hasError={ touched.selected_infobox_name && errors.selected_infobox_name }
 								setFieldTouched={ setFieldTouched }
-								handleChange={ e => {
-									const selectedInfoboxName = e.target.value;
-									if ( infoboxNames && infoboxNames.includes( selectedInfoboxName ) )
-									{
-										fetch('/a/infobox?' + new URLSearchParams({
-												infobox: selectedInfoboxName
-											}),
-											{
-												headers: {
-													'Accept': 'application/json',
-												}
+								setValue={ selectedInfoboxName => {
+									setFieldValue( 'selected_infobox_name', selectedInfoboxName );
+
+									fetch('/a/infobox?' + new URLSearchParams({
+											infobox: selectedInfoboxName
+										}),
+										{
+											headers: {
+												'Accept': 'application/json',
 											}
-										)	.then( res => res.json() )
-											.then( res => {
-												const structureText = res.infobox_structure_text;
-												setInitialInfoboxStructure( structureText );
-												setFieldValue( 'infobox_structure', structureText );
-												setFieldTouched( 'infobox_structure' );
-												console.log( structureText );
-											}
-										);
-									}
-									handleChange(e);
+										}
+									)	.then( res => res.json() )
+										.then( res => {
+											const structureText = res.infobox_structure_text;
+											setInitialInfoboxStructure( structureText );
+											setFieldValue( 'infobox_structure', structureText );
+											setFieldTouched( 'infobox_structure' );
+											console.log( structureText );
+										}
+									);
 								} }
-								handleBlur={ handleBlur }
-								value={ values.selected_infobox_name }
 								options={ infoboxNames }
 								defaultText={ 'Choose an infobox...' }
 							/>

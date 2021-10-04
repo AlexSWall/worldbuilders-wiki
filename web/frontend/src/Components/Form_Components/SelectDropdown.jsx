@@ -1,73 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function SelectDropdown({ formId, labelText, width, hasError, setFieldTouched, handleChange, handleBlur, value, options, defaultText = '' })
+export default function SelectDropdown({ formId, labelText, width, hasError, setFieldTouched, setValue, options, defaultText = '' })
 {
-	const [ isEmpty, setIsEmpty ] = useState( false );
+	// Contains the ephemeral contents of the input; cleared on blur.
+	const [ inputContents, setInputContents ] = useState( '' );
 
-	if ( isEmpty && value )
-	{
-		setIsEmpty(false);
-	}
-	else if ( ! isEmpty && ! value )
-	{
-		console.log(value);
-		setIsEmpty(true);
-	}
+	// Contains any valid value selected, obtained from the input on its blur.
+	// This is shown whenever inputContents is empty.
+	const [ selectedOption, setSelectedOption ] = useState( null );
+
+	// Whether to show the dropdown. This is true whenever the input has focus,
+	// and false when the input is subsequently blurred.
+	const [ showDropdown, setShowDropdown ] = useState( false );
+
+	// Used to switch focus from clicking dropdown to non-input. This ensured the
+	// input blurs, and also ensures we don't immediately select it again.
+	const selectedValueRef = useRef(null);
+
+	// Notes:
+	// On selecting a value, input's opacity is set to 1 to stop the blinking of
+	// the select box. The input text is therefore displayed in an input
+	// container directly above it, which overlays it.
+	// I'll need to add this after.
 
 	return (
-		<div className='form-group'>
-			<div className='form-input-wrapper'>
-				<Field
-					name={ formId }
-					id={ formId }
-					list={ formId + '-list' }
-					className={ (hasError ? 'form-input-has-error ' : '') + (! isEmpty ? 'has-content ' : '' ) + 'form-input' }
-					onChange={ e => {
-						console.log(e.target.value);
-						setIsEmpty(e.target.value === '');
-						setFieldTouched(formId);
-						handleChange(e);
-					} }
-				/>
-				<label htmlFor={ formId } style={ { pointerEvents: 'none' } }>{ labelText }</label>
-				<span className="focus-border">
-					<i></i>
-				</span>
-			</div>
-			<ErrorMessage name={ formId } component='span' className='form-error' style={ { width: width } } />
-			<datalist id={ formId + '-list' } >
-				{ options && options.map( ( option ) => {
-					return (
-						<option
-							value={ option }
-							key={ option }
-						>
-							{ option }
-						</option>
-					);
-				})}
-			</datalist>
+		<div
+			className='form-group'
+			ref={ selectedValueRef }
+		>
+			<label>
+				{ labelText }
+			</label>
+
+			{ ( inputContents === '' ) &&
+				<div
+					className={ 'form-select-selected-value' }
+				>
+					{ selectedOption }
+				</div>
+			}
+
+			<input
+				id={ formId }
+				className={ 'form-select-input' }
+				autoComplete={ 'off' }
+				value={ inputContents }
+				onFocus={ e => {
+					console.log('Focused on input');
+					setShowDropdown(true);
+				} }
+				onBlur={ e => {
+					console.log('Blurring input');
+					setShowDropdown(false);
+					if ( e !== '' && options && options.includes( inputContents ) )
+					{
+						setSelectedOption( inputContents );
+						setValue( inputContents );
+					}
+					setInputContents('');
+				} }
+				onChange={ e => {
+					const value = e.target.value;
+					console.log('Changing input (to ' + value + ')');
+					setInputContents(value);
+				} }
+			/>
+			{ showDropdown &&
+				<div className='form-select-dropdown'>
+					{ options && options.filter(
+							option => option.startsWith( inputContents )
+						).map(
+							( option, i ) =>
+								<div
+									key={ i }
+									className='form-select-option'
+									onMouseDown={ () => {
+										selectedValueRef.current.focus();
+										setInputContents( option );
+									} }
+								>
+									{ option }
+								</div>
+						) }
+				</div>
+			}
 		</div>
 	);
 }
-
-
-
-			// <Select
-			// 	name={ formId }
-			// 	id={ formId }
-			// 	className='form-select'
-			// 	placeholder={ defaultText }
-			// 	value={ value }
-			// 	onBlur={ handleBlur }
-			// 	onChange={ selectedOption => {
-			// 		let event = { target : { name: formId, value: selectedOption } };
-			// 		handleChange(event);
-			// 	} }
-			// 	onBlur={ () => {
-			// 		handleBlur( { target: { name: formId } } );
-			// 	} }
-			// 	options={ options }
-			// />
