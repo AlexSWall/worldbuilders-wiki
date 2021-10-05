@@ -43,17 +43,27 @@ class InfoboxToken extends BaseToken
 
 		$html .= '<aside class="infobox">';
 
-		$titleEntryValue = $this->values['title'];
-		if ( count( $titleEntryValue ) === 1 && is_a( $titleEntryValue[0], TextToken::class ) )
+		// Set the title
 		{
-			$title = $titleEntryValue[0]->toHtml();
-		}
-		else
-		{
-			$title = 'Infobox Title';
+			$titleEntryValue = $this->values['title'];
+
+			if ( $titleEntryValue !== null
+				&& count( $titleEntryValue ) === 1
+				&& is_a( $titleEntryValue[0], TextToken::class ) )
+			{
+				// The value for the title key is a single text token; extract the text
+				// and set it as the title.
+				$title = $titleEntryValue[0]->toHtml();
+			}
+			else
+			{
+				// We did not find a value title, so use this generic title.
+				$title = 'Infobox Title';
+			}
+
+			$html .= '<h2 class="infobox-title">' . $title . '</h2>';
 		}
 
-		$html .= '<h2 class="infobox-title">' . $title . '</h2>';
 
 		{
 			// Need to keep track of whether we're in a section or not to know
