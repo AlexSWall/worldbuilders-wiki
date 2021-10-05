@@ -64,7 +64,10 @@ class InfoboxToken extends BaseToken
 			$html .= '<h2 class="infobox-title">' . $title . '</h2>';
 		}
 
+		// Fill in the standard values
 
+		// If this isn't set to true by the end, don't return html.
+		$infoboxHasContent = false;
 		{
 			// Need to keep track of whether we're in a section or not to know
 			// whether to add a closing section HTML tag.
@@ -88,6 +91,8 @@ class InfoboxToken extends BaseToken
 					{
 						continue;
 					}
+
+					$infoboxHasContent = true;
 
 					if ( $priorHeader !== null )
 					{
@@ -139,6 +144,12 @@ class InfoboxToken extends BaseToken
 			{
 				$html .= '</section>';
 			}
+		}
+
+		if ( ! $infoboxHasContent )
+		{
+			self::$logger->info( 'No infobox content found; not producing HTML.' );
+			return '';
 		}
 
 		self::$logger->info( 'HTML produced: ' . print_r( $html, true ) );
