@@ -235,7 +235,66 @@
   box-shadow: none;
 }
 
-// .form-input-has-error {
-// 	border-color: rgb(179, 27, 27); outline: 0rem;
-// 	box-shadow: rgba(179, 27, 27, 0.3) 0rem 0rem .3rem;
-// }
+
+// -- Form Select --
+
+.form-select-wrapper {
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+}
+
+.form-select-input, .form-select-selected-value {
+	font: 1.5rem/2.4rem "Lato", Arial, sans-serif;
+	color: #333;
+	background-color: #e7f0fe;
+	width: 25rem;
+	box-sizing: border-box;
+	letter-spacing: .1rem;
+
+	position: relative;
+	border: .1rem solid #ccc;
+	padding: .7rem 1.4rem;
+
+	grid-area: 1 / 1 / 1 / 3;
+}
+
+.form-select-input {
+	@extend .form-input;
+	// Ensure we can see through to the form-select-selected-value
+	background: transparent;
+}
+
+.form-select-hidden {
+	// Set text to transparent if form-select-selected-value needs to be hidden
+	color: rgba(0, 0, 0, 0);
+}
+
+.form-select-dropdown {
+	position: absolute;
+	z-index: 10;
+	width: 90%;
+	top: calc(100% + .3rem);
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: white;
+	border: solid 0.1rem #3399FF;
+	border-radius: .3rem;
+	box-shadow: 0 .2rem .5rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.form-select-option {
+	padding: 0.6rem 0.6rem 0.6rem 1.4rem ;
+	font: 1.5rem/2.4rem "Lato", Arial, sans-serif;
+	font-color: #222;
+}
+
+.form-select-option:hover {
+	background-color: #ddebff;
+}
+
+.form-select-option-selected {
+	padding: 0.6rem 0.6rem 0.6rem 1.4rem ;
+	background-color: #bcd9ff;
+	font: 1.5rem/2.4rem "Lato", Arial, sans-serif;
+	color: #333;
+}

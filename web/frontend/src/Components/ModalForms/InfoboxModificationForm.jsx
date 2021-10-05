@@ -135,7 +135,6 @@ export default function InfoboxModificationForm({ closeModal })
 											setInitialInfoboxStructure( structureText );
 											setFieldValue( 'infobox_structure', structureText );
 											setFieldTouched( 'infobox_structure' );
-											console.log( structureText );
 										}
 									);
 								} }

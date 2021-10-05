@@ -19,73 +19,78 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 	// input blurs, and also ensures we don't immediately select it again.
 	const selectedValueRef = useRef(null);
 
-	// Notes:
-	// On selecting a value, input's opacity is set to 1 to stop the blinking of
-	// the select box. The input text is therefore displayed in an input
-	// container directly above it, which overlays it.
-	// I'll need to add this after.
+	// This is checked for being non-empty on the dropdown being sought.
+	const filteredOptions = options && options.filter(
+		option => option.toLowerCase().startsWith( inputContents.toLowerCase() )
+	);
 
 	return (
 		<div
 			className='form-group'
 			ref={ selectedValueRef }
+			style={ {
+				width: width
+			} }
 		>
-			<label>
-				{ labelText }
-			</label>
+			<div className='form-input-wrapper'>
+				<div className='form-select-wrapper'>
+					<div
+						className={ 'form-select-selected-value' + ( ( inputContents !== '' ) ? ' form-select-hidden' : '' ) }
+						style={ {
+							color: 'rgb(51, 51, 51, ' + ( ( inputContents !== '' ) ? '0' : ! selectedOption ? '0.5' : '1' )
+						} }
+					>
+						{ selectedOption }
+					</div>
 
-			{ ( inputContents === '' ) &&
-				<div
-					className={ 'form-select-selected-value' }
-				>
-					{ selectedOption }
-				</div>
-			}
+					<input
+						id={ formId }
+						className={ (hasError ? 'form-input-has-error ' : '') + ( inputContents || selectedOption ? 'has-content ' : '' ) + 'form-select-input' }
+						autoComplete='off'
+						value={ inputContents }
+						onFocus={ e => {
+							setShowDropdown(true);
+						} }
+						onBlur={ e => {
+							setShowDropdown(false);
+							if ( e !== '' && options && options.includes( inputContents ) )
+							{
+								setSelectedOption( inputContents );
+								setValue( inputContents );
+							}
+							setInputContents('');
+						} }
+						onChange={ e => {
+							const value = e.target.value;
+							setInputContents(value);
+						} }
+					/>
 
-			<input
-				id={ formId }
-				className={ 'form-select-input' }
-				autoComplete={ 'off' }
-				value={ inputContents }
-				onFocus={ e => {
-					console.log('Focused on input');
-					setShowDropdown(true);
-				} }
-				onBlur={ e => {
-					console.log('Blurring input');
-					setShowDropdown(false);
-					if ( e !== '' && options && options.includes( inputContents ) )
-					{
-						setSelectedOption( inputContents );
-						setValue( inputContents );
+					<label htmlFor={ formId }>{ labelText }</label>
+					<span className="focus-border">
+						<i></i>
+					</span>
+
+					{ showDropdown && filteredOptions && ( filteredOptions.length > 0 ) &&
+						<div className='form-select-dropdown'>
+							{ filteredOptions.map(
+									( option, i ) =>
+										<div
+											key={ i }
+											className={ 'form-select-option'
+												+ ( ( option == selectedOption ) ? '-selected' : '' ) }
+											onMouseDown={ () => {
+												selectedValueRef.current.focus();
+												setInputContents( option );
+											} }
+										>
+											{ option }
+										</div>
+								) }
+						</div>
 					}
-					setInputContents('');
-				} }
-				onChange={ e => {
-					const value = e.target.value;
-					console.log('Changing input (to ' + value + ')');
-					setInputContents(value);
-				} }
-			/>
-			{ showDropdown &&
-				<div className='form-select-dropdown'>
-					{ options && options.filter(
-							option => option.startsWith( inputContents )
-						).map(
-							( option, i ) =>
-								<div
-									key={ i }
-									className='form-select-option'
-									onMouseDown={ () => {
-										selectedValueRef.current.focus();
-										setInputContents( option );
-									} }
-								>
-									{ option }
-								</div>
-						) }
 				</div>
-			}
+			</div>
 		</div>
 	);
 }
