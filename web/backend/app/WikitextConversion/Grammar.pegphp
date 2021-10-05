@@ -28,6 +28,21 @@ class Grammar
 }
 /* ----------------------------------------------------------- */ {
 
+/**
+ * Merges all array entries of an array into one array.
+ *
+ * For example, it converts an array of the form
+ *   [
+ *	    [
+ *       [ 'a', 'b' ], [ 'c' ]
+ *	    ],
+ *	    [
+ *	      'd', [ 'e' ]
+ *	    ]
+ *   ]
+ * to
+ *   [ [ 'a', 'b' ], [ 'c' ], 'd', [ 'e' ] ]
+ */
 private function array_flatten_top( array $array ): array
 {
 	$result = [];
