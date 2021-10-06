@@ -29,7 +29,26 @@ class InfoboxEntry extends AbstractInfoboxItem
 
 		self::$logger->info( 'Placemarker' );
 		self::$logger->info( print_r( $entryValueTokens, true ) );
-		$entryValueHtml = (new TokenProcessor())->process( $entryValueTokens, 'inline' );
+
+		if ( count( $entryValueTokens ) === 1 )
+		{
+			// Only one value; process it in the normal way.
+			$entryValueHtml = (new TokenProcessor())->process( $entryValueTokens, 'inline' );
+		}
+		else if ( count( $entryValueTokens ) >= 2 )
+		{
+			// More than one value; we need to create a list.
+			$entryValueHtml = '<ul>';
+
+			foreach ( $entryValueTokens as $entryValueListItemTokens )
+			{
+				$entryValueHtml .= '<li>'
+					. (new TokenProcessor())->process( $entryValueListItemTokens, 'inline' )
+					. '</li>';
+			}
+
+			$entryValueHtml .= '</ul>';
+		}
 
 		$html = '';
 		$html .= '<div class="infobox-entry">';
