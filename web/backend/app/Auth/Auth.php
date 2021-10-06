@@ -16,6 +16,8 @@ use Carbon\Carbon;
 
 class Auth
 {
+	static $logger;
+
 	protected array $authConfig;
 
 	protected \App\Helpers\HashingUtilities $hashUtilities;
@@ -105,29 +107,39 @@ class Auth
 	{
 		if ( ! $this->isAuthenticated() )
 		{
+			self::$logger->info('Not authenticated, so cannot get character');
 			return null;
 		}
+
+		self::$logger->info('Attempting to get character');
 
 		$user = $this->getUser();
 		$character = null;
 
 		// Find character if possible.
 		$characterIdKey = $this->authConfig[ 'characterId' ];
-		if ( array_key_exists( $characterIdKey, $_SESSION ) )
+		if ( array_key_exists( $characterIdKey, $_SESSION ) && $characterId = $_SESSION[ $characterIdKey ] )
 		{
-			$characterId = $_SESSION[ $this->authConfig[ 'characterId' ] ];
-			if ( $characterId )
-			{
-				$character = Character::retrieveCharacterByCharacterId( $characterId );
-			}
+			self::$logger->info('Found character, returning it');
+
+			$character = Character::retrieveCharacterByCharacterId( $characterId );
+		}
+		else
+		{
+			self::$logger->info('Character ID key not present in $_SESSION');
+			self::$logger->dump($_SESSION);
 		}
 
 		if ( $user && $character && $user->getUserId() === $character->getUserId() )
 		{
+			self::$logger->info('Found character, returning it');
+
 			return $character;
 		}
 		else
 		{
+			self::$logger->info('Failed to get character');
+
 			return null;
 		}
 	}

@@ -23,13 +23,10 @@ class RememberMeMiddleware extends Middleware
 	private function getRememberMeToken( Request $request ): ?Cookie
 	{
 		$cookies = Cookies::fromRequest( $request );
-		self::$logger->dump( $cookies );
 
 		$rememberMeCookieKey = $this->container->get( 'settings' )[ 'auth' ][ 'remember' ];
-		self::$logger->dump( $rememberMeCookieKey );
 
 		$rememberMeCookie = $cookies->get( $rememberMeCookieKey );
-		self::$logger->dump( $rememberMeCookie );
 
 		return $rememberMeCookie;
 	}
