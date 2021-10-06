@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Globals;
 
-class FrontEndParameters
+class GlobalsContainer
 {
 	private ?string $baseUrl = null;
 	private ?bool $isAuthenticated = null;

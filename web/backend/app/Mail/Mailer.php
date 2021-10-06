@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
-use App\Globals\FrontEndParametersFacade;
+use App\Globals\GlobalsFacade;
 
 use App\Models\User;
 
@@ -28,7 +28,7 @@ class Mailer
 	public function send( User $user, string $subject, string $templateName, array $data ): void
 	{
 		$data['preferredName'] = $user->getPreferredName();
-		$data['baseUrl'] = FrontEndParametersFacade::getBaseUrl();
+		$data['baseUrl'] = GlobalsFacade::getBaseUrl();
 
 		self::$logger->info( 'Creating an email to ' . $user->getUsername() . ' at ' . $user->getEmail() . '.' );
 		self::$logger->info( 'Email being sent: ' . $templateName . '.' );

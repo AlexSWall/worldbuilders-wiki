@@ -255,17 +255,17 @@ require BASE_PATH . '/app/routes.php';
 
 /* == Set up Globals == */
 
-use App\Globals\FrontEndParametersFacade;
+use App\Globals\GlobalsFacade;
 
-FrontEndParametersFacade::createNewFrontEndParametersInstance();
-FrontEndParametersFacade::setIsAuthenticated($container->get('auth')->isAuthenticated());
-FrontEndParametersFacade::setHashingUtilities($container->get('HashingUtilities'));
+GlobalsFacade::createNewGlobalsInstance();
+GlobalsFacade::setIsAuthenticated($container->get('auth')->isAuthenticated());
+GlobalsFacade::setHashingUtilities($container->get('HashingUtilities'));
 {
 	$maybeUser = $container->get('auth')->getUserSafely();
 	if ( $maybeUser )
-		FrontEndParametersFacade::setUserData($maybeUser);
+		GlobalsFacade::setUserData($maybeUser);
 }
-FrontEndParametersFacade::setBaseUrl($container->get('settings')['app']['url']);
+GlobalsFacade::setBaseUrl($container->get('settings')['app']['url']);
 
 /* == Miscellaneous == */
 

@@ -144,7 +144,7 @@ class Rules
 
 		return function ( string $input ) use ( $passwordHash, $failureString ): ?string
 		{
-			$hashingUtilities = \App\Globals\FrontEndParametersFacade::getHashingUtilities();
+			$hashingUtilities = \App\Globals\GlobalsFacade::getHashingUtilities();
 			if ( ! $hashingUtilities->checkPassword( $input, $passwordHash ) ) {
 				return $failureString;
 			}

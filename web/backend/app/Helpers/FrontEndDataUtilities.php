@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
-use App\Globals\FrontEndParametersFacade;
+use App\Globals\GlobalsFacade;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -17,12 +17,12 @@ class FrontEndDataUtilities
 
 	public static function getBaseData(): array
 	{
-		$user = FrontEndParametersFacade::getUserData();
+		$user = GlobalsFacade::getUserData();
 
 		return [
 			'preferredName' => ($user === null) ? null : $user->getUserDetails()->getPreferredName(),
-			'isAuthenticated' => FrontEndParametersFacade::getIsAuthenticated(),
-			'csrfTokens' => FrontEndParametersFacade::getCsrfTokens()
+			'isAuthenticated' => GlobalsFacade::getIsAuthenticated(),
+			'csrfTokens' => GlobalsFacade::getCsrfTokens()
 		];
 	}
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use App\Globals\FrontEndParametersFacade;
+use App\Globals\GlobalsFacade;
 use App\Helpers\ResponseUtilities;
 use App\Models\User;
 
@@ -35,7 +35,7 @@ class RememberMeMiddleware extends Middleware
 	{
 		$rememberMeCookie = $this->getRememberMeToken( $request );
 
-		FrontEndParametersFacade::setHasRememberMeCookie( $rememberMeCookie !== null );
+		GlobalsFacade::setHasRememberMeCookie( $rememberMeCookie !== null );
 
 		if ( ! $this->auth->isAuthenticated() && $this->attemptLogin( $rememberMeCookie ) )
 		{

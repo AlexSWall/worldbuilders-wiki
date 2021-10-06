@@ -6,7 +6,7 @@ namespace App\Auth;
 
 use App\Models\User;
 use App\Models\Character;
-use App\Globals\FrontEndParametersFacade;
+use App\Globals\GlobalsFacade;
 
 use Slim\Http\Response;
 
@@ -156,7 +156,7 @@ class Auth
 
 	public function logout( Response $response ): Response
 	{
-		if ( FrontEndParametersFacade::getHasRememberMeCookie() )
+		if ( GlobalsFacade::getHasRememberMeCookie() )
 		{
 			$user = $this->getUser();
 			if ( $user )

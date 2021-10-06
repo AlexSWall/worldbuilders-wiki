@@ -121,7 +121,7 @@ class User extends DatabaseEncapsulator
 
 	public function setUnhashedPassword( string $password ): void
 	{
-		$hashingUtilities = \App\Globals\FrontEndParametersFacade::getHashingUtilities();
+		$hashingUtilities = \App\Globals\GlobalsFacade::getHashingUtilities();
 		$this->setHashedPassword( $hashingUtilities->hashPassword( $password ) );
 	}
 

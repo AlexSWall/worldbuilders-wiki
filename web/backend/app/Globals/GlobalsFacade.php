@@ -7,21 +7,21 @@ namespace App\Globals;
 use App\Models\User;
 use App\Helpers\HashingUtilities;
 
-class FrontEndParametersFacade
+class GlobalsFacade
 {
-	public static function createNewFrontEndParametersInstance(): void
+	public static function createNewGlobalsInstance(): void
 	{
-		$GLOBALS['FrontEndParameters'] = new FrontEndParameters();
+		$GLOBALS['Globals'] = new GlobalsContainer();
 	}
 
 	private static function setter( string $key, mixed $value ): void
 	{
-		$GLOBALS['FrontEndParameters']->_setter( $key, $value );
+		$GLOBALS['Globals']->_setter( $key, $value );
 	}
 
 	private static function getter( string $key ): mixed
 	{
-		return $GLOBALS['FrontEndParameters']->_getter( $key );
+		return $GLOBALS['Globals']->_getter( $key );
 	}
 
 	/* == Setters == */

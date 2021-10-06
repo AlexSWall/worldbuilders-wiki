@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use App\Globals\FrontEndParametersFacade;
+use App\Globals\GlobalsFacade;
 
 use Slim\Csrf\Guard;
 
@@ -35,7 +35,7 @@ class CsrfMiddleware extends Middleware
 			$csrf->getTokenValueKey() => $csrf->getTokenValue()
 		];
 
-		FrontEndParametersFacade::setCsrfTokens( $tokens );
+		GlobalsFacade::setCsrfTokens( $tokens );
 
 		self::$logger->info( 'CSRF Tokens:' );
 		self::$logger->dump( $tokens );
