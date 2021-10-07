@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class WikiPageQueries
 {
-	static $logger;
+	public static \App\Logging\Logger $logger;
 
 	public static function getAllWikiPageIds(): array
 	{

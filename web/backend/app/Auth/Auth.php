@@ -16,7 +16,7 @@ use Carbon\Carbon;
 
 class Auth
 {
-	static $logger;
+	public static \App\Logging\Logger $logger;
 
 	protected array $authConfig;
 

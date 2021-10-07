@@ -9,7 +9,7 @@ use App\Models\WikiPage;
 
 class WikiUtilities
 {
-	static $logger;
+	public static \App\Logging\Logger $logger;
 
 	public static function recompileAllWikiPages(): void
 	{

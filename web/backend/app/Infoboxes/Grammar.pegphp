@@ -9,7 +9,7 @@ namespace App\Infoboxes;
 
 class Grammar
 {
-	static $logger;
+	public static \App\Logging\Logger $logger;
 
 	static function getNewGrammarParser()
 	{
@@ -22,7 +22,7 @@ class Grammar
 }
 /* ----------------------------------------------------------- */ {
 
-static $logger;
+public static \App\Logging\Logger $logger;
 
 private function startOffset()
 {
