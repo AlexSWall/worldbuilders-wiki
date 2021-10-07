@@ -29,7 +29,9 @@ class AdministratorMiddleware extends Middleware
 
 		$auth = $this->container->get( 'auth' );
 
-		if ( ! $auth->isAuthenticated() || ! $auth->getUser()->isAdmin() )
+		$user = $auth->getUser();
+
+		if ( $user || ! $user->isAdmin() )
 		{
 			$logger->info( 'Failed to authenticate as an admin' );
 

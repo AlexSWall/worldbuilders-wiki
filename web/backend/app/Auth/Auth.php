@@ -31,25 +31,8 @@ class Auth
 		$this->generator = $generator;
 	}
 
-	public function checkUserExists( string $identity ): bool
+	public function attemptLogin( User $user, string $password ): bool
 	{
-		return User::retrieveUserByIdentity( $identity ) !== null;
-	}
-
-	public function checkActivated( string $identity ): bool
-	{
-		return User::retrieveUserByIdentity( $identity )->isActive();
-	}
-
-	public function attempt( string $identity, string $password ): bool
-	{
-		$user = User::retrieveUserByIdentity( $identity );
-
-		if ( !$user )
-		{
-			return false;
-		}
-
 		if ( !$this->hashUtilities->checkPassword( $password, $user->getPasswordHash() ) )
 		{
 			return false;
@@ -66,30 +49,76 @@ class Auth
 		return true;
 	}
 
-	private function createRememberMeCookie( string $value, string $expiry_str ): SetCookie
+	public function setRememberMeCookie( Response $response, User $user ): Response
 	{
-		return SetCookie::create( $this->authConfig[ 'remember' ] )
-			->withValue( $value )
-			->withExpires( Carbon::parse( $expiry_str )->timestamp )
-			->withPath( '/' );
-	}
-
-	public function setRememberMeCookie( Response $response, string $identity ): Response
-	{
-		$user = User::retrieveUserByIdentity( $identity );
-
 		$rememberIdentifier = $this->generator->generateString( 128 );
 		$rememberToken      = $this->generator->generateString( 128 );
 
 		$user->setRememberMeCredentials(
-				$rememberIdentifier,
-				$this->hashUtilities->hash( $rememberToken )
-				);
+			$rememberIdentifier,
+			$this->hashUtilities->hash( $rememberToken )
+		);
 
 		$response = FigResponseCookies::set(
-				$response,
-				$this->createRememberMeCookie( "{$rememberIdentifier}___{$rememberToken}", '+10 years' )
-				);
+			$response,
+			$this->createRememberMeCookie( "{$rememberIdentifier}___{$rememberToken}", '+10 years' )
+		);
+
+		return $response;
+	}
+
+	public function attemptLoginFromCookie( string $cookieData ): bool
+	{
+		$cookieData = explode( '___', $cookieData );
+
+		if ( count( $cookieData ) !== 2 )
+		{
+			self::$logger->info( '\'Remember me\' cookie contains wrong number of sections.' );
+
+			return false;
+		}
+
+		$identifier = $cookieData[0];
+		$token = $this->hashUtilities->hash( $cookieData[1] );
+
+		$user = User::retrieveUserByRememberMeIdentifier( $identifier );
+
+		if ( !$user )
+		{
+			self::$logger->info( 'Failed to retrieve user by \'remember me\' identifier.' );
+
+			return false;
+		}
+
+		if ( !$this->hashUtilities->checkHash( $token, $user->getRememberMeToken() ) )
+		{
+			self::$logger->info( 'Hash of second part of \'remember me\' cookie does not equal user\'s saved \'remember me\' token.' );
+
+			$user->removeRememberMeCredentials();
+			return false;
+		}
+
+		self::$logger->info( 'Successfully authenticated from \'remember me\' token.' );
+
+		SessionFacade::setUserId( $user->getUserId() );
+
+		return true;
+	}
+
+	public function logout( Response $response ): Response
+	{
+		if ( GlobalsFacade::getHasRememberMeCookie() )
+		{
+			$user = $this->getUser();
+			if ( $user )
+			{
+				$user->removeRememberMeCredentials();
+			}
+
+			$response = FigResponseCookies::set( $response, $this->createRememberMeCookie( '', '-1 week' ) );
+		}
+
+		SessionFacade::setUserId( null );
 
 		return $response;
 	}
@@ -99,9 +128,14 @@ class Auth
 		return SessionFacade::getUserId() !== null;
 	}
 
-	public function getUser(): User
+	public function getUser(): ?User
 	{
-		return User::retrieveUserByUserId( SessionFacade::getUserId() );
+		$userId = SessionFacade::getUserId();
+
+		if ( $userId === null )
+			return null;
+
+		return User::retrieveUserByUserId( $userId );
 	}
 
 	public function getCharacter(): ?Character
@@ -139,31 +173,13 @@ class Auth
 		}
 	}
 
-	public function getUserSafely(): ?User
+	/* == Private Helpers == */
+
+	private function createRememberMeCookie( string $value, string $expiry_str ): SetCookie
 	{
-		if ( $this->isAuthenticated() )
-		{
-			return User::retrieveUserByUserId( SessionFacade::getUserId() );
-		}
-
-		return null;
-	}
-
-	public function logout( Response $response ): Response
-	{
-		if ( GlobalsFacade::getHasRememberMeCookie() )
-		{
-			$user = $this->getUser();
-			if ( $user )
-			{
-				$user->removeRememberMeCredentials();
-			}
-
-			$response = FigResponseCookies::set( $response, $this->createRememberMeCookie( '', '-1 week' ) );
-		}
-
-		SessionFacade::setUserId( null );
-
-		return $response;
+		return SetCookie::create( $this->authConfig[ 'remember' ] )
+			->withValue( $value )
+			->withExpires( Carbon::parse( $expiry_str )->timestamp )
+			->withPath( '/' );
 	}
 }

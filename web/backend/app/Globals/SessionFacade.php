@@ -14,7 +14,7 @@ class SessionFacade
 
 	public static function initializeSessionFacade( array $authConfig ): void
 	{
-		if ( $authConfig === null )
+		if ( self::$authConfig === null )
 		{
 			self::$authConfig = $authConfig;
 		}
@@ -24,7 +24,7 @@ class SessionFacade
 		}
 	}
 
-	private static function setter( string $key, ?mixed $value, bool $auth = false ): void
+	private static function setter( string $key, mixed $value, bool $auth = false ): void
 	{
 		self::$logger->info("Called SESSION setter for key '{$key}' and value '{$value}'");
 
@@ -40,7 +40,7 @@ class SessionFacade
 		$_SESSION[ $key ] = $value;
 	}
 
-	private static function getter( string $key, bool $auth = false ): ?mixed
+	private static function getter( string $key, bool $auth = false ): mixed
 	{
 		self::$logger->info("Getting value of SESSION key '{$key}'");
 
@@ -66,7 +66,7 @@ class SessionFacade
 
 	private static function checkValidKey( string $key ): void
 	{
-		if ( ! array_key_exists( $key, self::$validKeys ) )
+		if ( ! in_array( $key, self::$validKeys ) )
 		{
 			throw new \InvalidArgumentException('Invalid SESSION key specified');
 		}

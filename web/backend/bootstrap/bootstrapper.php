@@ -269,9 +269,9 @@ GlobalsFacade::createNewGlobalsInstance();
 GlobalsFacade::setIsAuthenticated($container->get('auth')->isAuthenticated());
 GlobalsFacade::setHashingUtilities($container->get('HashingUtilities'));
 {
-	$maybeUser = $container->get('auth')->getUserSafely();
+	$maybeUser = $container->get('auth')->getUser();
 	if ( $maybeUser )
-		GlobalsFacade::setUserData($maybeUser);
+		GlobalsFacade::setUserData( $maybeUser );
 }
 GlobalsFacade::setBaseUrl($container->get('settings')['app']['url']);
 

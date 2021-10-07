@@ -148,30 +148,32 @@ class AuthenticationController extends Controller
 
 		self::$debug_logger->info( 'Checking that user exists...' );
 
-		if ( ! $this->auth->checkUserExists( $identity ) )
+		$user = User::retrieveUserByIdentity( $identity );
+
+		if ( $user === null )
 		{
 			return $errorResponse( 401, 'Identity not in use' );
 		}
 
 		self::$debug_logger->info( 'User exists, checking they\'re activated...' );
 
-		if ( !$this->auth->checkActivated( $identity ) )
+		if ( ! $user->isActive() )
 		{
 			return $errorResponse( 401, 'Not activated' );
 		}
 
 		self::$debug_logger->info( 'User activated, checking authentication succeeds...' );
 
-		if ( !$this->auth->attempt( $identity, $password ) )
+		if ( !$this->auth->attemptLogin( $user, $password ) )
 		{
-			return $errorResponse( 401, 'Identity in use but authentication failed' );
+			return $errorResponse( 401, 'Authentication failed' );
 		}
 
 		self::$debug_logger->info( 'User successfully logged in' );
 
 		if ( $rememberMe )
 		{
-			$response = $this->auth->setRememberMeCookie( $response, $identity );
+			$response = $this->auth->setRememberMeCookie( $response, $user );
 		}
 
 		return $response->withStatus( 200 );
@@ -215,6 +217,11 @@ class AuthenticationController extends Controller
 		}
 
 		$user = $this->auth->getUser();
+
+		if ( ! $user )
+		{
+			return $errorResponse( 400, 'Authentication failure' );
+		}
 
 		self::$logger->info( 'Client is authenticated, validating passwords' );
 

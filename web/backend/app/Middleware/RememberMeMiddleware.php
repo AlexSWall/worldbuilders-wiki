@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Globals\GlobalsFacade;
-use App\Globals\SessionFacade;
 use App\Helpers\ResponseUtilities;
-use App\Models\User;
 
 use Dflydev\FigCookies\Cookie;
 use Dflydev\FigCookies\Cookies;
@@ -21,7 +19,7 @@ class RememberMeMiddleware extends Middleware
 {
 	public static \App\Logging\Logger $logger;
 
-	private function getRememberMeToken( Request $request ): ?Cookie
+	private function extractRememberMeToken( Request $request ): ?Cookie
 	{
 		$cookies = Cookies::fromRequest( $request );
 
@@ -34,11 +32,11 @@ class RememberMeMiddleware extends Middleware
 
 	public function route( Request $request, RequestHandlerInterface $handler ): ResponseInterface
 	{
-		$rememberMeCookie = $this->getRememberMeToken( $request );
+		$rememberMeCookie = $this->extractRememberMeToken( $request );
 
 		GlobalsFacade::setHasRememberMeCookie( $rememberMeCookie !== null );
 
-		if ( ! $this->auth->isAuthenticated() && $this->attemptLogin( $rememberMeCookie ) )
+		if ( ! $this->auth->isAuthenticated() && $this->attemptLoginUsingCookie( $rememberMeCookie ) )
 		{
 			// The request should be resent to include the new session cookie in
 			// rendering the page.
@@ -61,52 +59,21 @@ class RememberMeMiddleware extends Middleware
 	 * @return Returns true if the account corresponding to the cookie is
 	 * successfully logged into, otherwise it returns false.
 	 */
-	public function attemptLogin( ?Cookie $rememberMeCookie ): bool
+	public function attemptLoginUsingCookie( ?Cookie $rememberMeCookie ): bool
 	{
 		$logger = $this->loggers['logger'];
 
 		if ( $rememberMeCookie === null )
 		{
-			$logger->info( 'Not authenticated but no \'remember me\' cookie.' );
+			$logger->info( 'No \'remember me\' cookie so cannot authenticate using one.' );
 
 			return false;
 		}
 
-		$data = $rememberMeCookie->getValue();
+		$cookieData = $rememberMeCookie->getValue();
 
-		$credentials = explode( '___', $data );
+		$logger->info( '\'Remember me\' cookie present, attempting authentication' );
 
-		if ( count( $credentials ) !== 2 )
-		{
-			$logger->info( 'Not authenticated but \'remember me\' cookie contains wrong number of sections.' );
-
-			return false;
-		}
-
-		$identifier = $credentials[0];
-		$token = $this->HashingUtilities->hash( $credentials[1] );
-
-		$user = User::retrieveUserByRememberMeIdentifier( $identifier );
-
-		if ( !$user )
-		{
-			$logger->info( 'Not authenticated but failed to retrieve user by \'remember me\' identifier.' );
-
-			return false;
-		}
-
-		if ( !$this->HashingUtilities->checkHash( $token, $user->getRememberMeToken() ) )
-		{
-			$logger->info( 'Not authenticated but hash of section 1 does not equal user\'s \'remember me\' token.' );
-
-			$user->removeRememberMeCredentials();
-			return false;
-		}
-
-		$logger->info( 'Not authenticated but successfully authentication from the user\'s \'remember me\' token.' );
-
-		SessionFacade::setUserId( $user->getUserId() );
-
-		return true;
+		return $this->auth->attemptLoginFromCookie( $cookieData );
 	}
 }
