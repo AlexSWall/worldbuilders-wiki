@@ -146,7 +146,7 @@ $containerBuilder->addDefinitions(
 
 			$mailerSettings = $container->get('settings')['mail'];
 
-			$mailer->isSMTP();  
+			$mailer->isSMTP();
 			$mailer->Host = $mailerSettings['host'];
 			$mailer->SMTPAuth = $mailerSettings['smtp_auth'];
 			$mailer->SMTPSecure = $mailerSettings['smtp_secure'];
@@ -253,6 +253,14 @@ $logger->info('Adding the routes.');
 
 require BASE_PATH . '/app/routes.php';
 
+
+/* == Set up Session == */
+
+use App\Globals\SessionFacade;
+
+SessionFacade::initializeSessionFacade( $container->get('settings')['auth'] );
+
+
 /* == Set up Globals == */
 
 use App\Globals\GlobalsFacade;
@@ -266,6 +274,7 @@ GlobalsFacade::setHashingUtilities($container->get('HashingUtilities'));
 		GlobalsFacade::setUserData($maybeUser);
 }
 GlobalsFacade::setBaseUrl($container->get('settings')['app']['url']);
+
 
 /* == Miscellaneous == */
 

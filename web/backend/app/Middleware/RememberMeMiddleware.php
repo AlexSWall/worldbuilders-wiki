@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Globals\GlobalsFacade;
+use App\Globals\SessionFacade;
 use App\Helpers\ResponseUtilities;
 use App\Models\User;
 
@@ -104,7 +105,8 @@ class RememberMeMiddleware extends Middleware
 
 		$logger->info( 'Not authenticated but successfully authentication from the user\'s \'remember me\' token.' );
 
-		$_SESSION[$this->container->get( 'settings' )['auth']['session']] = $user->getUserId();
+		SessionFacade::setUserId( $user->getUserId() );
+
 		return true;
 	}
 }

@@ -7,6 +7,7 @@ namespace App\Auth;
 use App\Models\User;
 use App\Models\Character;
 use App\Globals\GlobalsFacade;
+use App\Globals\SessionFacade;
 
 use Slim\Http\Response;
 
@@ -54,12 +55,12 @@ class Auth
 			return false;
 		}
 
-		$_SESSION[ $this->authConfig[ 'session' ] ] = $user->getUserId();
+		SessionFacade::setUserId( $user->getUserId() );
 
 		$characters = Character::retrieveCharactersByUserId( $user->getUserId() );
 		if ( $characters )
 		{
-			$_SESSION[ $this->authConfig[ 'characterId' ] ] = $characters[0]->getCharacterId();
+			SessionFacade::setCharacterId( $characters[0]->getCharacterId() );
 		}
 
 		return true;
@@ -95,12 +96,12 @@ class Auth
 
 	public function isAuthenticated(): bool
 	{
-		return isset( $_SESSION[ $this->authConfig[ 'session' ] ] );
+		return SessionFacade::getUserId() !== null;
 	}
 
 	public function getUser(): User
 	{
-		return User::retrieveUserByUserId( $_SESSION[ $this->authConfig[ 'session' ] ] );
+		return User::retrieveUserByUserId( SessionFacade::getUserId() );
 	}
 
 	public function getCharacter(): ?Character
@@ -117,22 +118,16 @@ class Auth
 		$character = null;
 
 		// Find character if possible.
-		$characterIdKey = $this->authConfig[ 'characterId' ];
-		if ( array_key_exists( $characterIdKey, $_SESSION ) && $characterId = $_SESSION[ $characterIdKey ] )
+		if ( $characterId = SessionFacade::getCharacterId() )
 		{
-			self::$logger->info('Found character, returning it');
+			self::$logger->info('Found character ID');
 
 			$character = Character::retrieveCharacterByCharacterId( $characterId );
-		}
-		else
-		{
-			self::$logger->info('Character ID key not present in $_SESSION');
-			self::$logger->dump($_SESSION);
 		}
 
 		if ( $user && $character && $user->getUserId() === $character->getUserId() )
 		{
-			self::$logger->info('Found character, returning it');
+			self::$logger->info('Found character (with correct user ID), returning it');
 
 			return $character;
 		}
@@ -148,7 +143,7 @@ class Auth
 	{
 		if ( $this->isAuthenticated() )
 		{
-			return User::retrieveUserByUserId( $_SESSION[ $this->authConfig[ 'session' ] ] );
+			return User::retrieveUserByUserId( SessionFacade::getUserId() );
 		}
 
 		return null;
@@ -167,7 +162,7 @@ class Auth
 			$response = FigResponseCookies::set( $response, $this->createRememberMeCookie( '', '-1 week' ) );
 		}
 
-		unset( $_SESSION[ $this->authConfig[ 'session' ] ] );
+		SessionFacade::setUserId( null );
 
 		return $response;
 	}
