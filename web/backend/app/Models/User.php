@@ -60,11 +60,16 @@ class User extends DatabaseEncapsulator
 
 	public static function retrieveUserByIdentity( string $identity ): ?User
 	{
-		$user = self::retrieveUserByUsername( $identity );
-		if ( !$user )
+		if ( str_contains( $identity, '@' ) )
 		{
 			$user = self::retrieveUserByEmail( $identity );
 		}
+
+		if ( !$user )
+		{
+			$user = self::retrieveUserByUsername( $identity );
+		}
+
 		return $user;
 	}
 
