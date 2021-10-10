@@ -35,16 +35,13 @@ class Auth
 	{
 		if ( !$this->hashUtilities->checkPassword( $password, $user->getPasswordHash() ) )
 		{
+			self::$logger->info( 'Failed to authenticate: password does not match the password hash stored' );
 			return false;
 		}
 
-		SessionFacade::setUserId( $user->getUserId() );
+		self::$logger->info( 'Authenticated; password correct' );
 
-		$characters = Character::retrieveCharactersByUserId( $user->getUserId() );
-		if ( $characters )
-		{
-			SessionFacade::setCharacterId( $characters[0]->getCharacterId() );
-		}
+		$this->postAuthenticationLogin( $user );
 
 		return true;
 	}
@@ -98,11 +95,27 @@ class Auth
 			return false;
 		}
 
-		self::$logger->info( 'Successfully authenticated from \'remember me\' token.' );
+		self::$logger->info( 'Authenticated: Valid \'remember me\' token.' );
+
+		$this->postAuthenticationLogin( $user );
+
+		return true;
+	}
+
+	private function postAuthenticationLogin( User $user ): void
+	{
+		self::$logger->info( 'Running post-authentication' );
 
 		SessionFacade::setUserId( $user->getUserId() );
 
-		return true;
+		$characters = Character::retrieveCharactersByUserId( $user->getUserId() );
+		if ( $characters )
+		{
+			// Set session to be first character initially.
+			SessionFacade::setCharacterId( $characters[0]->getCharacterId() );
+		}
+
+		self::$logger->info( 'Finished running post-authentication' );
 	}
 
 	public function logout( Response $response ): Response
