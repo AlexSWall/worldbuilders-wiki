@@ -67,7 +67,18 @@ abstract class DatabaseEncapsulator
 			. ' table with args ' . json_encode( $args )
 		);
 
-		return self::createIfNotNull( self::getTable()->where( $args )->first() );
+		$model = self::createIfNotNull( self::getTable()->where( $args )->first() );
+
+		if ( $model !== null )
+		{
+			self::$db_logger->info('Retrieved a model from the query');
+		}
+		else
+		{
+			self::$db_logger->info('Failed to retrieve a model from the query');
+		}
+
+		return $model;
 	}
 
 	protected static function retrieveModelsWithEntries( array $args ): array
@@ -77,6 +88,9 @@ abstract class DatabaseEncapsulator
 		{
 			$models[] = self::createIfNotNull( $bareModel );
 		}
+
+		self::$db_logger->info('Retrieved ' . count($models) . ' model(s) from the query');
+
 		return $models;
 	}
 

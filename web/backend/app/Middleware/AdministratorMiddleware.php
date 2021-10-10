@@ -14,6 +14,8 @@ use Slim\Http\ServerRequest as Request;
 
 class AdministratorMiddleware extends Middleware
 {
+	static $logger;
+
 	private bool $isApiRoute;
 
 	public function __construct( ContainerInterface $container, bool $isApiRoute )
@@ -25,15 +27,13 @@ class AdministratorMiddleware extends Middleware
 
 	public function route( Request $request, RequestHandlerInterface $handler ): ResponseInterface
 	{
-		$logger = $this->loggers['logger'];
-
 		$auth = $this->container->get( 'auth' );
 
 		$user = $auth->getUser();
 
 		if ( $user || ! $user->isAdmin() )
 		{
-			$logger->info( 'Failed to authenticate as an admin' );
+			self::$logger->info( 'Failed to authenticate as an admin' );
 
 			if ( $this->isApiRoute )
 			{
@@ -47,7 +47,7 @@ class AdministratorMiddleware extends Middleware
 			}
 		}
 
-		$logger->info( 'Authenticated as an admin' );
+		self::$logger->info( 'Authenticated as an admin' );
 
 		$response = $handler->handle( $request );
 		return $response;
