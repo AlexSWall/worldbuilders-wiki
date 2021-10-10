@@ -31,7 +31,7 @@ class AdministratorMiddleware extends Middleware
 
 		$user = $auth->getUser();
 
-		if ( $user || ! $user->isAdmin() )
+		if ( ! $user || ! $user->isAdmin() )
 		{
 			self::$logger->info( 'Failed to authenticate as an admin' );
 
