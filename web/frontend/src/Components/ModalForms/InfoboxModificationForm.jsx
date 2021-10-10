@@ -105,7 +105,7 @@ export default function InfoboxModificationForm({ closeModal })
 				});
 			} }
 		>
-			{ ({ touched, setFieldTouched, setFieldValue, handleChange, handleBlur, initialValues, values, errors }) => {
+			{ ({ touched, setFieldTouched, setFieldValue, handleChange, initialValues, values, errors }) => {
 				return <div className='card'>
 					<div className='card-header'>
 						Edit Infobox Structure

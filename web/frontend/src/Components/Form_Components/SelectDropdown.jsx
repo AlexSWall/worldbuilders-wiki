@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-import { Field, ErrorMessage } from 'formik';
-
-export default function SelectDropdown({ formId, labelText, width, hasError, setFieldTouched, setValue, options, defaultText = '' })
+export default function SelectDropdown({ formId, labelText, width, hasError, setValue, options })
 {
 	// Contains the ephemeral contents of the input; cleared on blur.
 	const [ inputContents, setInputContents ] = useState( '' );
