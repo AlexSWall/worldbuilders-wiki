@@ -12,7 +12,7 @@ import ErrorLabel from '../Form_Components/ErrorLabel';
 const schema = Yup.object().shape({
 	infobox_name: Yup.string()
 		.required('Required')
-		.matches(/^([a-z][a-z-]*)?[a-z]$/, 'Lowercase characters and interior hyphens only'),
+		.matches(/^([A-Za-z][A-Za-z -]*)?[A-Za-z]$/, 'Alphabetic characters and interior hyphens and spaces only'),
 });
 
 export default function InfoboxCreationForm({ closeModal })

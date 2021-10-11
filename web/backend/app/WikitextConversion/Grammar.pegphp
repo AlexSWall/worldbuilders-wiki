@@ -188,8 +188,8 @@ infobox =
 	}
 
 infoboxStart =
-	'{{' anySpacing 'Infobox' someSpacing infoboxType:word anySpacing newLine {
-		return $infoboxType;
+	'{{' anySpacing 'Infobox' someSpacing infoboxType:remainderOfLine newLine {
+		return trim($infoboxType);
 	}
 
 infoboxEntries =
