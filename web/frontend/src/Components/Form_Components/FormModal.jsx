@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Formik, Form } from 'formik';
+import { Form } from 'formik';
 
+import Card         from './Card';
 import SubmitButton from './SubmitButton';
 import ErrorLabel   from './ErrorLabel';
 
@@ -11,23 +12,18 @@ export default function FormModal({ title, submitButtonText, requiredFields, val
 		|| requiredFields.some( field => values[field].length == 0 );
 
 	return (
-		<div className='card'>
-			<div className='card-header'>
-				{ title }
-			</div>
-			<div className='card-body'>
-				<Form className='form' autoComplete={ autoComplete }>
-					{ children }
+		<Card title={ title }>
+			<Form className='form' autoComplete={ autoComplete }>
+				{ children }
 
-					<SubmitButton disabled={ submitButtonDisabled }>
-						{ submitButtonText }
-					</SubmitButton>
+				<SubmitButton disabled={ submitButtonDisabled }>
+					{ submitButtonText }
+				</SubmitButton>
 
-					{ submissionError && (
-						<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>
-					) }
-				</Form>
-			</div>
-		</div>
+				{ submissionError && (
+					<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>
+				) }
+			</Form>
+		</Card>
 	);
 }
