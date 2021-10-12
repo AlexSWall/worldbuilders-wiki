@@ -10,7 +10,7 @@ import SubmitButton from '../Form_Components/SubmitButton';
 import ErrorLabel from '../Form_Components/ErrorLabel';
 import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
 
-import { computePasswordHash } from 'utils/crypto'
+import { computePasswordHash } from 'utils/crypto';
 
 const schema = Yup.object().shape({
 	password_new: Yup.string()

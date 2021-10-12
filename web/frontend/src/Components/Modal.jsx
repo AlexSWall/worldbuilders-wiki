@@ -17,12 +17,10 @@ export default function Modal({ isOpen, setOpen, children })
 		{
 			if (isOpen)
 			{
-				console.log('Rendering Modal open');
 				window.addEventListener('click', handleOutsideClick);
 			}
 			else
 			{
-				console.log('Rendering Modal closed');
 				window.removeEventListener('click', handleOutsideClick);
 			}
 

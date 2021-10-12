@@ -5,9 +5,10 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
+import FormModal from '../Form_Components/FormModal';
 import TextInput from '../Form_Components/TextInput';
-import SubmitButton from '../Form_Components/SubmitButton';
-import ErrorLabel from '../Form_Components/ErrorLabel';
+
+import { makeApiPostRequest } from 'utils/api';
 
 const schema = Yup.object().shape({
 	page_path: Yup.string()
@@ -29,88 +30,56 @@ export default function WikiPageCreationForm({ closeModal })
 		<Formik
 			initialValues={ { page_path: pagePath, title: '' } }
 			validationSchema={ schema }
-			onSubmit={ (values, { setSubmitting }) => {
-				fetch('/a/wiki', {
-					method: 'post',
-					headers: {
-						'Accept': 'application/json, text/plain, */*',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(Object.assign({}, {
-						action: 'create',
-						data: {
-							page_path: values.page_path,
-							title: values.title
-						},
-					}, globals.csrfTokens))
-				}).then(async res => {
-					if (res.ok)
+			onSubmit={ (values, { setSubmitting, setErrors }) => {
+				makeApiPostRequest(
+					'/a/wiki',
+					'create',
 					{
-						setSubmitting(false);
+						page_path: values.page_path,
+						title: values.title
+					},
+					globals.csrfTokens,
+					() => {
 						closeModal();
 
 						window.location.hash = '#' + values.page_path;
-					}
-					else
-					{
-						console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-						const contentType = res.headers.get("content-type");
-
-						if (contentType && contentType.indexOf("application/json") !== -1) {
-							res.json().then(data => {
-								setSubmissionError(data.error);
-								console.log('Error: ' + data.error);
-							});
-						} else {
-							res.text().then(text => {
-								setSubmissionError(text);
-								console.log('Error (text): ' + text);
-							});
-						}
-					}
-				}).catch( error => {
-					console.log('Failed to make POST request...')
-					console.log(error);
-				});
+					},
+					setErrors,
+					setSubmissionError,
+					setSubmitting
+				);
 			} }
 		>
-			{ ({ touched, setFieldTouched, handleChange, errors }) => (
-				<div className='card'>
-					<div className='card-header'>
-						Create Wiki Page
-					</div>
-					<div className='card-body'>
-						<Form className='form'>
-							<TextInput
-								formId='page_path'
-								labelText='WikiPage Path/ID'
-								width={ 250 }
-								autoComplete='off'
-								hasError={ touched.page_path && errors.page_path }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-								initialValue={ pagePath }
-							/>
+			{ ({ values, touched, errors, setFieldTouched, handleChange }) => (
+				<FormModal
+					title='Create Wiki Page'
+					submitButtonText='Submit'
+					requiredFields={ [ 'page_path', 'title' ] }
+					values={ values }
+					errors={ errors }
+					submissionError={ submissionError }
+				>
+					<TextInput
+						formId='page_path'
+						labelText='WikiPage Path/ID'
+						width={ 250 }
+						autoComplete='off'
+						hasError={ touched.page_path && errors.page_path }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+						initialValue={ pagePath }
+					/>
 
-							<TextInput
-								formId='title'
-								labelText='WikiPage Title'
-								width={ 250 }
-								autoComplete='off'
-								hasError={ touched.title && errors.title }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<SubmitButton disabled={ Object.keys(errors).length != Object.keys(touched).length - 2 } />
-
-							{ submissionError
-								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
-								: null }
-						</Form>
-					</div>
-				</div>
+					<TextInput
+						formId='title'
+						labelText='WikiPage Title'
+						width={ 250 }
+						autoComplete='off'
+						hasError={ touched.title && errors.title }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
+				</FormModal>
 			) }
 		</Formik>
 	);

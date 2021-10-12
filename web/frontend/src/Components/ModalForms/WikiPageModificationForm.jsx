@@ -5,10 +5,11 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../Form_Components/TextInput';
+import FormModal    from '../Form_Components/FormModal';
+import TextInput    from '../Form_Components/TextInput';
 import WikiTextArea from '../Form_Components/WikiTextArea';
-import SubmitButton from '../Form_Components/SubmitButton';
-import ErrorLabel from '../Form_Components/ErrorLabel';
+
+import { makeApiPostRequest } from 'utils/api';
 
 const schema = Yup.object().shape({
 	title: Yup.string()
@@ -40,90 +41,57 @@ export default function WikiPageModificationForm({ closeModal })
 		: ( <Formik
 			initialValues={ { title: title, wikitext: wikitext } }
 			validationSchema={ schema }
-			onSubmit={ (values, { setSubmitting }) => {
-				console.log('Submitting...')
-				fetch('/a/wiki', {
-					method: 'post',
-					headers: {
-						'Accept': 'application/json, text/plain, */*',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(Object.assign({}, {
-						action: 'modify',
-						data: {
-							page_path: wikiPagePath,
-							title: values.title,
-							content: values.wikitext
-						},
-					}, globals.csrfTokens))
-				}).then(async res => {
-					if (res.ok)
+			onSubmit={ (values, { setSubmitting, setErrors }) => {
+				makeApiPostRequest(
+					'/a/wiki',
+					'modify',
 					{
-						setSubmitting(false);
+						page_path: wikiPagePath,
+						title: values.title,
+						content: values.wikitext
+					},
+					globals.csrfTokens,
+					() => {
 						closeModal();
 
 						window.dispatchEvent(new HashChangeEvent("hashchange"));
-					}
-					else
-					{
-						console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-						const contentType = res.headers.get("content-type");
-
-						if (contentType && contentType.indexOf("application/json") !== -1) {
-							res.json().then(data => {
-								setSubmissionError(data.error);
-								console.log('Error: ' + data.error);
-							});
-						} else {
-							res.text().then(text => {
-								setSubmissionError(text);
-								console.log('Error (text): ' + text);
-							});
-						}
-					}
-				}).catch( error => {
-					console.log('Failed to make POST request...')
-					console.log(error);
-				});
+					},
+					setErrors,
+					setSubmissionError,
+					setSubmitting
+				);
 			} }
 		>
-			{ ({ touched, setFieldTouched, handleChange, initialValues, errors }) => (
-				<div className='card'>
-					<div className='card-header'>
-						Edit Wiki Page
-					</div>
-					<div className='card-body'>
-						<Form className='form'>
-							<TextInput
-								formId='title'
-								labelText='WikiPage Title'
-								width={ 250 }
-								autoComplete='off'
-								hasError={ touched.title && errors.title }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-								initialValue={ initialValues.title }
-							/>
+			{ ({ values, touched, errors, setFieldTouched, handleChange, initialValues }) => (
+				<FormModal
+					title='Edit Wiki Page'
+					submitButtonText='Submit'
+					requiredFields={ [ 'title' ] }
+					values={ values }
+					errors={ errors }
+					submissionError={ submissionError }
+				>
+					<TextInput
+						formId='title'
+						labelText='WikiPage Title'
+						width={ 250 }
+						autoComplete='off'
+						hasError={ touched.title && errors.title }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+						initialValue={ initialValues.title }
+					/>
 
-							<WikiTextArea
-								formId='wikitext'
-								labelText='Wikitext'
-								size={ { width: 250, height: 150 } }
-								hasError={ touched.wikitext && errors.wikitext }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-								initialValue={ initialValues.wikitext }
-							/>
-
-							<SubmitButton disabled={ Object.keys(errors).length > 0 } />
-
-							{ submissionError
-								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
-								: null }
-						</Form>
-					</div>
-				</div>
+					<WikiTextArea
+						formId='wikitext'
+						labelText='Wikitext'
+						size={ { width: 250, height: 150 } }
+						hasError={ touched.wikitext && errors.wikitext }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+						initialValue={ initialValues.wikitext }
+					/>
+				</FormModal>
 			) }
 		</Formik>
 	);

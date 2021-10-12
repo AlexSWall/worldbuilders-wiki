@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getWeakPasswordString } from 'utils/crypto'
+import { getWeakPasswordString } from 'utils/crypto';
 
 export default function WeakPasswordWarning({ password, width })
 {

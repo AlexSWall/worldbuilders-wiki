@@ -5,14 +5,14 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
+import FormModal from '../Form_Components/FormModal';
 import TextInput from '../Form_Components/TextInput';
-import SubmitButton from '../Form_Components/SubmitButton';
-import ErrorLabel from '../Form_Components/ErrorLabel';
-import CheckBox from '../Form_Components/CheckBox';
+import CheckBox  from '../Form_Components/CheckBox';
 
 import AccountRecoveryForm from './AccountRecoveryForm';
 
-import { computePasswordHash } from 'utils/crypto'
+import { makeApiPostRequest }  from 'utils/api';
+import { computePasswordHash } from 'utils/crypto';
 
 const schema = Yup.object().shape({
 	identity: Yup.string()
@@ -37,73 +37,32 @@ export default function SignInForm({ closeModal, setModalComponent })
 				rememberMe: false
 			} }
 			validationSchema={ schema }
-			onSubmit={ async (values, { setSubmitting, setErrors }) => {
-
-				setSubmissionError(null);
-
-				const passwordFrontendHash = await computePasswordHash(values.password);
-
-				console.log('Posting...');
-
-				try
+			onSubmit={ async (values, { setSubmitting, setErrors }) =>
 				{
-					const res = await fetch('/auth/', {
-						method: 'post',
-						headers: {
-							'Accept': 'application/json, text/plain, */*',
-							'Content-Type': 'application/json'
+					const passwordFrontendHash = await computePasswordHash(values.password);
+
+					await makeApiPostRequest(
+						'/auth/',
+						'sign in',
+						{
+							identity: values.identity,
+							password: passwordFrontendHash,
+							remember_me: values.rememberMe
 						},
-						body: JSON.stringify(Object.assign({}, {
-							action: 'sign in',
-							data: {
-								identity: values.identity,
-								password: passwordFrontendHash,
-								remember_me: values.rememberMe
-							},
-						}, globals.csrfTokens))
-					});
+						globals.csrfTokens,
+						() => {
+							closeModal();
 
-					if (res.ok)
-					{
-						setSubmitting(false);
-						closeModal();
-
-						location.reload();
-					}
-					else
-					{
-						console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-						const contentType = res.headers.get("content-type");
-
-						if (contentType && contentType.indexOf("application/json") !== -1) {
-							res.json().then(data => {
-								if (data.error === 'Validation failure')
-								{
-									setErrors(data.validation_errors);
-								}
-								else
-								{
-									setSubmissionError(data.error);
-									console.log('Error: ' + data.error);
-								}
-							});
-						} else {
-							res.text().then(text => {
-								setSubmissionError(text);
-								console.log('Error (text): ' + text);
-							});
-						}
-					}
+							location.reload();
+						},
+						setErrors,
+						setSubmissionError,
+						setSubmitting
+					);
 				}
-				catch( error )
-				{
-					console.log('Failed to make POST request...');
-					console.log(error);
-				}
-			} }
+			}
 		>
-			{ ({ values, touched, setFieldTouched, handleChange, errors }) => {
+			{ ({ values, touched, errors, setFieldTouched, handleChange }) => {
 				// Required by Firefox auto-fill; if 'password' is given a value
 				// by auto-fill, the 'Required' error still exists in errors.
 				// Hence, we need to delete it manually.
@@ -111,59 +70,57 @@ export default function SignInForm({ closeModal, setModalComponent })
 					delete errors.password;
 
 				return (
-					<div className='card'>
-						<div className='card-header'>
-							Sign In
+					<FormModal
+						title='Sign In'
+						submitButtonText='Sign In'
+						requiredFields={ [ 'identity', 'password' ] }
+						values={ values }
+						errors={ errors }
+						submissionError={ submissionError }
+					>
+						<TextInput
+							formId='identity'
+							labelText='Username or Email'
+							width={ 250 }
+							hasError={ touched.identity && errors.identity }
+							setFieldTouched={ setFieldTouched }
+							handleChange={ handleChange }
+						/>
+
+						<TextInput
+							formId='password'
+							labelText='Password'
+							type='password'
+							width={ 250 }
+							hasError={ touched.password && errors.password }
+							setFieldTouched={ setFieldTouched }
+							handleChange={ handleChange }
+						/>
+
+						<div className='form-group'>
+							<label className='form-label' style={ { width: 250 } } >
+								<a href='#' onClick={ () => {
+									setModalComponent( () => AccountRecoveryForm );
+								} }>
+									Forgotten your password?
+								</a>
+							</label>
 						</div>
-						<div className='card-body'>
-							<Form className='form'>
-								<TextInput
-									formId='identity'
-									labelText='Username or Email'
-									width={ 250 }
-									hasError={ touched.identity && errors.identity }
-									setFieldTouched={ setFieldTouched }
-									handleChange={ handleChange }
-								/>
 
-								<TextInput
-									formId='password'
-									labelText='Password'
-									type='password'
-									width={ 250 }
-									hasError={ touched.password && errors.password }
-									setFieldTouched={ setFieldTouched }
-									handleChange={ handleChange }
-								/>
-
-								<div className='form-group'>
-									<label className='form-label' style={ { width: 250 } } >
-										<a href='#' onClick={ () => {
-											setModalComponent(() => AccountRecoveryForm);
-										} }>Forgotten your password?</a>
-									</label>
-								</div>
-
-								<div className='form-group'>
-									<label className='form-label' style={ { width: 250 } } >
-										{ 'Don\'t have an account? ' }
-										<a href='#'>Sign up.</a>
-									</label>
-								</div>
-
-								<CheckBox
-									formId='rememberMe'
-									labelText='Keep me signed in'
-								/>
-
-								<SubmitButton disabled={ !(Object.keys(errors).length == 0 && 'identity' in touched && 'password' in touched) }> Sign In </SubmitButton>
-
-								{ submissionError
-									? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
-									: null }
-							</Form>
+						<div className='form-group'>
+							<label className='form-label' style={ { width: 250 } } >
+								{ 'Don\'t have an account? ' }
+								<a href='#'>
+									Sign up.
+								</a>
+							</label>
 						</div>
-					</div>
+
+						<CheckBox
+							formId='rememberMe'
+							labelText='Keep me signed in'
+						/>
+					</FormModal>
 				)
 			} }
 		</Formik>

@@ -1,16 +1,16 @@
 import React, { useContext, useState } from 'react';
 
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../Form_Components/TextInput';
-import SubmitButton from '../Form_Components/SubmitButton';
-import ErrorLabel from '../Form_Components/ErrorLabel';
+import FormModal           from '../Form_Components/FormModal';
+import TextInput           from '../Form_Components/TextInput';
 import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
 
-import { computePasswordHash } from 'utils/crypto'
+import { makeApiPostRequest }  from 'utils/api';
+import { computePasswordHash } from 'utils/crypto';
 
 const schema = Yup.object().shape({
 	preferred_name: Yup.string()
@@ -48,143 +48,99 @@ export default function SignUpForm({ closeModal })
 				password_confirm: ''
 			} }
 			validationSchema={ schema }
-			onSubmit={ async (values, { setSubmitting, setErrors }) => {
-
-				setSubmissionError(null);
-
-				const passwordFrontendHash = await computePasswordHash(values.password);
-
-				console.log('Posting...')
-
-				try
+			onSubmit={ async (values, { setSubmitting, setErrors }) =>
 				{
-					const res = await fetch('/auth/', {
-						method: 'post',
-						headers: {
-							'Accept': 'application/json, text/plain, */*',
-							'Content-Type': 'application/json'
+					const passwordFrontendHash = await computePasswordHash(values.password);
+
+					await makeApiPostRequest(
+						'/auth/',
+						'sign up',
+						{
+							username: values.username,
+							email: values.email,
+							password: passwordFrontendHash,
+							preferred_name: values.preferred_name
 						},
-						body: JSON.stringify(Object.assign({}, {
-							action: 'sign up',
-							data: {
-								username: values.username,
-								email: values.email,
-								password: passwordFrontendHash,
-								preferred_name: values.preferred_name
-							},
-						}, globals.csrfTokens))
-					});
+						globals.csrfTokens,
+						() => {
+							closeModal();
 
-					if (res.ok)
-					{
-						setSubmitting(false);
-						closeModal();
-					}
-					else
-					{
-						console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-						const contentType = res.headers.get("content-type");
-
-						if (contentType && contentType.indexOf("application/json") !== -1) {
-							res.json().then(data => {
-								if (data.error === 'Validation failure')
-								{
-									setErrors(data.validation_errors);
-								}
-								else
-								{
-									setSubmissionError(data.error);
-									console.log('Error: ' + data.error);
-								}
-							});
-						} else {
-							res.text().then(text => {
-								setSubmissionError(text);
-								console.log('Error (text): ' + text);
-							});
-						}
-					}
+							window.location.hash = '#' + values.page_path;
+						},
+						setErrors,
+						setSubmissionError,
+						setSubmitting
+					);
 				}
-				catch( error )
-				{
-					console.log('Failed to make POST request...')
-					console.log(error);
-				};
-			} }
+			}
 		>
 			{ ({ values, touched, setFieldTouched, handleChange, errors }) => (
-				<div className='card'>
-					<div className='card-header'>
-						Sign Up
-					</div>
-					<div className='card-body'>
-						<Form className='form' autoComplete='off'>
-							<TextInput
-								formId='preferred_name'
-								labelText='Preferred Name'
-								type='search'
-								autoComplete='off'
-								width={ 250 }
-								hasError={ touched.preferred_name && errors.preferred_name }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
+				<FormModal
+					title='Sign Up'
+					submitButtonText='Sign Up'
+					requiredFields={ [ 'username', 'email', 'password', 'password_confirm' ] }
+					values={ values }
+					errors={ errors }
+					submissionError={ submissionError }
+					autoComplete='off'
+				>
+					<TextInput
+						formId='preferred_name'
+						labelText='Preferred Name'
+						type='search'
+						autoComplete='off'
+						width={ 250 }
+						hasError={ touched.preferred_name && errors.preferred_name }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
 
-							<TextInput
-								formId='username'
-								labelText='Username'
-								type='search'
-								autoComplete='off'
-								width={ 250 }
-								hasError={ touched.username && errors.username }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
+					<TextInput
+						formId='username'
+						labelText='Username'
+						type='search'
+						autoComplete='off'
+						width={ 250 }
+						hasError={ touched.username && errors.username }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
 
-							<TextInput
-								formId='email'
-								labelText='Email'
-								type='search'
-								autoComplete='off'
-								width={ 250 }
-								hasError={ touched.email && errors.email }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
+					<TextInput
+						formId='email'
+						labelText='Email'
+						type='search'
+						autoComplete='off'
+						width={ 250 }
+						hasError={ touched.email && errors.email }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
 
-							<TextInput
-								formId='password'
-								labelText='Password'
-								type='password'
-								autoComplete='new-password'
-								width={ 250 }
-								hasError={ touched.password && errors.password }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							>
-								<WeakPasswordWarning password={ values.password } width={ 250 }/>
-							</TextInput>
+					<TextInput
+						formId='password'
+						labelText='Password'
+						type='password'
+						autoComplete='new-password'
+						width={ 250 }
+						hasError={ touched.password && errors.password }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					>
+						<WeakPasswordWarning password={ values.password } width={ 250 }/>
+					</TextInput>
 
-							<TextInput
-								formId='password_confirm'
-								labelText='Confirm Password'
-								type='password'
-								autoComplete='new-password'
-								width={ 250 }
-								hasError={ touched.password_confirm && errors.password_confirm }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 5) }> Sign Up </SubmitButton>
-
-							{ submissionError
-								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
-								: null }
-						</Form>
-					</div>
-				</div>
+					<TextInput
+						formId='password_confirm'
+						labelText='Confirm Password'
+						type='password'
+						autoComplete='new-password'
+						width={ 250 }
+						hasError={ touched.password_confirm && errors.password_confirm }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
+				</FormModal>
 			) }
 		</Formik>
 	);

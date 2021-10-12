@@ -5,12 +5,12 @@ import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
 
-import TextInput from '../Form_Components/TextInput';
-import SubmitButton from '../Form_Components/SubmitButton';
-import ErrorLabel from '../Form_Components/ErrorLabel';
+import FormModal           from '../Form_Components/FormModal';
+import TextInput           from '../Form_Components/TextInput';
 import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
 
-import { computePasswordHash } from 'utils/crypto'
+import { makeApiPostRequest }  from 'utils/api';
+import { computePasswordHash } from 'utils/crypto';
 
 const schema = Yup.object().shape({
 	password_old: Yup.string()
@@ -38,119 +38,72 @@ export default function ChangePasswordForm({ closeModal })
 				password_new_confirm: ''
 			} }
 			validationSchema={ schema }
-			onSubmit={ async (values, { setSubmitting, setErrors }) => {
-
-				setSubmissionError(null);
-
-				const oldPasswordFrontendHash = await computePasswordHash(values.password_old);
-				const newPasswordFrontendHash = await computePasswordHash(values.password_new);
-
-				console.log('Posting...')
-
-				try
+			onSubmit={ async (values, { setSubmitting, setErrors }) =>
 				{
-					const res = await fetch('/auth/', {
-						method: 'post',
-						headers: {
-							'Accept': 'application/json, text/plain, */*',
-							'Content-Type': 'application/json'
+					const oldPasswordFrontendHash = await computePasswordHash(values.password_old);
+					const newPasswordFrontendHash = await computePasswordHash(values.password_new);
+
+					await makeApiPostRequest(
+						'/auth/',
+						'change password',
+						{
+							password_old: oldPasswordFrontendHash,
+							password_new: newPasswordFrontendHash
 						},
-						body: JSON.stringify(Object.assign({}, {
-							action: 'change password',
-							data: {
-								password_old: oldPasswordFrontendHash,
-								password_new: newPasswordFrontendHash
-							},
-						}, globals.csrfTokens))
-					});
-
-					if (res.ok)
-					{
-						setSubmitting(false);
-						closeModal();
-					}
-					else
-					{
-						console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-						const contentType = res.headers.get("content-type");
-
-						if (contentType && contentType.indexOf("application/json") !== -1) {
-							res.json().then(data => {
-								if (data.error === 'Validation failure')
-								{
-									setErrors(data.validation_errors);
-								}
-								else
-								{
-									setSubmissionError(data.error);
-									console.log('Error: ' + data.error);
-								}
-							});
-						} else {
-							res.text().then(text => {
-								setSubmissionError(text);
-								console.log('Error (text): ' + text);
-							});
-						}
-					}
+						globals.csrfTokens,
+						() => {
+							closeModal();
+						},
+						setErrors,
+						setSubmissionError,
+						setSubmitting
+					);
 				}
-				catch( error )
-				{
-					console.log('Failed to make POST request...')
-					console.log(error);
-				};
-			} }
+			}
 		>
-			{ ({ values, touched, setFieldTouched, handleChange, errors }) => (
-				<div className='card'>
-					<div className='card-header'>
-						Change Password
-					</div>
-					<div className='card-body'>
-						<Form className='form'>
-							<TextInput
-								formId='password_old'
-								labelText='Old Password'
-								type='password'
-								width={ 250 }
-								hasError={ touched.password_old && errors.password_old }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
+			{ ({ values, touched, errors, setFieldTouched, handleChange }) => (
+				<FormModal
+					title='Change Password'
+					submitButtonText='Change Password'
+					requiredFields={ [ 'password_old', 'password_new', 'password_new_confirm' ] }
+					values={ values }
+					errors={ errors }
+					submissionError={ submissionError }
+				>
+					<TextInput
+						formId='password_old'
+						labelText='Old Password'
+						type='password'
+						width={ 250 }
+						hasError={ touched.password_old && errors.password_old }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
 
-							<TextInput
-								formId='password_new'
-								labelText='New Password'
-								type='password'
-								autoComplete='new-password'
-								width={ 250 }
-								hasError={ touched.password_new && errors.password_new }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							>
-								<WeakPasswordWarning password={ values.password_new } width={ 250 }/>
-							</TextInput>
+					<TextInput
+						formId='password_new'
+						labelText='New Password'
+						type='password'
+						autoComplete='new-password'
+						width={ 250 }
+						hasError={ touched.password_new && errors.password_new }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					>
+						<WeakPasswordWarning password={ values.password_new } width={ 250 }/>
+					</TextInput>
 
-							<TextInput
-								formId='password_new_confirm'
-								labelText='Confirm New Password'
-								type='password'
-								autoComplete='new-password'
-								width={ 250 }
-								hasError={ touched.password_new_confirm && errors.password_new_confirm }
-								setFieldTouched={ setFieldTouched }
-								handleChange={ handleChange }
-							/>
-
-							<SubmitButton disabled={ !(Object.keys(errors).length == 0 && Object.keys(touched).length == 3) }> Change Password </SubmitButton>
-
-							{ submissionError
-								? (<ErrorLabel width={ 250 }> { submissionError } </ErrorLabel>)
-								: null }
-						</Form>
-					</div>
-				</div>
+					<TextInput
+						formId='password_new_confirm'
+						labelText='Confirm New Password'
+						type='password'
+						autoComplete='new-password'
+						width={ 250 }
+						hasError={ touched.password_new_confirm && errors.password_new_confirm }
+						setFieldTouched={ setFieldTouched }
+						handleChange={ handleChange }
+					/>
+				</FormModal>
 			) }
 		</Formik>
 	);
