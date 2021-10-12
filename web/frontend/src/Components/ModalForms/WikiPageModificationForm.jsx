@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import GlobalsContext from 'GlobalsContext';
 
 import FormModal    from '../Form_Components/FormModal';
+import Card         from '../Form_Components/Card';
 import TextInput    from '../Form_Components/TextInput';
 import WikiTextArea from '../Form_Components/WikiTextArea';
 
@@ -36,8 +37,8 @@ export default function WikiPageModificationForm({ closeModal })
 	}) .then(res => res.json())
 		.then(res => setWikitext(res.wikitext));
 
-	return (wikitext === null)
-		? ( <i> Fetching and loading content...  </i> )
+	return ( wikitext === null )
+		? ( <Card title='Fetching and loading content...'/> )
 		: ( <Formik
 			initialValues={ { title: title, wikitext: wikitext } }
 			validationSchema={ schema }
