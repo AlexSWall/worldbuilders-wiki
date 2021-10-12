@@ -2,6 +2,7 @@
 @import '../core/footer.scss';
 @import '../fonts/adamina.scss';
 @import '../fonts/roboto.scss';
+@import '../fonts/montserrat.scss';
 @import '../wiki/table-of-contents.scss';
 
 #pageWrapper {
@@ -276,10 +277,11 @@
 		margin: 0;
 		padding: 0.9rem;
 		text-align: center;
+		font-family: 'Montserrat';
 		font-size: 1.7rem;
-		font-weight: 700;
+		font-weight: normal;
 		line-height: 1;
-		background-color: rgba(188, 210, 227, 0.8);
+		background-color: rgba(196, 151, 132, 0.5);
 		color: #000;
 		overflow-wrap: break-word;
 		border: none;
@@ -300,13 +302,11 @@
 		margin: 0.5rem 0 0 0;
 		padding: 0.9rem;
 		text-align: center;
+		font-family: 'Montserrat';
 		font-size: 1.45rem;
-		font-weight: 700;
+		font-weight: normal;
 		line-height: 1;
-		// background: #3a5472;
-		// color: #fff;
-		// background: #e3c19f;
-		background-color: rgba(188, 210, 227, 0.8);
+		background-color: rgba(196, 151, 132, 0.3);
 		color: #000;
 		overflow-wrap: break-word;
 		border-style: solid;
@@ -320,9 +320,6 @@
 		box-sizing: border-box;
 		grid-column-gap: 0.9rem;
 		overflow: hidden;
-		// border-top-style: solid;
-		// border-color: #3a5472;
-		// border-top-width: .1rem;
 		padding: .3rem .7rem .3rem .7rem;
 		font-size: 1.4rem;
 	}
