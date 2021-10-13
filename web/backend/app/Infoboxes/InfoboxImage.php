@@ -35,7 +35,7 @@ class InfoboxImage extends AbstractInfoboxItem
 
 		// Create HTML
 		$html = '';
-		$html .= '<figure>';
+		$html .= '<figure class="infobox-figure">';
 		$html .=     "<img src=\"/images/wiki-images/{$filename}\" class=\"infobox-image\" width=\"{$width}\">";
 		$html .= '</figure>';
 
