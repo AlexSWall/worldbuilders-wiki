@@ -315,6 +315,11 @@
 		border-color: #282828;
 	}
 
+	.infobox-title + section > .infobox-subheading {
+		margin-top: 0;
+		border-top-width: 0;
+	}
+
 	.infobox-entry {
 		display: flex;
 		flex-direction: row;
