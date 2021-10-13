@@ -188,21 +188,20 @@ infobox =
 	}
 
 infoboxStart =
-	'{{' anySpacing 'Infobox' someSpacing infoboxType:remainderOfLine newLine {
+	'{{' someSpacing infoboxType:remainderOfLine newLine {
 		return trim($infoboxType);
 	}
 
 infoboxEntries =
-	entries:( infoboxEntry / ( ! infoboxEnd remainderOfLine newLine { return null; } ) )+
+	entries:( infoboxEntry / ( ! infoboxEnd remainderOfLine newLine { return null; } ) )*
 	{
 		// Ignore non-entry non-end lines
 		return $this->array_flatten_top(array_filter($entries, fn ($e) => $e != null ));
 	}
 
 infoboxEntry =
-	anySpacing '|'
 	anySpacing key:infoboxKey
-	anySpacing '='
+	anySpacing '|'
 	anySpacing value:infoboxValue
 	anySpacing newLine {
 		return [ $key => $value ];
@@ -214,7 +213,7 @@ infoboxKey =
 // Returns an array of token arrays; each entry is a line of tokens.
 infoboxValue =
 	initialValue:inlineLine
-	additionalValues:( newLine anySpacing '=' v:inlineLine { return $v; } )*
+	additionalValues:( newLine anySpacing '|' v:inlineLine { return $v; } )*
 	{
 		if (empty($additionalValues))
 			return $initialValue;
@@ -512,7 +511,7 @@ string =
 
 stringBreak =
 	& newLine
-	/ & <infoboxKey> & ( "=" )
+	/ & <infoboxKey> & ( "|" )
 
 remainderOfLine =
 	$ (!endOfLine .)*
