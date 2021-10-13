@@ -45,15 +45,11 @@ class InfoboxToken extends BaseToken
 
 		// Set the title
 		{
-			$titleEntryValue = $this->values['title'];
+			$infoboxTitle = $this->values['--infobox-title'];
 
-			if ( $titleEntryValue !== null
-				&& count( $titleEntryValue ) === 1
-				&& is_a( $titleEntryValue[0], TextToken::class ) )
+			if ( is_string( $infoboxTitle ) && $infoboxTitle !== '' )
 			{
-				// The value for the title key is a single text token; extract the text
-				// and set it as the title.
-				$title = $titleEntryValue[0]->toHtml();
+				$title = htmlspecialchars( $infoboxTitle );
 			}
 			else
 			{

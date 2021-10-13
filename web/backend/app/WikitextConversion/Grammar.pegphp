@@ -181,15 +181,22 @@ block =
 /* == Infobox == */
 
 infobox =
-	type:infoboxStart
+	typeAndTitle:infoboxStart
 	entries:infoboxEntries
 	infoboxEnd {
-		return new InfoboxToken($type, $entries);
+		[ $type, $infoboxTitle ] = $typeAndTitle;
+		return new InfoboxToken(
+			$type,
+			array_merge(
+				[ '--infobox-title' => $infoboxTitle ],
+				$entries
+			)
+		);
 	}
 
 infoboxStart =
-	'{{' someSpacing infoboxType:remainderOfLine newLine {
-		return trim($infoboxType);
+	'{{' someSpacing infoboxType:word someSpacing infoboxTitle:remainderOfLine newLine {
+		return [ trim($infoboxType), trim($infoboxTitle) ];
 	}
 
 infoboxEntries =
