@@ -71,9 +71,8 @@ return [
 		'prefix' => ''
 	],
 	'auth' => [
-		'session' => 'user_id',
-		'remember' => 'user_r',
-		'characterId' => 'char_id'
+		'userId' => 'user_id',
+		'remember' => 'user_r'
 	],
 	'mail' => [
 		'host' => 'smtp.gmail.com',
