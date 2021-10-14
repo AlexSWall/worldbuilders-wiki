@@ -6,10 +6,12 @@ namespace App\Models\SpecialisedQueries;
 
 use Illuminate\Database\Capsule\Manager as DB;
 
+use App\Exceptions\ServerException;
 use App\Infoboxes\InfoboxCaption;
 use App\Infoboxes\InfoboxEntry;
 use App\Infoboxes\InfoboxHorizontalRule;
 use App\Infoboxes\InfoboxImage;
+use App\Infoboxes\InfoboxPosition;
 use App\Infoboxes\InfoboxSubheading;
 
 class InfoboxQueries
@@ -32,71 +34,140 @@ class InfoboxQueries
 
 		$infoboxItemsArray = array();
 
+		self::$logger->json_dump($result);
+
 		// We ordered and then grouped by position, so loop over these.
 		// TODO: Ensure assumption holds; create exception if false
 		foreach ( $result as $position => $groupedRows )
 		{
-			// Each query result row here has the same position, item key, and type
-			// string, but different data names and values. We can therefore pick
-			// the first result row arbitrarily to extract the former list of data.
+			self::$logger->json_dump($groupedRows);
 
-			$firstRow = $groupedRows[0];
+			// Each query result row here has the same position and type string,
+			// but different item keys, data names, and data values.
+			// We can therefore pick the first result row arbitrarily to extract
+			// the type string.
+			$itemTypeString = $groupedRows[0]->TypeString;
 
-			$itemKey = $firstRow->ItemKey;
-			$itemTypeString = $firstRow->TypeString;
+			// Set the default item key to be the item key of the first row, in
+			// case the item has no data keys to over-write it.
+			$firstItemKey = $groupedRows[0]->ItemKey;
 
 			$args = [];
-
+			// Constructs args data of the form
+			// $args = [ itemKey => [ dataName => dataValue ] ]
 			foreach ( $groupedRows as $row )
 			{
-				$name = $row->DataName;
-				if ( $name === null )
+				// itemKey may be null; this is fine.
+				$itemKey = $row->ItemKey;
+				$dataName = $row->DataName;
+				$dataValue = $row->DataValue;
+
+				if ( $dataName !== null )
 				{
-					continue;
+					if ( ! in_array( $itemKey, $args, true ) )
+					{
+						$args[$itemKey] = [ $dataName => $dataValue ];
+					}
+					else
+					{
+						$args[$itemKey][$dataName] = $dataValue;
+					}
 				}
-				$value = $row->DataValue;
-				$args[$name] = $value;
 			}
 
+			$assertNumKeys = function( $minNum = null, $maxNum = null ) use ( $itemTypeString, $args )
+			{
+				$numKeys = count( $args );
+
+				$msg = null;
+				if ( $minNum && $numKeys < $minNum )
+				{
+					$msg = "Infobox item of type {$itemTypeString} should have"
+						. " at least {$minNum} entry keys, but found {$numKeys}";
+				}
+				elseif ( $maxNum && $numKeys > $maxNum )
+				{
+					$msg = "Infobox item of type {$itemTypeString} should have"
+						. " at least {$minNum} entry keys, but found {$numKeys}";
+				}
+
+				if ( $msg !== null )
+				{
+					self::$logger->warning( $msg );
+					throw	new ServerException( $msg );
+				}
+				else
+				{
+					self::$logger->info( 'Correct number of infobox item keys' );
+				}
+			};
+
+			$assertDataKeyExists = function( $infoboxKeyArgs, $dataKey ) use ( $itemTypeString )
+			{
+				if ( !array_key_exists( $dataKey, $infoboxKeyArgs ) )
+				{
+					$msg = "Infobox item of type {$itemTypeString} should have a"
+						. " data key of {$dataKey} but {$dataKey} not found in args.";
+					self::$logger->warning( $msg );
+					throw	new ServerException( $msg );
+				}
+			};
+
 			// Switch statement to set infoboxItem.
-			$infoboxItem = null;
 			switch ( $itemTypeString )
 			{
 				case 'Caption':
-					$infoboxItem = new InfoboxCaption( $itemKey );
+					$assertNumKeys(0, 0);
+
+					// Add to infobox items array
+					$infoboxItemsArray[$position] = new InfoboxCaption( $firstItemKey );
 					break;
 
 				case 'Entry':
-					if ( !array_key_exists( 'key-text', $args ) )
-					{
-						// TODO
-						return null;
-					}
-					$keyText = $args['key-text'];
+					$assertNumKeys(1, null);
 
-					$infoboxItem = new InfoboxEntry( $itemKey, $keyText );
+					$infoboxEntries = [];
+					foreach ( $args as $itemKey => $dataArray )
+					{
+						$assertDataKeyExists( $dataArray, 'key-text' );
+
+						$keyText = $dataArray['key-text'];
+
+						$infoboxEntries[] = new InfoboxEntry( $itemKey, $keyText );
+					}
+
+					// Add to infobox items array
+					$infoboxItemsArray[$position] = $infoboxEntries;
 					break;
 
 				case 'HorizontalRule':
-					$infoboxItem = new InfoboxHorizontalRule();
+					$assertNumKeys(0, 0);
+
+					// Add to infobox items array
+					$infoboxItemsArray[$position] = new InfoboxHorizontalRule();
 					break;
 
 				case 'Image':
-					$infoboxItem = new InfoboxImage( $itemKey );
+					$assertNumKeys(0, 0);
+
+					// Add to infobox items array
+					$infoboxItemsArray[$position] = new InfoboxImage( $firstItemKey );
 					break;
 
 				case 'Subheading':
-					if ( !array_key_exists( 'subheading-text', $args ) )
-					{
-						// TODO
-						return null;
-					}
-					$subheadingText = $args['subheading-text'];
+					$assertNumKeys(1, 1);
 
-					$infoboxItem = new InfoboxSubheading( $subheadingText );
+					// Subheading has no item key
+					$dataArray = $args[null];
+
+					$assertDataKeyExists( $dataArray, 'subheading-text' );
+
+					$subheadingText = $dataArray['subheading-text'];
+
+					// Add to infobox items array
+					$infoboxItemsArray[$position] = new InfoboxSubheading( $subheadingText );
 					break;
 			}
-			$infoboxItemsArray[$position] = $infoboxItem;
 		}
 
 		return $infoboxItemsArray;

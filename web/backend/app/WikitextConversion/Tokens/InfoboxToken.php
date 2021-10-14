@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\WikitextConversion\Tokens;
 
 use App\Models\Infobox;
+use App\Infoboxes\InfoboxPosition;
 
 class InfoboxToken extends BaseToken
 {
@@ -36,8 +37,9 @@ class InfoboxToken extends BaseToken
 			return '';
 		}
 
-		/** [ AbstractInfoboxItem ] */
+		/** [ AbstractInfoboxItem | [ AbstractInfoboxItem ] ] */
 		$infoboxStructureItems = $infoboxStructure->getInfoboxItems();
+		$infoboxPositions = InfoboxPosition::constructPositionsArray( $infoboxStructureItems );
 
 		$html = '';
 
@@ -77,14 +79,23 @@ class InfoboxToken extends BaseToken
 			$priorHorizontalRule = null;
 			$sectionHasContent = false;
 
-			foreach ( $infoboxStructureItems as /** AbstractInfoboxItem */ $infoboxStructureItem )
+			foreach ( $infoboxPositions as /** AbstractInfoboxItem */ $infoboxPosition )
 			{
+				$infoboxStructureItem = $infoboxPosition->getItemForPosition( $this->values );
+
+				if ( $infoboxStructureItem === null )
+				{
+					continue;
+				}
+
 				if ( $infoboxStructureItem->isContent() )
 				{
 					$itemHtml = $infoboxStructureItem->getHtml( $this->values );
 
 					if ( $itemHtml === null )
 					{
+						// This shouldn't happen due to check above, but check just
+						// in case.
 						continue;
 					}
 
