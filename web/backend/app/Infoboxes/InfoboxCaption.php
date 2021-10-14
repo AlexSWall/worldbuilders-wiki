@@ -27,7 +27,7 @@ class InfoboxCaption extends AbstractInfoboxItem
 
 		// Create HTML
 		$html = '';
-		$html .= '<div class="infobox-capion">';
+		$html .= '<div class="infobox-caption">';
 		$html .=     $captionHtml;
 		$html .= '</div>';
 
