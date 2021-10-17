@@ -15,7 +15,7 @@ export default function AdministrationApp()
 				<div id="contentWrapper">
 					<div id="content">
 						<div id="mainPanelWrapper">
-							<div id="mainPanel">
+							<div className="mainPanel">
 								<div className="card">
 									<div className="card-header">
 										<h1>Administration Panel — Home</h1>

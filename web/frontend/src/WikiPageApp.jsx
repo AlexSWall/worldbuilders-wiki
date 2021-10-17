@@ -14,7 +14,7 @@ export default function WikiPageApp()
 				<div id="contentWrapper">
 					<div id="content">
 						<div id="mainPanelWrapper">
-							<div id="mainPanel">
+							<div className="mainPanel">
 								<WikiPageLoader urlBase='/w/' />
 							</div>
 						</div>
