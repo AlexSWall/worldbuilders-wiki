@@ -38,11 +38,11 @@ class InfoboxEntry extends AbstractInfoboxItem
 		else if ( count( $entryValueTokens ) >= 2 )
 		{
 			// More than one value; we need to create a list.
-			$entryValueHtml = '<ul>';
+			$entryValueHtml = '<ul class="infobox-entry-value-list">';
 
 			foreach ( $entryValueTokens as $entryValueListItemTokens )
 			{
-				$entryValueHtml .= '<li>'
+				$entryValueHtml .= '<li class="infobox-entry-value-list-item">'
 					. (new TokenProcessor())->process( $entryValueListItemTokens, 'inline' )
 					. '</li>';
 			}

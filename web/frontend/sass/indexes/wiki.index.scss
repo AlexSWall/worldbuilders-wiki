@@ -293,7 +293,7 @@
 
 	.infobox-caption {
 		display: inline-block;
-		font-size: 1.3rem;
+		font-size: 1.15rem;
 		margin: 0 1.5rem 0.5rem 1.5rem;
 	}
 
@@ -338,24 +338,46 @@
 		grid-column-gap: 0.9rem;
 		overflow: hidden;
 		padding: .3rem .7rem .3rem .7rem;
-		font-size: 1.4rem;
+		font-size: 1.2rem;
+
+		@at-root .infobox-entry-key {
+			flex-basis: 8rem;
+			font-family: 'Montserrat';
+			font-weight: 700;
+		}
+
+		@at-root .infobox-entry-value {
+			flex-basis: 1.6rem;
+			flex-grow: 1;
+			hyphens: auto;
+
+			> .infobox-entry-value-list {
+				margin: 0;
+
+				> .infobox-entry-value-list-item
+				{
+					padding-left: 0.6rem;
+
+					&::before
+					{
+						content: '\2013'; // Bulletpoint unicode
+						font-size: 1.2rem; // Increase size by 25%
+
+						margin-top: 0;
+						padding-right: .0rem;
+
+						position: absolute; // Position absolutely relative to li
+						left: -.4rem; // Move to the left
+					}
+				}
+			}
+		}
 	}
 
 	.infobox-subheading+.infobox-entry
 	/* , figure+.infobox-entry */ {
 		border-top-width: 0;
 		margin-top: .3rem;
-	}
-
-	.infobox-entry-key {
-		flex-basis: 7rem;
-		font-weight: 700;
-	}
-
-	.infobox-entry-value {
-		hyphens: auto;
-		flex-basis: 1.6rem;
-		flex-grow: 1;
 	}
 
 	hr {
