@@ -81,7 +81,7 @@ class SessionFacade
 
 		$newKey = self::$authConfig[ $key ];
 
-		self::$logger->info("Converting auth variable {$key} to {$newKey} before storing in SESSION.");
+		self::$logger->info("Converting auth variable {$key} to {$newKey} before indexing into SESSION.");
 
 		return $newKey;
 	}
