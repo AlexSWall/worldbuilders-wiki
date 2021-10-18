@@ -2,86 +2,46 @@ import React, { useState, useEffect } from 'react';
 
 import WikiPanel from './WikiPanel';
 
-export default function WikiPageLoader({ urlBase }) 
+import { makeApiGetRequest }  from 'utils/api';
+
+export default function WikiPageLoader({ urlBase })
 {
 	const [wikiPageData, setWikiPageData] = useState({});
+	const [pagePositions, setPagePosition] = useState({});
 
-	// -- Start of 'member' functions --
-
-	const fetchAndUpdatePageContents = (wikiPagePath, heading) =>
+	const fetchAndUpdatePageContents = ( wikiPagePath, heading ) =>
 	{
-		fetch(urlBase + wikiPagePath)
-			.then(async response => {
+		makeApiGetRequest(
+			'/w/' + wikiPagePath,
+			( res, data ) => data.wikiPage !== null,
+			( res, data ) => {
+				// -- Success callback --
 
-				if (!response.ok)
-					console.log('Error: Received status code ' + response.status + ' in response to POST request');
-
-				// Ensure data is JSON
-				const contentType = response.headers.get("content-type");
-				if (!contentType || contentType.indexOf("application/json") === -1)
-				{
-					try
-					{
-						data = await response.text();
-						console.log('Error (text): ' + text);
-					}
-					catch(e)
-					{
-						console.log('Error, and then error on handling: ' + e);
-					}
-					return
-				}
-
-				// Ensure JSON data parses
-				let data;
-				try {
-					data = await response.json();
-				} catch(e) {
-					console.log('Error response, and then JSON in body failed to parse: ' + e);
-					return;
-				}
-
+				// We know this is non-null by passing success predicate
 				const wikiPageData = data.wikiPage;
 
-				// Ensure JSON has wikiPageData key
-				if (wikiPageData === null)
-				{
-					if (data.error)
-						console.log('Error response: ' + data.error);
-					else
-						console.log('Error response and JSON has no error key: ' + e);
-					return;
-				}
-
-				// -- Successfully got data --
-
-				// Set title.
+				// Set tab title to the title of the wikipage.
 				document.title = wikiPageData.title;
 
-				// Set inner React component and its data.
-				setWikiPageData(wikiPageData);
+				// Set wikipage data state.
+				setWikiPageData( wikiPageData );
 
 				// Move to heading, if there was one.
-				moveToHeading(heading);
+				if ( heading && heading !== '' )
+				{
+					const headingElement = document.getElementById(heading);
 
-			}).catch( error => {
-				console.log('Failed to make POST request...')
-				console.log(error);
-			});
+					// If we've found the heading element, scroll it into view
+					if ( headingElement !== null )
+					{
+						headingElement.scrollIntoView();
+					}
+				}
+			},
+			null,  // No error callback
+			true  // Allow 404
+		);
 	};
-
-	const moveToHeading = (heading) =>
-	{
-		if ( !heading || heading === '' )
-			return;
-
-		const headingElement = document.getElementById(heading);
-
-		if ( headingElement !== null )
-			headingElement.scrollIntoView();
-	}
-
-	// -- End of 'member' functions --
 
 	// Run after initial mounting of the component...
 	useEffect(() =>

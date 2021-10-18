@@ -1,4 +1,4 @@
-export async function makeApiPostRequest(path, action, data, csrfTokens, successCallback, validationFailureCallback, setGenericError, setSubmitting,  )
+export async function makeApiPostRequest(path, action, data, csrfTokens, successCallback, validationFailureCallback, setGenericError, setSubmitting )
 {
 	console.log('Making POST Request to API...')
 
@@ -67,5 +67,78 @@ export async function makeApiPostRequest(path, action, data, csrfTokens, success
 		console.log('Finished submission')
 
 		setSubmitting(false);
+	}
+}
+
+export async function makeApiGetRequest(path, successPredicate, successCallback, failureCallback, allow404 = false )
+{
+	console.log(`Making GET Request to '${path}'`)
+
+	try
+	{
+		const res = await fetch( path, {
+			method: 'get',
+			headers: {
+				'Accept': 'application/json, text/plain, */*',
+			}
+		} );
+
+		const contentType = res.headers.get( 'content-type' );
+		const isJson = contentType && contentType.indexOf( 'application/json' ) !== -1
+
+		const data = isJson ? await res.json() : await res.text();
+
+		if ( ! ( allow404 || res.ok ) || ! isJson || ( successPredicate !== null && ! successPredicate( res, data ) ) )
+		{
+			if ( ! res.ok )
+			{
+				console.log('Error: Received status code ' + res.status + ' in response to GET request');
+			}
+			else if ( ! isJson )
+			{
+				console.log('Error: Did not receive JSON in response to GET request');
+			}
+			else
+			{
+				// Here due to failing success predicate
+				console.log('Error: Failed success predicate in response to GET request');
+			}
+
+			if ( isJson )
+			{
+				// Check for an 'error' key, and use it if it exists.
+				if ( data.error )
+				{
+					console.log( 'Error: ' + data.error );
+				}
+				else
+				{
+					console.log( 'Error: ' + data );
+				}
+			}
+			else
+			{
+				console.log( 'Error (text): ' + data );
+			}
+
+			if ( failureCallback !== null )
+			{
+				failureCallback( res, data );
+			}
+
+			return;
+		}
+
+		// We have a successful JSON return; call success callback (if any)...
+
+		if ( successCallback !== null )
+		{
+			successCallback( res, data );
+		}
+	}
+	catch( error )
+	{
+		console.log( 'Exception thrown on making GET request...' )
+		console.log( error );
 	}
 }
