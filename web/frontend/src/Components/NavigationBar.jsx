@@ -3,9 +3,12 @@ import React, { useContext } from 'react';
 import GlobalsContext from 'GlobalsContext';
 
 import DropdownList from './NavigationBar/DropdownList';
-import DropdownItem from './NavigationBar/DropdownItem';
-import Item         from './NavigationBar/Item';
+import HrefItem     from './NavigationBar/Items/HrefItem';
+import ModalItem    from './NavigationBar/Items/ModalItem';
+import NullItem     from './NavigationBar/Items/NullItem';
+import OnClickItem  from './NavigationBar/Items/OnClickItem';
 import SearchBar    from './NavigationBar/SearchBar';
+
 
 import ChangePasswordForm       from './ModalForms/ChangePasswordForm';
 import InfoboxCreationForm      from './ModalForms/InfoboxCreationForm';
@@ -31,50 +34,50 @@ export default function NavigationBar()
 				</div>
 				<div id="navbar-content">
 					<ul className="navbar-list">
-						<Item text='Wiki Navigation' href={ false }>
+						<NullItem text='Wiki Navigation'>
 							<DropdownList>
-								<DropdownItem text='Cosmology'>
+								<HrefItem type='dropdown' text='Cosmology'>
 									<DropdownList>
-										<DropdownItem text='Grand History' />
-										<DropdownItem text='Deities and Religion' />
-										<DropdownItem text='The Planes' />
-										<DropdownItem text='Magic and Natural Sciences' />
+										<HrefItem type='dropdown' text='Grand History' />
+										<HrefItem type='dropdown' text='Deities and Religion' />
+										<HrefItem type='dropdown' text='The Planes' />
+										<HrefItem type='dropdown' text='Magic and Natural Sciences' />
 									</DropdownList>
-								</DropdownItem>
-								<DropdownItem text='Locations'>
+								</HrefItem>
+								<HrefItem type='dropdown' text='Locations'>
 									<DropdownList>
-										<DropdownItem text="Tal'Dorei" />
-										<DropdownItem text='Wildemount' />
-										<DropdownItem text='Outer Planes' />
+										<HrefItem type='dropdown' text="Tal'Dorei" />
+										<HrefItem type='dropdown' text='Wildemount' />
+										<HrefItem type='dropdown' text='Outer Planes' />
 									</DropdownList>
-								</DropdownItem>
-								<DropdownItem text='Miscellaneous'>
+								</HrefItem>
+								<NullItem type='dropdown' text='Miscellaneous'>
 									<DropdownList>
-										<DropdownItem text='Misconceptions' />
+										<HrefItem type='dropdown' text='Misconceptions' />
 									</DropdownList>
-								</DropdownItem>
-								<DropdownItem text='Random Page' onClick={ () => {
+								</NullItem>
+								<OnClickItem type='dropdown' text='Random Page' onClick={ () => {
 									return false;
 								} }/>
 							</DropdownList>
-						</Item>
+						</NullItem>
 						{
 							globals.isAuthenticated ? (
 								<>
-									<Item text='Modify Wiki' href={ false }>
+									<NullItem text='Modify Wiki'>
 										<DropdownList>
-											<DropdownItem text='Add Page' ModalComponent={ WikiPageCreationForm } />
-											<DropdownItem text='Edit Page' ModalComponent={ WikiPageModificationForm } />
-											<DropdownItem text='Delete Page' ModalComponent={ WikiPageDeletionForm } />
-											<DropdownItem text='Infobox' href={ false }>
+											<ModalItem type='dropdown' text='Add Page' ModalComponent={ WikiPageCreationForm } />
+											<ModalItem type='dropdown' text='Edit Page' ModalComponent={ WikiPageModificationForm } />
+											<ModalItem type='dropdown' text='Delete Page' ModalComponent={ WikiPageDeletionForm } />
+											<NullItem type='dropdown' text='Infobox'>
 												<DropdownList>
-													<DropdownItem text='Add Infobox' ModalComponent={ InfoboxCreationForm } />
-													<DropdownItem text='Edit Infobox' ModalComponent={ InfoboxModificationForm } />
-													<DropdownItem text='Delete Infobox' ModalComponent={ InfoboxDeletionForm } />
+													<ModalItem type='dropdown' text='Add Infobox' ModalComponent={ InfoboxCreationForm } />
+													<ModalItem type='dropdown' text='Edit Infobox' ModalComponent={ InfoboxModificationForm } />
+													<ModalItem type='dropdown' text='Delete Infobox' ModalComponent={ InfoboxDeletionForm } />
 												</DropdownList>
-											</DropdownItem>
+											</NullItem>
 										</DropdownList>
-									</Item>
+									</NullItem>
 								</>
 							) : (<React.Fragment />)
 						}
@@ -84,16 +87,16 @@ export default function NavigationBar()
 						{
 							globals.isAuthenticated
 							? (
-								<Item text={ globals.preferredName || 'Account' } href={ false }>
+								<NullItem text={ globals.preferredName || 'Account' }>
 									<DropdownList>
-										<DropdownItem text='Change Password' ModalComponent={ ChangePasswordForm } />
-										<DropdownItem text='Sign Out' onClick={ () => signOut(globals.csrfTokens) } />
+										<ModalItem type='dropdown' text='Change Password' ModalComponent={ ChangePasswordForm } />
+										<OnClickItem type='dropdown' text='Sign Out' onClick={ () => signOut(globals.csrfTokens) } />
 									</DropdownList>
-								</Item>
+								</NullItem>
 							) : (
 								<>
-									<Item text='Sign up' ModalComponent={ SignUpForm } />
-									<Item text='Sign in' ModalComponent={ SignInForm } />
+									<ModalItem text='Sign up' ModalComponent={ SignUpForm } />
+									<ModalItem text='Sign in' ModalComponent={ SignInForm } />
 								</>
 							)
 						}
