@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 
 import Item from './Item';
-import Modal from '../../Modal';
+import ModalWrapper from '../../ModalWrapper';
 
 export default function ModalItem({ text, ModalComponent, type='navbar', children })
 {
+	// We need to own the 'modal open' state and pass it to the ModalWrapper as
+	// we neet to have access to setModalOpen to be able to initially open it.
 	const [isModalOpen, setModalOpen] = useState(false);
-	const [CurrentModalComponent, setModalComponent] = useState(() => ModalComponent);
 
 	const modalComponent = (
-		<Modal
-			isOpen={ isModalOpen }
-			setOpen = { setModalOpen }
-		>
-			<CurrentModalComponent
-				closeModal={ () => setModalOpen(false) }
-				setModalComponent={ setModalComponent }
-			/>
-		</Modal>
+		<ModalWrapper
+			ModalComponent={ ModalComponent }
+			modalOpenState={ [isModalOpen, setModalOpen] }
+		/>
 	);
 
 	return (

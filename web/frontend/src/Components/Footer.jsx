@@ -2,7 +2,7 @@ import React from 'react';
 
 import FooterLink from './Footer/FooterLink';
 
-export default function Footer() 
+export default function Footer()
 {
 	return (
 		<footer>
