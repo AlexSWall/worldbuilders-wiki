@@ -15,11 +15,11 @@ use Slim\Http\Response;
 assert( isset( $container ) );
 
 /* Note:
- * 	$app->get('/', 'Foo:bar');
+ *    $app->get('/', 'Foo:bar');
  * gives
- * 	$app->get('/', function ($request, $response, $args) {
- * 		return $this->Foo->bar($request, $response, $args);
- * 	});
+ *    $app->get('/', function ($request, $response, $args) {
+ *       return $this->Foo->bar($request, $response, $args);
+ *    });
  */
 
 

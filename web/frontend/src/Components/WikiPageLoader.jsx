@@ -41,7 +41,7 @@ import { makeApiGetRequest }  from 'utils/api';
  * Finally, the initial loading of the page does not come with an unload, so we
  * need to set the wikipage hash at the beginning of an onMount useEffect.
  */
-export default function WikiPageLoader({ urlBase })
+export default function WikiPageLoader()
 {
 	// == State ==
 
