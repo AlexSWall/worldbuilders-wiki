@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import WikiPanel from './WikiPanel';
 
-import useStateWithGetter  from 'utils/useStateWithGetter';
-import useReducerWithGetter  from 'utils/useReducerWithGetter';
+import useStateWithGetter  from 'utils/hooks/useStateWithGetter';
+import useReducerWithGetter  from 'utils/hooks/useReducerWithGetter';
 
 import { makeApiGetRequest }  from 'utils/api';
 
