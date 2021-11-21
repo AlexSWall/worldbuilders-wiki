@@ -17,7 +17,7 @@ const schema = Yup.object().shape({
 	infobox_structure: Yup.string()
 });
 
-export default function InfoboxModificationForm({ closeModal })
+export default function InfoboxModificationForm({ closeModal, setHasUnsavedState })
 {
 	const globals = useContext(GlobalsContext);
 
@@ -146,6 +146,7 @@ export default function InfoboxModificationForm({ closeModal })
 									setInitialInfoboxStructure( structureText );
 									setFieldValue( 'infobox_structure', structureText );
 									setFieldTouched( 'infobox_structure' );
+									setHasUnsavedState(false);
 								}
 							);
 						} }
@@ -159,7 +160,12 @@ export default function InfoboxModificationForm({ closeModal })
 						size={ { width: 250, height: 150 } }
 						hasError={ touched.infobox_structure && errors.infobox_structure }
 						setFieldTouched={ setFieldTouched }
-						handleChange={ handleChange }
+						handleChange={ e => {
+							// We've changed the infobox structure, so set that we have
+							// unsaved state before passing on to default handleChange.
+							setHasUnsavedState(true);
+							return handleChange(e);
+						} }
 						initialValue={ initialValues.infobox_structure }
 						value={ values.infobox_structure }
 					/>

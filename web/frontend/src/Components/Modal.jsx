@@ -1,14 +1,33 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import ReactDom from 'react-dom'
 
-export default function Modal({ isOpen, setOpen, children })
+export default function Modal({ isOpen, setOpen, getHasUnsavedState, children })
 {
 	const modalBackground = useRef(null);
 
 	const handleOutsideClick = useCallback( e =>
 		{
-			if ( modalBackground.current.contains(e.target) )
-				setOpen(false);
+			// Return early if the click we've hooked is inside our modal
+			if ( ! modalBackground.current.contains(e.target) )
+			{
+				return;
+			}
+
+			// We have a click outside of the modal; check whether we have unsaved
+			// changes to get a user confirmation prompt
+			if ( getHasUnsavedState !== null && getHasUnsavedState() )
+			{
+				const msg = 'You may have unsaved changes; are you sure you want to close?';
+				const confirm = window.confirm(msg);
+				if ( ! confirm ) {
+					// The user selected 'Cancel', so return early to avoid closing
+					// the modal.
+					return;
+				}
+			}
+
+			// We've not aborted, so proceed with closing the modal
+			setOpen(false);
 		},
 		[setOpen]
 	);

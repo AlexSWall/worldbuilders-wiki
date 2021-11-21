@@ -18,7 +18,7 @@ const schema = Yup.object().shape({
 	wikitext: Yup.string()
 });
 
-export default function WikiPageModificationForm({ closeModal })
+export default function WikiPageModificationForm({ closeModal, setHasUnsavedState })
 {
 	const globals = useContext(GlobalsContext);
 
@@ -89,7 +89,12 @@ export default function WikiPageModificationForm({ closeModal })
 						size={ { width: 250, height: 150 } }
 						hasError={ touched.wikitext && errors.wikitext }
 						setFieldTouched={ setFieldTouched }
-						handleChange={ handleChange }
+						handleChange={ e => {
+							// We've changed the wikitext entry, so set that we have
+							// unsaved state before passing on to default handleChange.
+							setHasUnsavedState(true);
+							return handleChange(e);
+						} }
 						initialValue={ initialValues.wikitext }
 					/>
 				</FormModal>
