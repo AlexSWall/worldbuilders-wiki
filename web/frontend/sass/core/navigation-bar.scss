@@ -288,3 +288,36 @@
 	}
 }
 
+
+/* == Hamburger Toggle Buttons == */
+
+
+.hamburger-button-item {
+	float: left;
+
+	// Round up the height (the button has dimensions 3.0rem, 2.9rem)
+	width: 3.0rem;
+	height: 3.0rem;
+
+	// Fill up the rest of the space above and below (4.2rem)
+	margin: 0.8rem 0.6rem 0.4rem 0.6rem;
+
+	.hamburger-button {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		fill: #888;
+		padding: .6rem .6rem .6rem .6rem;
+
+		&:hover {
+			// Highlight button on hover
+			fill: #CEE;
+		}
+
+		@include transition(transition, fill 0.3s);
+	}
+
+	.hamburger-button-on {
+		fill: #CEE;
+	}
+}
