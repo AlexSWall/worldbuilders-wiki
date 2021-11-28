@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-export default function SelectDropdown({ formId, labelText, width, hasError, setValue, options, initialValue, defaultText })
+export default function SelectDropdown({ formId, labelText, width, hasError, setValue, options, initialValue })
 {
 	// Contains the ephemeral contents of the input; cleared on blur.
 	const [ inputContents, setInputContents ] = useState( '' );
