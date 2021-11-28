@@ -33,10 +33,6 @@ $app->get( '/', 'WikiController:serveWikiApp' )->setName( 'home' );
 /* 302: /<PageName> -> /#<PageName> */
 $app->get( '/{page}', function ( Request $request, Response $response, array $args ) {
 	$page = $args['page'];
-	if ( $page === 'favicon.ico' )
-	{
-		return $response->withStatus(404);
-	}
 	return ResponseUtilities::respondWithRedirect( $response, '/#' . $page );
 } );
 
