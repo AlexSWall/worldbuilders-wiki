@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
@@ -21,14 +21,15 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 {
 	const globals = useContext(GlobalsContext);
 
+	const [ [ initialInfoboxName, initialInfoboxStructure ], setInitialInfoboxData ] = useState( ['', ''] );
 	const [ infoboxNames, setInfoboxNames ] = useState( null );
 	const [ infoboxValidation, setInfoboxValidation ] = useState( schema );
-	const [ initialInfoboxStructure, setInitialInfoboxStructure ] = useState( '' );
 	const [ submissionError, setSubmissionError ] = useState( null );
 
+	if ( infoboxNames === null )
 	{
-		// Check infobox of page and set currently-selected infobox dropdown to
-		// have the value of that infobox name...
+		// We're on the initial load; let's set the initial infobox name to be the
+		// infobox on the current page if it has one...
 		const hash = window.location.hash.substring(1);
 		const [ wikiPagePath, ] = hash.split('#');
 
@@ -39,13 +40,13 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 		}).then(res => res.json())
 		  .then(res => {
 				const wikitext = res.wikitext;
-				const regex = /^{{ Infobox +([A-Za-z][A-Za-z -]*)?[A-Za-z]$/;
+				const regex = /^{{ +([A-Za-z][A-Za-z-]*)?[A-Za-z]/;
 				const matches = wikitext.match(regex);
 
 				if ( matches != null && matches.length > 0 )
 				{
 					const match = matches[0];
-					const infoboxName = match.substring(8).trim();
+					const infoboxName = match.substring(3).trim();
 
 					fetch('/a/infobox?' + new URLSearchParams({
 							infobox: infoboxName
@@ -58,16 +59,14 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 					)	.then( res => res.json() )
 						.then( res => {
 							const structureText = res.infobox_structure_text;
-							setInitialInfoboxStructure( structureText );
-							setFieldValue( 'infobox_structure', structureText );
-							setFieldTouched( 'infobox_structure' );
+							setInitialInfoboxData([ infoboxName, structureText ]);
 						}
 					);
 				}
 		});
 	}
 
-	if ( infoboxNames == null )
+	if ( infoboxNames === null )
 	{
 		fetch('/a/infobox', {
 			headers: {
@@ -90,7 +89,8 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 
 	return (
 		<Formik
-			initialValues={ { selected_infobox_name: '', infobox_structure: initialInfoboxStructure } }
+			initialValues={ { selected_infobox_name: initialInfoboxName, infobox_structure: initialInfoboxStructure } }
+			enableReinitialize={ true }
 			validationSchema={ infoboxValidation }
 			onSubmit={ async (values, { setSubmitting, setErrors }) =>
 				{
@@ -104,7 +104,6 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 						globals.csrfTokens,
 						() => {
 							closeModal();
-
 							window.dispatchEvent(new HashChangeEvent("hashchange"));
 						},
 						setErrors,
@@ -151,7 +150,7 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 							);
 						} }
 						options={ infoboxNames }
-						defaultText={ 'Choose an infobox...' }
+						initialValue={ initialValues.selected_infobox_name }
 					/>
 
 					<WikiTextArea

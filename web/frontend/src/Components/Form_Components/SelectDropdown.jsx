@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
-export default function SelectDropdown({ formId, labelText, width, hasError, setValue, options })
+export default function SelectDropdown({ formId, labelText, width, hasError, setValue, options, initialValue, defaultText })
 {
 	// Contains the ephemeral contents of the input; cleared on blur.
 	const [ inputContents, setInputContents ] = useState( '' );
@@ -8,6 +8,14 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 	// Contains any valid value selected, obtained from the input on its blur.
 	// This is shown whenever inputContents is empty.
 	const [ selectedOption, setSelectedOption ] = useState( null );
+
+	// Ensure selected option is updated if initialValue is changed
+	useEffect( () => {
+		if ( initialValue !== null )
+		{
+			setSelectedOption( initialValue );
+		}
+	}, [ initialValue ]);
 
 	// Whether to show the dropdown. This is true whenever the input has focus,
 	// and false when the input is subsequently blurred.
