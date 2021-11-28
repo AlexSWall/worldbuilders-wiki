@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -26,7 +26,32 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 	const [ infoboxValidation, setInfoboxValidation ] = useState( schema );
 	const [ submissionError, setSubmissionError ] = useState( null );
 
-	if ( infoboxNames === null )
+	// On the initial load, obtain the infobox names to populate the select
+	// dropdown.
+	useEffect( () =>
+	{
+		fetch('/a/infobox', {
+			headers: {
+				'Accept': 'application/json',
+			}
+		}).then( res => res.json() )
+		  .then( res => {
+				const infoboxNames = res.infobox_names;
+
+				setInfoboxNames( infoboxNames );
+
+				setInfoboxValidation( Yup.object().shape({
+					selected_infobox_name: Yup.string()
+						.required('Required')
+						.oneOf( infoboxNames, 'Must be an existing infobox' ),
+					infobox_structure: Yup.string()
+				}) );
+			});
+	}, []);
+
+	// On the initial load, check whether our current wikipage has an infobox,
+	// and, if it does, use it as the initial infobox structure to edit.
+	useEffect( () =>
 	{
 		// We're on the initial load; let's set the initial infobox name to be the
 		// infobox on the current page if it has one...
@@ -64,28 +89,7 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 					);
 				}
 		});
-	}
-
-	if ( infoboxNames === null )
-	{
-		fetch('/a/infobox', {
-			headers: {
-				'Accept': 'application/json',
-			}
-		}).then( res => res.json() )
-		  .then( res => {
-				const infoboxNames = res.infobox_names;
-
-				setInfoboxNames( infoboxNames );
-
-				setInfoboxValidation( Yup.object().shape({
-					selected_infobox_name: Yup.string()
-						.required('Required')
-						.oneOf( infoboxNames, 'Must be an existing infobox' ),
-					infobox_structure: Yup.string()
-				}) );
-			});
-	}
+	}, []);
 
 	return (
 		<Formik
@@ -142,7 +146,7 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 							)	.then( res => res.json() )
 								.then( res => {
 									const structureText = res.infobox_structure_text;
-									setInitialInfoboxStructure( structureText );
+									setInitialInfoboxData([ selectedInfoboxName, structureText ]);
 									setFieldValue( 'infobox_structure', structureText );
 									setFieldTouched( 'infobox_structure' );
 									setHasUnsavedState(false);
