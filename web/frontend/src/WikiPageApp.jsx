@@ -2,7 +2,6 @@ import React from 'react';
 
 import NavigationBar from './Components/NavigationBar';
 import Footer from './Components/Footer';
-import Sidebar from './Components/Sidebar';
 import WikiPageLoader from './Components/WikiPageLoader';
 
 export default function WikiPageApp()
@@ -22,7 +21,6 @@ export default function WikiPageApp()
 				</div>
 			</main>
 			<Footer />
-			<Sidebar />
 		</div>
 	);
 }

@@ -20,6 +20,7 @@ import WikiPageModificationForm from './ModalForms/WikiPageModificationForm';
 import SignInForm               from './ModalForms/SignInForm';
 import SignUpForm               from './ModalForms/SignUpForm';
 
+
 export default function NavigationBar()
 {
 	const globals = useContext(GlobalsContext);
