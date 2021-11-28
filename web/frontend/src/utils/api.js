@@ -6,6 +6,8 @@ export async function makeApiPostRequest(path, action, data, csrfTokens, success
 	// setSubmissionError.
 	setGenericError( null );
 
+	let boundSuccessCallback = null;
+
 	try
 	{
 		const res = await fetch( path, {
@@ -22,7 +24,10 @@ export async function makeApiPostRequest(path, action, data, csrfTokens, success
 
 		if (res.ok)
 		{
-			successCallback( res );
+			// Bind result to success callback to be called at end
+			boundSuccessCallback = () => {
+				successCallback(res);
+			}
 		}
 		else
 		{
@@ -59,14 +64,21 @@ export async function makeApiPostRequest(path, action, data, csrfTokens, success
 	}
 	catch( error )
 	{
-		console.log('Failed to make POST request...')
+		console.log('Failed to make POST request...');
 		console.log(error);
 	}
 	finally
 	{
-		console.log('Finished submission')
+		console.log('Finished submission');
 
 		setSubmitting(false);
+
+		if ( boundSuccessCallback !== null )
+		{
+			console.log('Calling success callback after submission');
+
+			boundSuccessCallback();
+		}
 	}
 }
 
