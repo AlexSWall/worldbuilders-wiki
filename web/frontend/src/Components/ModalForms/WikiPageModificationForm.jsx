@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
@@ -30,12 +30,14 @@ export default function WikiPageModificationForm({ closeModal, setHasUnsavedStat
 	const hash = window.location.hash.substring(1);
 	const [wikiPagePath,] = hash.split('#');
 
-	fetch('/a/wiki?wikipage=' + wikiPagePath, {
-		headers: {
-			'Accept': 'application/json',
-		}
-	}) .then(res => res.json())
-		.then(res => setWikitext(res.wikitext));
+	useEffect( () => {
+		fetch('/a/wiki?wikipage=' + wikiPagePath, {
+			headers: {
+				'Accept': 'application/json',
+			}
+		}) .then(res => res.json())
+			.then(res => setWikitext(res.wikitext));
+	}, []);
 
 	return ( wikitext === null )
 		? ( <Card title='Fetching and loading content...'/> )
