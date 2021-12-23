@@ -8,6 +8,7 @@ config/etc/ssl
 
 data/db/mysql
 data/db/dumps/db.sql
+data/db/dumps/tests_db.sql
 
 logs/
 
