@@ -41,7 +41,6 @@ class GlobalsFacade
 		self::setter( 'hashingUtilities', $hashingUtilities );
 	}
 
-	private ?HashingUtilities $hashUtilities;
 	public static function setCsrfTokens( array $tokens ): void
 	{
 		self::setter( 'csrfTokens', $tokens );

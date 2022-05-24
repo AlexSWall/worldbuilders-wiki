@@ -92,7 +92,7 @@ export default function WikiPageLoader()
 			// we wait for the fetch to ensure we have the most up to date
 			// version.
 			const newHash = event.target.location.hash.substring(1);
-			const [newWikiPage, newHeading] = newHash.split('#');
+			const [newWikiPage, _newHeading] = newHash.split('#');
 			const pageContentCacheLookup = getPageContent()[newWikiPage];
 			if ( pageContentCacheLookup )
 			{
@@ -111,7 +111,7 @@ export default function WikiPageLoader()
 		}
 
 		// Define hashchange listener function
-		const onHashChange = (event) =>
+		const onHashChange = ( _event ) =>
 		{
 			// We use window.location for the new hash as we're not guaranteed
 			// to have event.newURL set when throwing the event ourselves.
@@ -176,8 +176,8 @@ function fetchAndUpdatePageContents( wikiPagePath, setWikiPageData, savePageCont
 {
 	makeApiGetRequest(
 		'/w/' + wikiPagePath,
-		( res, data ) => data.wikiPage !== null,
-		( res, data ) => {
+		( _res, data ) => data.wikiPage !== null,
+		( _res, data ) => {
 			// -- Success callback --
 
 			// We know this is non-null by passing success predicate

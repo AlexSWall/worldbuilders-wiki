@@ -74,7 +74,7 @@ class WikiController extends Controller
 			'modify' => [
 				[ '\App\Controllers\WikiPageController', 'modifyWikiPage' ],
 				[
-					'page_path' => $nonEmptyStringCheck,
+					'page_path' => $stringCheck,
 					'title' => $stringCheck,
 					'content' => $stringCheck
 				]
