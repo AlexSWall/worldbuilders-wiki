@@ -56,8 +56,8 @@ class RememberMeMiddleware extends Middleware
 	 * To make use of this, the client will need to reload their page via a
 	 * redirect Response/etc.
 	 *
-	 * @return Returns true if the account corresponding to the cookie is
-	 * successfully logged into, otherwise it returns false.
+	 * @return bool Returns true if the account corresponding to the cookie is
+	 *     successfully logged into, otherwise it returns false.
 	 */
 	public function attemptLoginUsingCookie( ?Cookie $rememberMeCookie ): bool
 	{

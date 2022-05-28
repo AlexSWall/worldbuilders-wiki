@@ -350,7 +350,7 @@ class AuthenticationController extends Controller
 		self::$logger->info( 'Attempting to activate account' );
 
 		// Convenience function for creating response
-		$makeResponse = function ( $messageType, $message ) use ( $response )
+		$makeResponse = function ( $_messageType, $_message ) use ( $response )
 		{
 			// TODO
 			//self::$logger->info("Responding with {$messageType} flash message: {$message}");
@@ -398,7 +398,7 @@ class AuthenticationController extends Controller
 		return $makeResponse( 'info', "Your account has been activated and you can sign in." );
 	}
 
-	public function serveResetPasswordGetRequest( Request $request, Response $response ): Response
+	public function serveResetPasswordGetRequest( Request $_request, Response $response ): Response
 	{
 		self::$logger->info( 'Serving reset password page' );
 

@@ -54,7 +54,7 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 						className={ (hasError ? 'form-input-has-error ' : '') + ( inputContents || selectedOption ? 'has-content ' : '' ) + 'form-select-input' }
 						autoComplete='off'
 						value={ inputContents }
-						onFocus={ e => {
+						onFocus={ _e => {
 							setShowDropdown(true);
 						} }
 						onBlur={ e => {

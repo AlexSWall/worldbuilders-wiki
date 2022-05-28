@@ -42,7 +42,7 @@ class InfoboxParser
 			return true;
 		} catch ( \Exception $e )
 		{
-			self::$logger->info( 'Infobox structure text does not parse' );
+			self::$logger->info( 'Infobox structure text does not parse; error message: ' . $e->getMessage());
 			return false;
 		}
 	}

@@ -24,12 +24,7 @@ class Grammar
 
 public static \App\Logging\Logger $logger;
 
-private function startOffset()
-{
-	return $this->savedPos;
-}
-
-private function endOffset()
+private function getCurrPos()
 {
 	return $this->currPos;
 }
@@ -178,12 +173,12 @@ newLine =
 /* == Positional Rules == */
 
 startOfFile =
-	& { return $this->endOffset() === 0; } {
+	& { return $this->getCurrPos() === 0; } {
 		return [];
 	}
 
 endOfFile =
-	& { return $this->endOffset() === $this->inputLength; } {
+	& { return $this->getCurrPos() === $this->inputLength; } {
 		return [];
 	}
 

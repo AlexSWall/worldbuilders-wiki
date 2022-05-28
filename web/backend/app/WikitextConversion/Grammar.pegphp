@@ -13,7 +13,6 @@ use App\WikitextConversion\Tokens\InfoboxToken;
 use App\WikitextConversion\Tokens\MetaToken;
 use App\WikitextConversion\Tokens\NewLineToken;
 use App\WikitextConversion\Tokens\OpeningTagToken;
-use App\WikitextConversion\Tokens\SelfClosingTagToken;
 use App\WikitextConversion\Tokens\TextToken;
 
 class Grammar
@@ -47,7 +46,7 @@ private function array_flatten_top( array $array ): array
 {
 	$result = [];
 
-	foreach ($array as $key => $value)
+	foreach ($array as $_key => $value)
 	{
 		$result = array_merge($result, $value);
 	}
@@ -55,12 +54,7 @@ private function array_flatten_top( array $array ): array
 	return $result;
 }
 
-private function startOffset(): int
-{
-	return $this->savedPos;
-}
-
-private function endOffset(): int
+private function getCurrPos(): int
 {
 	return $this->currPos;
 }
@@ -558,12 +552,12 @@ newLine =
 /* == Positional Rules == */
 
 startOfFile =
-	& { return $this->endOffset() === 0; } {
+	& { return $this->getCurrPos() === 0; } {
 		return [];
 	}
 
 endOfFile =
-	& { return $this->endOffset() === $this->inputLength; } {
+	& { return $this->getCurrPos() === $this->inputLength; } {
 		return [];
 	}
 

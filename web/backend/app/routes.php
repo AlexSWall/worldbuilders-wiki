@@ -7,8 +7,6 @@ declare(strict_types=1);
 use App\Middleware\AdministratorMiddleware;
 use App\Helpers\ResponseUtilities;
 
-use Psr\Container\ContainerInterface;
-
 use Slim\Http\ServerRequest as Request;
 use Slim\Http\Response;
 
@@ -31,7 +29,7 @@ assert( isset( $container ) );
 $app->get( '/', 'WikiController:serveWikiApp' )->setName( 'home' );
 
 /* 302: /<PageName> -> /#<PageName> */
-$app->get( '/{page}', function ( Request $request, Response $response, array $args ) {
+$app->get( '/{page}', function ( Request $_request, Response $response, array $args ) {
 	$page = $args['page'];
 	return ResponseUtilities::respondWithRedirect( $response, '/#' . $page );
 } );

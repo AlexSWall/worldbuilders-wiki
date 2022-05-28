@@ -39,7 +39,7 @@ class TestDatabaseResetter
 			{
 				DB::table($table)->delete();
 			}
-			catch (\Exception $e)
+			catch (\Exception $_e)
 			{
 			}
 	}

@@ -10,7 +10,7 @@ export default function WeakPasswordWarning({ password, width })
 		return null;
 
 	return (
-		<label className='form-warning' style={ { width: 250 } }>
+		<label className='form-warning' style={ { 'width': width } }>
 			{ weakPasswordString }
 		</label>
 	);

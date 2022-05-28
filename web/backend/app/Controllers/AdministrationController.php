@@ -12,7 +12,7 @@ use Slim\Http\ServerRequest as Request;
 
 class AdministrationController extends Controller
 {
-	public function index( Request $request, Response $response )
+	public function index( Request $_request, Response $response )
 	{
 		return FrontEndDataUtilities::getEntryPointResponse( $this->view, $response, 'administration' );
 	}

@@ -36,10 +36,10 @@ class Character extends DatabaseEncapsulator
 
 	/* == Creators & Retrievers == */
 
-	public static function createCharacter( int $UserId, string $fullName ): ?Character
+	public static function createCharacter( int $userId, string $fullName ): ?Character
 	{
 	    return self::createModelWithEntries( [
-			'UserId' => $UserId,
+			'UserId' => $userId,
 			'FullName' => $fullName
 		] );
 	}
@@ -112,7 +112,7 @@ class Character extends DatabaseEncapsulator
 	public function removePermissions( array $permissions ): void
 	{
 		$this->setPermissionsFieldIfNeeded();
-		$this->permissions->removeAll( $permissions );
+		$this->permissions->deleteAll( $permissions );
 		CharacterPermissionsQueries::removeCharacterPermissions( $this->getCharacterId(), $permissions );
 	}
 

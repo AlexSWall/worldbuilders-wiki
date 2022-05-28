@@ -11,7 +11,8 @@ class WikitextParser
 	public static \App\Logging\Logger $logger;
 
 	/**
-	 * @return Returns an iterable of BaseToken instances, representing the wikitext.
+	* @return array Returns an iterable of BaseToken instances, representing the
+	*     wikitext.
 	 */
 	public static function parse( string $wikitext ): array
 	{
@@ -51,7 +52,7 @@ class WikitextParser
 			self::parse( $wikitext );
 			self::$logger->info( 'Wikitext parses' );
 			return true;
-		} catch ( \Exception $e )
+		} catch ( \Exception $_e )
 		{
 			self::$logger->info( 'Wikitext does not parse' );
 			return false;

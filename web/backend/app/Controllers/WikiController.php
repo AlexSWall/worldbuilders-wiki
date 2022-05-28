@@ -15,7 +15,7 @@ class WikiController extends Controller
 
 	/* GET request with path of the form /#{pageName} */
 	public function serveWikiApp(
-		Request $request,
+		Request $_request,
 		Response $response
 	): Response
 	{
@@ -26,7 +26,7 @@ class WikiController extends Controller
 
 	/* GET request with path of the form /w/{pageName} */
 	public function serveWikiContentGetRequest(
-		Request $request,
+		Request $_request,
 		Response $response,
 		array $args
 	): Response

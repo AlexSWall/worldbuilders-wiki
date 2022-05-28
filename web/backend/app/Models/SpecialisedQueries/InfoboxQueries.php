@@ -11,7 +11,6 @@ use App\Infoboxes\InfoboxCaption;
 use App\Infoboxes\InfoboxEntry;
 use App\Infoboxes\InfoboxHorizontalRule;
 use App\Infoboxes\InfoboxImage;
-use App\Infoboxes\InfoboxPosition;
 use App\Infoboxes\InfoboxSubheading;
 
 class InfoboxQueries

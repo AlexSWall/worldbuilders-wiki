@@ -205,7 +205,7 @@ $logger->info('Adding middleware.');
 	// TODO: Ensure this is invalidated on login.
 	$csrfGuard->setPersistentTokenMode(true);
 
-	$csrfGuard->setFailureHandler(function ($request, $handler): \Psr\Http\Message\ResponseInterface
+	$csrfGuard->setFailureHandler(function ($_request, $_handler): \Psr\Http\Message\ResponseInterface
 	{
 		$response = new \Slim\Psr7\Response;
 

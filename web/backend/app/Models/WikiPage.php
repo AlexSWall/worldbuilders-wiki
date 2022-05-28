@@ -103,9 +103,9 @@ class WikiPage extends DatabaseEncapsulator
 	 * permissions
 	 *
 	 * @param permissions The list of permissions the character has, used to
-	 *    determine which permission blocks are viewable.
-	 *	@return A string containing the HTML which contains the viewable wikitext
-	 *	   content.
+	 *     determine which permission blocks are viewable.
+	 * @return string A string containing the HTML which contains the viewable
+	 *     wikitext content.
 	 */
 	public function getHtmlForPermissions( ?ArrayBasedSet $permissions ): string
 	{
@@ -147,7 +147,7 @@ class WikiPage extends DatabaseEncapsulator
 	 *
 	 * This is only called within the class.
 	 *
-	 * @return An array of `WikiPagePermissionBlock`s.
+	 * @return array An array of `WikiPagePermissionBlock`s.
 	 */
 	private function getPermissionBlocks(): array
 	{

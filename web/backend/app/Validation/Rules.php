@@ -61,7 +61,7 @@ class Rules
 
 	public static function alphaAndSpaces( ?string $failureString = null ): callable
 	{
-		$failureString = $failureString ?: "Must be only letters and spaces" ;
+		$failureString = $failureString ?: "Must be only letters and spaces";
 
 		return function ( string $input ) use ( $failureString ): ?string
 		{
@@ -74,7 +74,7 @@ class Rules
 
 	public static function alphaNumeric( ?string $failureString = null ): callable
 	{
-		$failureString = $failureString ?: "Must be only letters and numbers" ;
+		$failureString = $failureString ?: "Must be only letters and numbers";
 
 		return function ( string $input ) use ( $failureString ): ?string
 		{
@@ -85,9 +85,22 @@ class Rules
 		};
 	}
 
+	public static function json( ?string $failureString = null ): callable
+	{
+		$failureString = $failureString ?: "Must be a valid JSON string";
+
+		return function ( string $input ) use ( $failureString ): ?string
+		{
+			if ( ! json_decode( $input, true ) ) {
+				return $failureString;
+			}
+			return null;
+		};
+	}
+
 	public static function email( ?string $failureString = null ): callable
 	{
-		$failureString = $failureString ?: "Must be a valid email address" ;
+		$failureString = $failureString ?: "Must be a valid email address";
 
 		return function ( string $input ) use ( $failureString ): ?string
 		{
@@ -101,7 +114,7 @@ class Rules
 
 	public static function usernameAvailable( ?string $failureString = null ): callable
 	{
-		$failureString = $failureString ?: "Username is already in use" ;
+		$failureString = $failureString ?: "Username is already in use";
 
 		return function ( string $input ) use ( $failureString ): ?string
 		{

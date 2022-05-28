@@ -17,10 +17,10 @@ class Validator
 	 * The validationArray parameter is of the form:
 	 *   [ ParameterName => [ [ RuleFunctions ], ParameterValue ] ]
 	 *
-	 * @param validationArray The validation array containingthe parameter
-	 * names, rules, and values.
-	 * @return An array containing any validation errors, indexed by the
-	 * parameter names; an empty array returned implies no validation errors.
+	 * @param validationArray The validation array containing the parameter
+	 *     names, rules, and values.
+	 * @return array An array containing any validation errors, indexed by the
+	 *     parameter names; an empty array returned implies no validation errors.
 	 */
 	public static function validate( array $validationArray ): array
 	{

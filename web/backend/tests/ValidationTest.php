@@ -99,7 +99,7 @@ final class ValidationTests extends TestCase
 		$passwordHash = '$2y$10$f/NOOGcbFDczGIzzGYoJ1ORLJnMHztuV.LbTpTkmxUhQ22eGgXtNK';
 		$activationHash = '4ea82b7f719ce4d57595706cb2e65f9a407d34b2c0c2dddd8c017f3b1601477f';
 
-		$user = User::createInactiveUser(
+		$_user = User::createInactiveUser(
 			'johnsmith',
 			'john@smith.com',
 			$passwordHash,

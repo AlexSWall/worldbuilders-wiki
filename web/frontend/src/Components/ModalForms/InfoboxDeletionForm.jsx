@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import GlobalsContext from 'GlobalsContext';
