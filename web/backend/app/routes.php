@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /* use App\Middleware\GuestMiddleware; */
-/* use App\Middleware\AuthenticatedMiddleware; */
+use App\Middleware\AuthenticatedMiddleware;
 use App\Middleware\AdministratorMiddleware;
 use App\Helpers\ResponseUtilities;
 
@@ -41,6 +41,14 @@ $app->get( '/{page}', function ( Request $_request, Response $response, array $a
 
 /* Get Wiki Page Contents /w/<PageName> */
 $app->get( '/w/{wikipage:.*}', 'WikiController:serveWikiContentGetRequest' );
+
+/* Logged-In Wiki APIs */
+$app->group( '', function () use ( $app )
+{
+	/* Wiki Quick Navigator */
+	$app->get( '/u/quick-navigator', 'QuickNavigatorController:serveQuickNavigatorGetRequest' );
+	$app->post( '/u/quick-navigator', 'QuickNavigatorController:serveQuickNavigatorPostRequest' );
+} )->add( new AuthenticatedMiddleware( $container, true ) );
 
 /* Admin Wiki APIs */
 $app->group( '', function () use ( $app )

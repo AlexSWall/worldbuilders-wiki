@@ -111,6 +111,11 @@ $containerBuilder->addDefinitions(
 			return new \App\Controllers\AdministrationController($container);
 		},
 
+	'QuickNavigatorController' => function( ContainerInterface $container ): \App\Controllers\QuickNavigatorController
+		{
+			return new \App\Controllers\QuickNavigatorController($container);
+		},
+
 	'WikiController' => function( ContainerInterface $container ): \App\Controllers\WikiController
 		{
 			return new \App\Controllers\WikiController($container);
