@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { GlobalsProvider } from 'GlobalsContext';
+import { GlobalStateWrapper } from './GlobalState';
 
 import NavigationBar from './Components/NavigationBar';
 import ResetPasswordForm from './Components/Authentication/ResetPasswordForm';
 
 ReactDOM.render(
-	<GlobalsProvider>
+	<GlobalStateWrapper>
 		<div id="pageWrapper">
 			<NavigationBar />
 			<main>
@@ -16,6 +16,6 @@ ReactDOM.render(
 				</div>
 			</main>
 		</div>
-	</GlobalsProvider>,
+	</GlobalStateWrapper>,
 	document.getElementById('root')
 );

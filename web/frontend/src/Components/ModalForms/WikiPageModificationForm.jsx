@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import GlobalsContext from 'GlobalsContext';
+import { GlobalStateContext } from 'GlobalState';
 
 import FormModal    from '../Form_Components/FormModal';
 import Card         from '../Form_Components/Card';
@@ -20,7 +20,7 @@ const schema = Yup.object().shape({
 
 export default function WikiPageModificationForm({ closeModal, setHasUnsavedState })
 {
-	const globals = useContext(GlobalsContext);
+	const globalState = useContext( GlobalStateContext );
 
 	const [wikitext, setWikitext] = useState(null);
 	const [submissionError, setSubmissionError] = useState(null);
@@ -53,7 +53,7 @@ export default function WikiPageModificationForm({ closeModal, setHasUnsavedStat
 						title: values.title,
 						content: values.wikitext
 					},
-					globals.csrfTokens,
+					globalState.csrfTokens,
 					() => {
 						closeModal();
 

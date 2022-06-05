@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 
-import GlobalsContext from 'GlobalsContext';
+import { GlobalStateContext, GlobalStateDispatchContext, SET_QUICK_NAVIGATOR_OPEN } from 'GlobalState';
 
-import DropdownList from './NavigationBar/DropdownList';
-import HrefItem     from './NavigationBar/Items/HrefItem';
-import ModalItem    from './NavigationBar/Items/ModalItem';
-import NullItem     from './NavigationBar/Items/NullItem';
-import OnClickItem  from './NavigationBar/Items/OnClickItem';
-import SearchBar    from './NavigationBar/SearchBar';
-
+import DropdownList          from './NavigationBar/DropdownList';
+import HamburgerToggleButton from './NavigationBar/HamburgerToggleButton';
+import HrefItem              from './NavigationBar/Items/HrefItem';
+import ModalItem             from './NavigationBar/Items/ModalItem';
+import NullItem              from './NavigationBar/Items/NullItem';
+import OnClickItem           from './NavigationBar/Items/OnClickItem';
+import SearchBar             from './NavigationBar/SearchBar';
 
 import ChangePasswordForm       from './ModalForms/ChangePasswordForm';
 import InfoboxCreationForm      from './ModalForms/InfoboxCreationForm';
@@ -23,11 +23,21 @@ import SignUpForm               from './ModalForms/SignUpForm';
 
 export default function NavigationBar()
 {
-	const globals = useContext(GlobalsContext);
+	const globalState = useContext( GlobalStateContext );
+	const globalDispatch = useContext( GlobalStateDispatchContext );
 
 	return (
 		<div id="navbar-wrapper">
 			<nav id="navbar">
+				<ul className="navbar-list">
+					{
+						globalState.isAuthenticated ? (
+							<HamburgerToggleButton
+								isOnFn={ state => globalDispatch({ type: SET_QUICK_NAVIGATOR_OPEN, payload: state }) }
+							/>
+						) : (<React.Fragment />)
+					}
+				</ul>
 				<div id="navbar-brand-wrapper">
 					<a id="navbar-brand" href="/#">
 						Weavemajj
@@ -63,7 +73,7 @@ export default function NavigationBar()
 							</DropdownList>
 						</NullItem>
 						{
-							globals.isAuthenticated ? (
+							globalState.isAuthenticated ? (
 								<>
 									<NullItem text='Modify Wiki'>
 										<DropdownList>
@@ -86,12 +96,12 @@ export default function NavigationBar()
 					<ul className="navbar-list navbar-list-right">
 						<SearchBar />
 						{
-							globals.isAuthenticated
+							globalState.isAuthenticated
 							? (
-								<NullItem text={ globals.preferredName || 'Account' }>
+								<NullItem text={ globalState.preferredName || 'Account' }>
 									<DropdownList>
 										<ModalItem type='dropdown' text='Change Password' ModalComponent={ ChangePasswordForm } />
-										<OnClickItem type='dropdown' text='Sign Out' onClick={ () => signOut(globals.csrfTokens) } />
+										<OnClickItem type='dropdown' text='Sign Out' onClick={ () => signOut(globalState.csrfTokens) } />
 									</DropdownList>
 								</NullItem>
 							) : (
@@ -101,6 +111,9 @@ export default function NavigationBar()
 								</>
 							)
 						}
+						{/* <HamburgerToggleButton */}
+						{/* 	isOnFn={ state => globalDispatch({ type: SET_QUICK_NAVIGATOR_OPEN, payload: state }) } */}
+						{/* /> */}
 					</ul>
 				</div>
 			</nav>

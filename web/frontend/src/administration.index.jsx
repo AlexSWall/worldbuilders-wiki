@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { GlobalsProvider } from 'GlobalsContext';
+import { GlobalStateWrapper } from './GlobalState';
 import AdministrationApp from './AdministrationApp';
 
 ReactDOM.render(
-	<GlobalsProvider>
+	<GlobalStateWrapper>
 		<AdministrationApp />
-	</GlobalsProvider>,
+	</GlobalStateWrapper>,
 	document.getElementById('root')
 );

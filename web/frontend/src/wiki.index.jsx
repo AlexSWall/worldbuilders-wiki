@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { GlobalsProvider } from 'GlobalsContext';
+import { GlobalStateWrapper } from './GlobalState';
 import WikiPageApp from './WikiPageApp';
 
 ReactDOM.render(
-	<GlobalsProvider>
+	<GlobalStateWrapper>
 		<WikiPageApp />
-	</GlobalsProvider>,
+	</GlobalStateWrapper>,
 	document.getElementById('root')
 );

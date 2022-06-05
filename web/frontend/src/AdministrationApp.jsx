@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 
-import GlobalsContext from 'GlobalsContext';
+import { GlobalStateContext } from './GlobalState';
 
 import NavigationBar from './Components/NavigationBar';
 
 export default function AdministrationApp()
 {
-	const globals = useContext(GlobalsContext);
+	const globalState = useContext( GlobalStateContext );
 
 	return (
 		<div id="pageWrapper">
@@ -24,9 +24,9 @@ export default function AdministrationApp()
 										<p style={ { marginBottom: '20px' } }>Administrators only.</p>
 										<p><u><b>Authentication Data.</b></u></p>
 										<dl style={ { listStyleType: 'none', marginLeft: '20px' } }>
-											<dd><b>{ globals.isAuthenticated ? 'Is Authenticated. ' : 'Is Not Authenticated! ✗' }</b></dd>
+											<dd><b>{ globalState.isAuthenticated ? 'Is Authenticated. ' : 'Is Not Authenticated! ✗' }</b></dd>
 											<dd><b>Preferred Name:</b></dd>
-											<dt style={ { marginLeft: '20px' } }>{ globals.preferredName }</dt>
+											<dt style={ { marginLeft: '20px' } }>{ globalState.preferredName }</dt>
 										</dl>
 										{ children }
 									</div>

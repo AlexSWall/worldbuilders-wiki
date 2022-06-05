@@ -1,3 +1,11 @@
+@mixin transition($prop, $values...) {
+	-moz-#{$prop}: $values;
+	-ms-#{$prop}: $values;
+	-o-#{$prop}: $values;
+	-webkit-#{$prop}: $values;
+	$prop: $values;
+}
+
 footer {
 	display: block;
 	z-index: 1;

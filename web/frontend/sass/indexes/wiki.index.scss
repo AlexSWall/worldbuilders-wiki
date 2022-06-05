@@ -1,5 +1,6 @@
-@import '../core/navigation-bar.scss';
 @import '../core/footer.scss';
+@import '../core/sidebar.scss';
+@import '../core/navigation-bar.scss';
 @import '../fonts/adamina.scss';
 @import '../fonts/roboto.scss';
 @import '../fonts/montserrat.scss';
@@ -8,14 +9,19 @@
 #pageWrapper {
 	main {
 		#contentWrapper {
+			display: flex;  // Required for content to stretch vertically
 			min-height: 100vh;
 
 			#content {
+				display: flex;
+				flex-grow: 1;  // Ensure content fills remaining width amongst siblings in contentWrapper.
 				padding-top: 4.2rem; /* 42 = 14 + 14 + 14 (navbar a links) */;
-				padding-bottom: 5.0rem;
+				padding-bottom: 2.7rem;
 
 				#mainPanelWrapper {
+					width: 100%;
 					padding-top: 3.0rem;
+					padding-bottom: 2.3rem;
 
 					// mainPanel below
 				}

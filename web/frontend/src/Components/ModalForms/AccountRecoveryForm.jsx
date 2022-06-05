@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import GlobalsContext from 'GlobalsContext';
+import { GlobalStateContext } from 'GlobalState';
 
 import FormModal from '../Form_Components/FormModal';
 import TextInput from '../Form_Components/TextInput';
@@ -18,7 +18,7 @@ const schema = Yup.object().shape({
 
 export default function AccountRecoveryForm({ closeModal })
 {
-	const globals = useContext(GlobalsContext);
+	const globalState = useContext( GlobalStateContext );
 
 	const [submissionError, setSubmissionError] = useState(null);
 
@@ -36,7 +36,7 @@ export default function AccountRecoveryForm({ closeModal })
 						{
 							email: values.email
 						},
-						globals.csrfTokens,
+						globalState.csrfTokens,
 						() => {
 							closeModal();
 						},

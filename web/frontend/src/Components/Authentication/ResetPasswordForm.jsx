@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import GlobalsContext from 'GlobalsContext';
+import { GlobalStateContext } from 'GlobalState';
 
 import TextInput from '../Form_Components/TextInput';
 import SubmitButton from '../Form_Components/SubmitButton';
@@ -23,7 +23,7 @@ const schema = Yup.object().shape({
 
 export default function ResetPasswordForm()
 {
-	const globals = useContext(GlobalsContext);
+	const globalState = useContext( GlobalStateContext );
 
 	const [submissionError, setSubmissionError] = useState(null);
 
@@ -61,7 +61,7 @@ export default function ResetPasswordForm()
 								identifier: identifier,
 								password_new: newPasswordFrontendHash,
 							},
-						}, globals.csrfTokens))
+						}, globalState.csrfTokens))
 					});
 
 					if (res.ok)
