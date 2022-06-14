@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-/**
- * type is currently either 'navbar' or 'dropdown'
- */
-export default function Item({ text, type, action, children, extraComponent=undefined })
+interface Props
+{
+	text: string;
+	type: 'navbar' | 'dropdown';
+	action: { href: string } | { onClick: () => void };
+	children: React.ReactNode;
+	extraComponent?: ReactElement;
+};
+
+export const Item = ({ text, type, action, children, extraComponent=undefined }: Props): ReactElement =>
 {
 	return (
 		<li className={ type + '-item' }>
@@ -15,4 +21,4 @@ export default function Item({ text, type, action, children, extraComponent=unde
 			{ children }
 		</li>
 	);
-}
+};

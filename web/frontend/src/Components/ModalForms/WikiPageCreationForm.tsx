@@ -1,14 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal from '../Form_Components/FormModal';
-import TextInput from '../Form_Components/TextInput';
+import { FormModal } from '../Form_Components/FormModal';
+import { TextInput } from '../Form_Components/TextInput';
 
 import { makeApiPostRequest } from 'utils/api';
+import { getWikiPagePathAndHeading } from 'utils/wiki';
 
 const schema = Yup.object().shape({
 	page_path: Yup.string()
@@ -18,17 +19,22 @@ const schema = Yup.object().shape({
 		.required('Required')
 });
 
-export default function WikiPageCreationForm({ closeModal })
+interface Props
+{
+	closeModal: () => void;
+};
+
+export const WikiPageCreationForm = ({ closeModal }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
-	const pagePath = window.location.hash.substring(1).split('#')[0];
+	const [ wikiPagePath, _heading ] = getWikiPagePathAndHeading( window.location.hash );
 
 	return (
 		<Formik
-			initialValues={ { page_path: pagePath, title: '' } }
+			initialValues={ { page_path: wikiPagePath, title: '' } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
 				makeApiPostRequest(
@@ -64,10 +70,10 @@ export default function WikiPageCreationForm({ closeModal })
 						labelText='WikiPage Path/ID'
 						width={ 250 }
 						autoComplete='off'
-						hasError={ touched.page_path && errors.page_path }
+						hasError={ !!(touched.page_path && errors.page_path) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
-						initialValue={ pagePath }
+						initialValue={ wikiPagePath }
 					/>
 
 					<TextInput
@@ -75,7 +81,7 @@ export default function WikiPageCreationForm({ closeModal })
 						labelText='WikiPage Title'
 						width={ 250 }
 						autoComplete='off'
-						hasError={ touched.title && errors.title }
+						hasError={ !!(touched.title && errors.title) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -83,4 +89,4 @@ export default function WikiPageCreationForm({ closeModal })
 			) }
 		</Formik>
 	);
-}
+};

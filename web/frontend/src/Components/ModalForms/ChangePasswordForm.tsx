@@ -1,13 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal           from '../Form_Components/FormModal';
-import TextInput           from '../Form_Components/TextInput';
-import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
+import { FormModal }           from '../Form_Components/FormModal';
+import { TextInput }           from '../Form_Components/TextInput';
+import { WeakPasswordWarning } from '../Form_Components/WeakPasswordWarning';
 
 import { makeApiPostRequest }  from 'utils/api';
 import { computePasswordHash } from 'utils/crypto';
@@ -24,11 +24,16 @@ const schema = Yup.object().shape({
 		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
 });
 
-export default function ChangePasswordForm({ closeModal })
+interface Props
+{
+	closeModal: () => void;
+};
+
+export const ChangePasswordForm = ({ closeModal }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
+	const [submissionError, setSubmissionError] = useState<string | null>( null );
 
 	return (
 		<Formik
@@ -75,7 +80,7 @@ export default function ChangePasswordForm({ closeModal })
 						labelText='Old Password'
 						type='password'
 						width={ 250 }
-						hasError={ touched.password_old && errors.password_old }
+						hasError={ !!( touched.password_old && errors.password_old ) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -86,7 +91,7 @@ export default function ChangePasswordForm({ closeModal })
 						type='password'
 						autoComplete='new-password'
 						width={ 250 }
-						hasError={ touched.password_new && errors.password_new }
+						hasError={ !!( touched.password_new && errors.password_new ) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					>
@@ -99,7 +104,7 @@ export default function ChangePasswordForm({ closeModal })
 						type='password'
 						autoComplete='new-password'
 						width={ 250 }
-						hasError={ touched.password_new_confirm && errors.password_new_confirm }
+						hasError={ !!( touched.password_new_confirm && errors.password_new_confirm ) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -107,4 +112,4 @@ export default function ChangePasswordForm({ closeModal })
 			) }
 		</Formik>
 	);
-}
+};

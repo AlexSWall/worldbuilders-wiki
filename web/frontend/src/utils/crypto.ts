@@ -24,7 +24,7 @@ const frontendPasswordHashPrefix = 'a72b9e12';
  * It is not created to act as a backend database hash. This is done separately,
  * as appropriate.
  */
-export async function computePasswordHash(password)
+export async function computePasswordHash( password: string ): Promise<string>
 {
 	// Take a modified SHA256 hash of the password provided to create frontend
 	// hash.
@@ -33,7 +33,7 @@ export async function computePasswordHash(password)
 	return passwordFrontendHash;
 }
 
-export async function sha256hex(strIn)
+export async function sha256hex( strIn: string ): Promise<string>
 {
 	// Encode input string as UTF-8
 	const bytes = new TextEncoder().encode(strIn);
@@ -50,7 +50,7 @@ export async function sha256hex(strIn)
 	return hashHex;
 }
 
-export function getWeakPasswordString(password)
+export function getWeakPasswordString( password: string ): string
 {
 	// Check first whether if password is actually invalid.
 	if (password.length < 8)

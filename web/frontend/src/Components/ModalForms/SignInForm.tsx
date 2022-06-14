@@ -1,18 +1,19 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal from '../Form_Components/FormModal';
-import TextInput from '../Form_Components/TextInput';
-import CheckBox  from '../Form_Components/CheckBox';
+import { FormModal } from '../Form_Components/FormModal';
+import { TextInput } from '../Form_Components/TextInput';
+import { CheckBox }  from '../Form_Components/CheckBox';
 
-import AccountRecoveryForm from './AccountRecoveryForm';
+import { AccountRecoveryForm } from './AccountRecoveryForm';
 
 import { makeApiPostRequest }  from 'utils/api';
 import { computePasswordHash } from 'utils/crypto';
+import { ModalComponentProps } from 'Components/ModalWrapper';
 
 const schema = Yup.object().shape({
 	identity: Yup.string()
@@ -23,11 +24,17 @@ const schema = Yup.object().shape({
 	rememberMe: Yup.boolean()
 });
 
-export default function SignInForm({ closeModal, setModalComponent })
+interface Props
+{
+	closeModal: () => void;
+	setModalComponent: React.Dispatch<React.SetStateAction<(props: ModalComponentProps) => ReactElement>>;
+};
+
+export const SignInForm = ({ closeModal, setModalComponent }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
 	return (
 		<Formik
@@ -82,7 +89,7 @@ export default function SignInForm({ closeModal, setModalComponent })
 							formId='identity'
 							labelText='Username or Email'
 							width={ 250 }
-							hasError={ touched.identity && errors.identity }
+							hasError={ !!(touched.identity && errors.identity) }
 							setFieldTouched={ setFieldTouched }
 							handleChange={ handleChange }
 						/>
@@ -92,7 +99,7 @@ export default function SignInForm({ closeModal, setModalComponent })
 							labelText='Password'
 							type='password'
 							width={ 250 }
-							hasError={ touched.password && errors.password }
+							hasError={ !!(touched.password && errors.password) }
 							setFieldTouched={ setFieldTouched }
 							handleChange={ handleChange }
 						/>
@@ -125,4 +132,4 @@ export default function SignInForm({ closeModal, setModalComponent })
 			} }
 		</Formik>
 	);
-}
+};

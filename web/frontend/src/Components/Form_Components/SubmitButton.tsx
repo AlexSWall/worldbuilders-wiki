@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function SubmitButton({ disabled, children })
+interface Props
+{
+	disabled: boolean;
+	children: React.ReactNode;
+};
+
+export const SubmitButton = ({ disabled, children }: Props): ReactElement =>
 {
 	return (
 		<button
@@ -11,4 +17,4 @@ export default function SubmitButton({ disabled, children })
 			{ children ? children : 'Submit' }
 		</button>
 	);
-}
+};

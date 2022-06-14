@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-import Item from './Item';
+import { Item } from './Item';
 
-export default function HrefItem({ text, href=null, type='navbar', children })
+interface Props
+{
+	text: string;
+	href?: string | null;
+	type?: 'navbar' | 'dropdown';
+	children?: React.ReactNode | null;
+};
+
+export const HrefItem = ({ text, href=null, type='navbar', children=null }: Props): ReactElement =>
 {
 	if ( href === null )
 	{
@@ -17,4 +25,4 @@ export default function HrefItem({ text, href=null, type='navbar', children })
 			children={ children }
 		/>
 	);
-}
+};

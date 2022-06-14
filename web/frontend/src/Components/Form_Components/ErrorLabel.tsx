@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function ErrorLabel({ width, children })
+interface Props
+{
+	width: number;
+	children: React.ReactNode;
+};
+
+export const ErrorLabel = ({ width, children }: Props): ReactElement =>
 {
 	return (
 		<div className='form-group'>
@@ -9,4 +15,4 @@ export default function ErrorLabel({ width, children })
 			</label>
 		</div>
 	);
-}
+};

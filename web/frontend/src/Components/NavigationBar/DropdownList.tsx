@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function Dropdown({ children })
+interface Props
+{
+	children: React.ReactNode;
+};
+
+export const DropdownList = ({ children }: Props): ReactElement =>
 {
 	return (
 		<ul className="dropdown-list">
 			{children}
 		</ul>
 	);
-}
+};

@@ -1,15 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal      from '../Form_Components/FormModal';
-import SelectDropdown from '../Form_Components/SelectDropdown';
-import WikiTextArea   from '../Form_Components/WikiTextArea';
+import { FormModal }      from '../Form_Components/FormModal';
+import { SelectDropdown } from '../Form_Components/SelectDropdown';
+import { WikiTextArea }   from '../Form_Components/WikiTextArea';
 
-import { makeApiPostRequest } from 'utils/api';
+import { ApiGetInfobox, ApiGetInfoboxNames, ApiGetWikiText, makeApiGetRequest, makeApiPostRequest } from 'utils/api';
+import { getWikiPagePathAndHeading } from 'utils/wiki';
 
 const schema = Yup.object().shape({
 	selected_infobox_name: Yup.string()
@@ -17,36 +18,41 @@ const schema = Yup.object().shape({
 	infobox_structure: Yup.string()
 });
 
-export default function InfoboxModificationForm({ closeModal, setHasUnsavedState })
+interface Props
+{
+	closeModal: () => void;
+	setHasUnsavedState: ( hasUnsavedState: boolean ) => void;
+};
+
+export const InfoboxModificationForm = ({ closeModal, setHasUnsavedState }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
 	const [ [ initialInfoboxName, initialInfoboxStructure ], setInitialInfoboxData ] = useState( ['', ''] );
-	const [ infoboxNames, setInfoboxNames ] = useState( null );
+	const [ infoboxNames, setInfoboxNames ] = useState<string[]>( [] );
 	const [ infoboxValidation, setInfoboxValidation ] = useState( schema );
-	const [ submissionError, setSubmissionError ] = useState( null );
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
 	// On the initial load, obtain the infobox names to populate the select
 	// dropdown.
 	useEffect( () =>
 	{
-		fetch('/a/infobox', {
-			headers: {
-				'Accept': 'application/json',
-			}
-		}).then( res => res.json() )
-		  .then( res => {
-				const infoboxNames = res.infobox_names;
+		makeApiGetRequest<ApiGetInfoboxNames>(
+			`/a/infobox`,
+			data =>
+				{
+					const infoboxNames = data.infobox_names;
 
-				setInfoboxNames( infoboxNames );
+					setInfoboxNames( infoboxNames );
 
-				setInfoboxValidation( Yup.object().shape({
-					selected_infobox_name: Yup.string()
-						.required('Required')
-						.oneOf( infoboxNames, 'Must be an existing infobox' ),
-					infobox_structure: Yup.string()
-				}) );
-			});
+					setInfoboxValidation( Yup.object().shape({
+						selected_infobox_name: Yup.string()
+							.required('Required')
+							.oneOf( infoboxNames, 'Must be an existing infobox' ),
+						infobox_structure: Yup.string()
+					}) );
+				}
+		);
 	}, []);
 
 	// On the initial load, check whether our current wikipage has an infobox,
@@ -55,40 +61,30 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 	{
 		// We're on the initial load; let's set the initial infobox name to be the
 		// infobox on the current page if it has one...
-		const hash = window.location.hash.substring(1);
-		const [ wikiPagePath, ] = hash.split('#');
+		const [ wikiPagePath, _heading ] = getWikiPagePathAndHeading( window.location.hash );
 
-		fetch('/a/wiki?wikipage=' + wikiPagePath, {
-			headers: {
-				'Accept': 'application/json',
-			}
-		}).then(res => res.json())
-		  .then(res => {
-				const wikitext = res.wikitext;
-				const regex = /^{{ +([A-Za-z][A-Za-z-]*)?[A-Za-z]/;
-				const matches = wikitext.match(regex);
-
-				if ( matches != null && matches.length > 0 )
+		makeApiGetRequest<ApiGetWikiText>(
+			`/a/wiki?wikipage=${wikiPagePath}`,
+			data =>
 				{
-					const match = matches[0];
-					const infoboxName = match.substring(3).trim();
+					const regex = /^{{ +([A-Za-z][A-Za-z-]*)?[A-Za-z]/;
+					const matches = data.wikitext.match(regex);
 
-					fetch('/a/infobox?' + new URLSearchParams({
-							infobox: infoboxName
-						}),
-						{
-							headers: {
-								'Accept': 'application/json',
-							}
-						}
-					)	.then( res => res.json() )
-						.then( res => {
-							const structureText = res.infobox_structure_text;
-							setInitialInfoboxData([ infoboxName, structureText ]);
-						}
-					);
-				}
-		});
+					const infoboxName = matches?.pop()?.substring(3)?.trim();
+
+					if ( infoboxName !== undefined )
+					{
+						makeApiGetRequest<ApiGetInfobox>(
+							`/a/infobox?infobox=${infoboxName}`,
+							data =>
+								{
+									const structureText = data.infobox_structure_text;
+									setInitialInfoboxData([ infoboxName, structureText ]);
+								},
+						);
+					}
+				},
+		);
 	}, []);
 
 	return (
@@ -130,27 +126,21 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 						formId='selected_infobox_name'
 						labelText='Infobox Name'
 						width={ 250 }
-						hasError={ touched.selected_infobox_name && errors.selected_infobox_name }
-						setFieldTouched={ setFieldTouched }
+						hasError={ !!( touched.selected_infobox_name && errors.selected_infobox_name ) }
 						setValue={ selectedInfoboxName => {
 							setFieldValue( 'selected_infobox_name', selectedInfoboxName );
 
-							fetch('/a/infobox?' + new URLSearchParams({
-									infobox: selectedInfoboxName
-								}),
-								{
-									headers: {
-										'Accept': 'application/json',
-									}
-								}
-							)	.then( res => res.json() )
-								.then( res => {
-									const structureText = res.infobox_structure_text;
-									setInitialInfoboxData([ selectedInfoboxName, structureText ]);
-									setFieldValue( 'infobox_structure', structureText );
-									setFieldTouched( 'infobox_structure' );
-									setHasUnsavedState(false);
-								}
+							makeApiGetRequest<ApiGetInfobox>(
+								`/a/infobox?infobox=${selectedInfoboxName}`,
+								data =>
+									{
+										const structureText = data.infobox_structure_text;
+
+										setInitialInfoboxData([ selectedInfoboxName, structureText ]);
+										setFieldValue( 'infobox_structure', structureText );
+										setFieldTouched( 'infobox_structure' );
+										setHasUnsavedState( false );
+									},
 							);
 						} }
 						options={ infoboxNames }
@@ -160,13 +150,12 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 					<WikiTextArea
 						formId='infobox_structure'
 						labelText='Infobox Structure'
-						size={ { width: 250, height: 150 } }
-						hasError={ touched.infobox_structure && errors.infobox_structure }
+						hasError={ !!( touched.infobox_structure && errors.infobox_structure ) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ e => {
 							// We've changed the infobox structure, so set that we have
 							// unsaved state before passing on to default handleChange.
-							setHasUnsavedState(true);
+							setHasUnsavedState( true );
 							return handleChange(e);
 						} }
 						initialValue={ initialValues.infobox_structure }
@@ -176,4 +165,4 @@ export default function InfoboxModificationForm({ closeModal, setHasUnsavedState
 			) }
 		</Formik>
 	);
-}
+};

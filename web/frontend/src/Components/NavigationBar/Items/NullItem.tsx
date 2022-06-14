@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-import Item from './Item';
+import { Item } from './Item';
 
-export default function NullItem({ text, type='navbar', children })
+interface Props
 {
+	text: string;
+	type?: 'navbar' | 'dropdown';
+	children: React.ReactNode;
+};
 
+export const NullItem = ({ text, type='navbar', children }: Props): ReactElement =>
+{
 	return (
 		<Item
 			text={ text }
@@ -13,4 +19,4 @@ export default function NullItem({ text, type='navbar', children })
 			children={ children }
 		/>
 	);
-}
+};

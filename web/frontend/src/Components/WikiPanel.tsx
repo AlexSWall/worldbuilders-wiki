@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function WikiPanel({ title, html })
+interface Props
+{
+	title: string;
+	html: string;
+};
+
+export const WikiPanel = ({ title, html }: Props): ReactElement =>
 {
 	return (
 		<>
@@ -8,4 +14,4 @@ export default function WikiPanel({ title, html })
 			<div dangerouslySetInnerHTML={ { __html: html } } />
 		</>
 	);
-}
+};

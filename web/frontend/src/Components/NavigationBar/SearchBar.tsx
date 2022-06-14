@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-// import CSRFField from 'Form Components/CSRFField'
-
-export default function NavBarSearchBar()
+export const SearchBar = (): ReactElement =>
 {
 	return (
 		<li className="navbar-item">
@@ -18,4 +16,4 @@ export default function NavBarSearchBar()
 			</div>
 		</li>
 	);
-}
+};

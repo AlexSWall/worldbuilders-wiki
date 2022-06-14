@@ -1,13 +1,26 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { MutableRefObject, useEffect, useState, useRef, ReactElement } from 'react';
 
-export default function SelectDropdown({ formId, labelText, width, hasError, setValue, options, initialValue })
+import classNames from 'classnames';
+
+interface Props
+{
+	formId: string;
+	labelText: string;
+	width: number;
+	hasError: boolean;
+	setValue: ( value: string ) => void;
+	options: string[];
+	initialValue: string | null;
+};
+
+export const SelectDropdown = ({ formId, labelText, width, hasError, setValue, options, initialValue }: Props): ReactElement =>
 {
 	// Contains the ephemeral contents of the input; cleared on blur.
-	const [ inputContents, setInputContents ] = useState( '' );
+	const [ inputContents, setInputContents ] = useState<string>( '' );
 
 	// Contains any valid value selected, obtained from the input on its blur.
 	// This is shown whenever inputContents is empty.
-	const [ selectedOption, setSelectedOption ] = useState( null );
+	const [ selectedOption, setSelectedOption ] = useState<string | null>( null );
 
 	// Ensure selected option is updated if initialValue is changed
 	useEffect( () => {
@@ -19,14 +32,13 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 
 	// Whether to show the dropdown. This is true whenever the input has focus,
 	// and false when the input is subsequently blurred.
-	const [ showDropdown, setShowDropdown ] = useState( false );
+	const [ showDropdown, setShowDropdown ] = useState<boolean>( false );
 
 	// Used to switch focus from clicking dropdown to non-input. This ensured the
 	// input blurs, and also ensures we don't immediately select it again.
-	const selectedValueRef = useRef(null);
+	const selectedValueRef = useRef<HTMLDivElement>( null ) as MutableRefObject<HTMLDivElement>;
 
-	// This is checked for being non-empty on the dropdown being sought.
-	const filteredOptions = options && options.filter(
+	const filteredOptions = options.filter(
 		option => option.toLowerCase().startsWith( inputContents.toLowerCase() )
 	);
 
@@ -41,7 +53,10 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 			<div className='form-input-wrapper'>
 				<div className='form-select-wrapper'>
 					<div
-						className={ 'form-select-selected-value' + ( ( inputContents !== '' ) ? ' form-select-hidden' : '' ) }
+						className={ classNames({
+							'form-select-selected-value': true,
+							'form-select-hidden': inputContents !== ''
+						}) }
 						style={ {
 							color: 'rgb(51, 51, 51, ' + ( ( inputContents !== '' ) ? '0' : ! selectedOption ? '0.5' : '1' )
 						} }
@@ -51,7 +66,11 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 
 					<input
 						id={ formId }
-						className={ (hasError ? 'form-input-has-error ' : '') + ( inputContents || selectedOption ? 'has-content ' : '' ) + 'form-select-input' }
+						className={ classNames({
+							'form-select-input': true,
+							'has-content': inputContents || selectedOption,
+							'form-input-has-error': hasError
+						}) }
 						autoComplete='off'
 						value={ inputContents }
 						onFocus={ _e => {
@@ -59,7 +78,7 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 						} }
 						onBlur={ e => {
 							setShowDropdown(false);
-							if ( e !== '' && options && options.includes( inputContents ) )
+							if ( e && options.includes( inputContents ) )
 							{
 								setSelectedOption( inputContents );
 								setValue( inputContents );
@@ -83,8 +102,10 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 									( option, i ) =>
 										<div
 											key={ i }
-											className={ 'form-select-option'
-												+ ( ( option == selectedOption ) ? '-selected' : '' ) }
+											className={ classNames({
+												'form-select-option-selected': ( option === selectedOption ),
+												'form-select-option': ( option !== selectedOption ),
+											}) }
 											onMouseDown={ () => {
 												selectedValueRef.current.focus();
 												setInputContents( option );
@@ -99,4 +120,4 @@ export default function SelectDropdown({ formId, labelText, width, hasError, set
 			</div>
 		</div>
 	);
-}
+};

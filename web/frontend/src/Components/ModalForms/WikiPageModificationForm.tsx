@@ -1,16 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal    from '../Form_Components/FormModal';
-import Card         from '../Form_Components/Card';
-import TextInput    from '../Form_Components/TextInput';
-import WikiTextArea from '../Form_Components/WikiTextArea';
+import { FormModal }    from '../Form_Components/FormModal';
+import { Card }         from '../Form_Components/Card';
+import { TextInput }    from '../Form_Components/TextInput';
+import { WikiTextArea } from '../Form_Components/WikiTextArea';
 
-import { makeApiPostRequest } from 'utils/api';
+import { ApiGetWikiText, makeApiGetRequest, makeApiPostRequest } from 'utils/api';
+import { getWikiPagePathAndHeading } from 'utils/wiki';
+import useStateInitiallyNull from 'utils/hooks/useStateInitiallyNull';
 
 const schema = Yup.object().shape({
 	title: Yup.string()
@@ -18,31 +20,32 @@ const schema = Yup.object().shape({
 	wikitext: Yup.string()
 });
 
-export default function WikiPageModificationForm({ closeModal, setHasUnsavedState })
+interface Props
+{
+	closeModal: () => void;
+	setHasUnsavedState: ( hasUnsavedState: boolean ) => void;
+};
+
+export const WikiPageModificationForm = ({ closeModal, setHasUnsavedState }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [wikitext, setWikitext] = useState(null);
-	const [submissionError, setSubmissionError] = useState(null);
+	const [ wikitext, setWikitext ] = useStateInitiallyNull<string>();
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
-	const title = document.title;
-
-	const hash = window.location.hash.substring(1);
-	const [wikiPagePath,] = hash.split('#');
+	const [ wikiPagePath, _heading ] = getWikiPagePathAndHeading( window.location.hash );
 
 	useEffect( () => {
-		fetch('/a/wiki?wikipage=' + wikiPagePath, {
-			headers: {
-				'Accept': 'application/json',
-			}
-		}) .then(res => res.json())
-			.then(res => setWikitext(res.wikitext));
+		makeApiGetRequest<ApiGetWikiText>(
+			`/a/wiki?wikipage=${wikiPagePath}`,
+			data => setWikitext( data.wikitext )
+		);
 	}, []);
 
 	return ( wikitext === null )
 		? ( <Card title='Fetching and loading content...'/> )
 		: ( <Formik
-			initialValues={ { title: title, wikitext: wikitext } }
+			initialValues={ { title: document.title, wikitext: wikitext } }
 			validationSchema={ schema }
 			onSubmit={ (values, { setSubmitting, setErrors }) => {
 				makeApiPostRequest(
@@ -79,7 +82,7 @@ export default function WikiPageModificationForm({ closeModal, setHasUnsavedStat
 						labelText='WikiPage Title'
 						width={ 250 }
 						autoComplete='off'
-						hasError={ touched.title && errors.title }
+						hasError={ !!(touched.title && errors.title) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 						initialValue={ initialValues.title }
@@ -88,8 +91,7 @@ export default function WikiPageModificationForm({ closeModal, setHasUnsavedStat
 					<WikiTextArea
 						formId='wikitext'
 						labelText='Wikitext'
-						size={ { width: 250, height: 150 } }
-						hasError={ touched.wikitext && errors.wikitext }
+						hasError={ !!(touched.wikitext && errors.wikitext) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ e => {
 							// We've changed the wikitext entry, so set that we have
@@ -98,9 +100,10 @@ export default function WikiPageModificationForm({ closeModal, setHasUnsavedStat
 							return handleChange(e);
 						} }
 						initialValue={ initialValues.wikitext }
+						value={ values.wikitext }
 					/>
 				</FormModal>
 			) }
 		</Formik>
 	);
-}
+};

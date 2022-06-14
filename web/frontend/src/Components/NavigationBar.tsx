@@ -1,27 +1,27 @@
-import React, { useContext } from 'react';
+import React, { ReactElement, useContext } from 'react';
 
-import { GlobalStateContext, GlobalStateDispatchContext, SET_QUICK_NAVIGATOR_OPEN } from 'GlobalState';
+import { GlobalStateContext, GlobalStateDispatchContext, SET_LEFT_SIDEBAR } from 'GlobalState';
 
-import DropdownList          from './NavigationBar/DropdownList';
-import HamburgerToggleButton from './NavigationBar/HamburgerToggleButton';
-import HrefItem              from './NavigationBar/Items/HrefItem';
-import ModalItem             from './NavigationBar/Items/ModalItem';
-import NullItem              from './NavigationBar/Items/NullItem';
-import OnClickItem           from './NavigationBar/Items/OnClickItem';
-import SearchBar             from './NavigationBar/SearchBar';
+import { DropdownList }          from './NavigationBar/DropdownList';
+import { HamburgerToggleButton } from './NavigationBar/HamburgerToggleButton';
+import { HrefItem }              from './NavigationBar/Items/HrefItem';
+import { ModalItem }             from './NavigationBar/Items/ModalItem';
+import { NullItem }              from './NavigationBar/Items/NullItem';
+import { OnClickItem }           from './NavigationBar/Items/OnClickItem';
+import { SearchBar }             from './NavigationBar/SearchBar';
 
-import ChangePasswordForm       from './ModalForms/ChangePasswordForm';
-import InfoboxCreationForm      from './ModalForms/InfoboxCreationForm';
-import InfoboxDeletionForm      from './ModalForms/InfoboxDeletionForm';
-import InfoboxModificationForm  from './ModalForms/InfoboxModificationForm';
-import WikiPageCreationForm     from './ModalForms/WikiPageCreationForm';
-import WikiPageDeletionForm     from './ModalForms/WikiPageDeletionForm';
-import WikiPageModificationForm from './ModalForms/WikiPageModificationForm';
-import SignInForm               from './ModalForms/SignInForm';
-import SignUpForm               from './ModalForms/SignUpForm';
+import { ChangePasswordForm }       from './ModalForms/ChangePasswordForm';
+import { InfoboxCreationForm }      from './ModalForms/InfoboxCreationForm';
+import { InfoboxDeletionForm }      from './ModalForms/InfoboxDeletionForm';
+import { InfoboxModificationForm }  from './ModalForms/InfoboxModificationForm';
+import { WikiPageCreationForm }     from './ModalForms/WikiPageCreationForm';
+import { WikiPageDeletionForm }     from './ModalForms/WikiPageDeletionForm';
+import { WikiPageModificationForm } from './ModalForms/WikiPageModificationForm';
+import { SignInForm }               from './ModalForms/SignInForm';
+import { SignUpForm }               from './ModalForms/SignUpForm';
+import { makeApiPostRequest } from 'utils/api';
 
-
-export default function NavigationBar()
+export const NavigationBar = (): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 	const globalDispatch = useContext( GlobalStateDispatchContext );
@@ -33,7 +33,7 @@ export default function NavigationBar()
 					{
 						globalState.isAuthenticated ? (
 							<HamburgerToggleButton
-								isOnFn={ state => globalDispatch({ type: SET_QUICK_NAVIGATOR_OPEN, payload: state }) }
+								isOnFn={ isOn => globalDispatch({ type: SET_LEFT_SIDEBAR, panel: isOn ? 'QuickNavigator' : null }) }
 							/>
 						) : (<React.Fragment />)
 					}
@@ -101,7 +101,9 @@ export default function NavigationBar()
 								<NullItem text={ globalState.preferredName || 'Account' }>
 									<DropdownList>
 										<ModalItem type='dropdown' text='Change Password' ModalComponent={ ChangePasswordForm } />
-										<OnClickItem type='dropdown' text='Sign Out' onClick={ () => signOut(globalState.csrfTokens) } />
+										<OnClickItem type='dropdown' text='Sign Out' onClick={ async () => {
+											await makeApiPostRequest('/auth/', 'sign out', {}, globalState.csrfTokens, () => { location.reload(); })
+										} } />
 									</DropdownList>
 								</NullItem>
 							) : (
@@ -112,50 +114,11 @@ export default function NavigationBar()
 							)
 						}
 						{/* <HamburgerToggleButton */}
-						{/* 	isOnFn={ state => globalDispatch({ type: SET_QUICK_NAVIGATOR_OPEN, payload: state }) } */}
+						{/* 	isOnFn={ state => globalDispatch({ type: SET_RIGHT_SIDEBAR, payload: state }) } */}
 						{/* /> */}
 					</ul>
 				</div>
 			</nav>
 		</div>
 	);
-}
-
-function signOut(csrfTokens)
-{
-	fetch('/auth/', {
-		method: 'post',
-		headers: {
-			'Accept': 'application/json, text/plain, */*',
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(Object.assign({}, {
-			action: 'sign out',
-			data: {},
-		}, csrfTokens))
-	}).then(async res => {
-		if (res.ok)
-		{
-			location.reload();
-		}
-		else
-		{
-			console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-			const contentType = res.headers.get("content-type");
-
-			if (contentType && contentType.indexOf("application/json") !== -1) {
-				res.json().then(data => {
-					console.log('Error: ' + data.error);
-				});
-			} else {
-				res.text().then(text => {
-					console.log('Error (text): ' + text);
-				});
-			}
-		}
-	}).catch( error => {
-		console.log('Failed to make POST request...')
-		console.log(error);
-	});
-}
+};

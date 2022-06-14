@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React, { ReactElement, useContext } from 'react';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import Footer from './Components/Footer';
-import NavigationBar from './Components/NavigationBar';
-import Sidebar from './Components/Sidebars/Sidebar';
-import WikiPageLoader from './Components/WikiPageLoader';
+import { Footer } from './Components/Footer';
+import { NavigationBar } from './Components/NavigationBar';
+import { Sidebar } from './Components/Sidebars/Sidebar';
+import { WikiPageLoader } from './Components/WikiPageLoader';
 
-export default function WikiPageApp()
+export const WikiPageApp = (): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
@@ -17,17 +17,17 @@ export default function WikiPageApp()
 			<main>
 				<div id="contentWrapper">
 					<div id="content">
-						{ globalState.QuickNavigationOpen && <Sidebar /> }
+						{ <Sidebar sidebar={ globalState.leftSidebar }/> }
 						<div id="mainPanelWrapper">
 							<div className="mainPanel">
 								<WikiPageLoader />
 							</div>
 						</div>
-						{/* { globalState.QuickNavigationOpen && <Sidebar /> } */}
+						{ <Sidebar sidebar={ globalState.rightSidebar }/> }
 					</div>
 				</div>
 			</main>
 			<Footer />
 		</div>
 	);
-}
+};

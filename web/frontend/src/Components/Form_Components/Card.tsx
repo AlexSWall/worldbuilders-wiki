@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function Card({ title, children })
+interface Props
+{
+	title: string;
+	children?: React.ReactNode | null;
+};
+
+export const Card = ({ title, children = null }: Props): ReactElement =>
 {
 	return (
 		<div className='card'>
@@ -12,4 +18,4 @@ export default function Card({ title, children })
 			</div>
 		</div>
 	);
-}
+};

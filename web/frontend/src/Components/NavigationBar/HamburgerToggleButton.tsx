@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
 import classNames from 'classnames';
 
-export default function HamburgerToggleButton({ isOnFn })
+interface Props
+{
+	isOnFn: ( isOn: boolean ) => void;
+};
+
+export const HamburgerToggleButton = ({ isOnFn }: Props): ReactElement =>
 {
 	const [ toggleStateIsOn, setToggleState ] = useState( false );
 
 	return (
 		<li className={ 'hamburger-button-item' }>
-			<button className={ classNames({ 'hamburger-button': true, 'hamburger-button-on': toggleStateIsOn }) }
+			<button
+				className={ classNames({
+					'hamburger-button': true,
+					'hamburger-button-on': toggleStateIsOn
+				}) }
 				onClick={() => {
 					const newToggleStateIsOn = ! toggleStateIsOn;
 					setToggleState( newToggleStateIsOn );
@@ -22,5 +31,4 @@ export default function HamburgerToggleButton({ isOnFn })
 			</button>
 		</li>
 	);
-}
-
+};

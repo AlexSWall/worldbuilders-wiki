@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
-import Modal from './Modal'
+import { Modal } from './Modal'
 
-import useStateWithGetter from 'utils/hooks/useStateWithGetter.js'
+import useStateWithGetter from 'utils/hooks/useStateWithGetter'
 
-export default function ModalWrapper({ ModalComponent, modalOpenState })
+export interface ModalComponentProps
+{
+	closeModal: () => void;
+	setModalComponent: React.Dispatch<React.SetStateAction<(props: ModalComponentProps) => ReactElement>>;
+	setHasUnsavedState: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+interface Props
+{
+	ModalComponent: (props: ModalComponentProps) => ReactElement;
+	modalOpenState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+};
+
+export const ModalWrapper = ({ ModalComponent, modalOpenState }: Props): ReactElement =>
 {
 	// State caught from the caller; the caller needs to create the state so that
 	// it can access the 'setModalOpen' function, needed to be able to initially
@@ -34,5 +47,4 @@ export default function ModalWrapper({ ModalComponent, modalOpenState })
 			/>
 		</Modal>
 	);
-}
-
+};

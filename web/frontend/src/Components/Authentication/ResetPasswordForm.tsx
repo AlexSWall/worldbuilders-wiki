@@ -5,12 +5,13 @@ import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import TextInput from '../Form_Components/TextInput';
-import SubmitButton from '../Form_Components/SubmitButton';
-import ErrorLabel from '../Form_Components/ErrorLabel';
-import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
+import { TextInput } from '../Form_Components/TextInput';
+import { SubmitButton } from '../Form_Components/SubmitButton';
+import { ErrorLabel } from '../Form_Components/ErrorLabel';
+import { WeakPasswordWarning } from '../Form_Components/WeakPasswordWarning';
 
 import { computePasswordHash } from 'utils/crypto';
+import { makeApiPostRequest } from 'utils/api';
 
 const schema = Yup.object().shape({
 	password_new: Yup.string()
@@ -21,11 +22,11 @@ const schema = Yup.object().shape({
 		.oneOf([Yup.ref('password_new'), null], "Passwords do not match")
 });
 
-export default function ResetPasswordForm()
+export const ResetPasswordForm = (): JSX.Element =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
 	const urlParams = new URLSearchParams(window.location.search);
 	const email = urlParams.get('email');
@@ -46,60 +47,22 @@ export default function ResetPasswordForm()
 
 				console.log('Posting...')
 
-				try
-				{
-					const res = await fetch('/auth/', {
-						method: 'post',
-						headers: {
-							'Accept': 'application/json, text/plain, */*',
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(Object.assign({}, {
-							action: 'reset password',
-							data: {
-								email: email,
-								identifier: identifier,
-								password_new: newPasswordFrontendHash,
-							},
-						}, globalState.csrfTokens))
-					});
-
-					if (res.ok)
+				await makeApiPostRequest(
+					'/auth/',
+					'reset password',
 					{
-						setSubmitting(false);
-						window.location = '/';
-					}
-					else
-					{
-						console.log('Error: Received status code ' + res.status + ' in response to POST request');
-
-						const contentType = res.headers.get("content-type");
-
-						if (contentType && contentType.indexOf("application/json") !== -1) {
-							res.json().then(data => {
-								if (data.error === 'Validation failure')
-								{
-									setErrors(data.validation_errors);
-								}
-								else
-								{
-									setSubmissionError(data.error);
-									console.log('Error: ' + data.error);
-								}
-							});
-						} else {
-							res.text().then(text => {
-								setSubmissionError(text);
-								console.log('Error (text): ' + text);
-							});
-						}
-					}
-				}
-				catch( error )
-				{
-					console.log('Failed to make POST request...')
-					console.log(error);
-				};
+						email: email,
+						identifier: identifier,
+						password_new: newPasswordFrontendHash
+					},
+					globalState.csrfTokens,
+					() => {
+						window.location.href = '/';
+					},
+					setErrors,
+					setSubmissionError,
+					setSubmitting
+				);
 			} }
 		>
 			{ ({ values, touched, setFieldTouched, handleChange, errors }) => (
@@ -115,7 +78,7 @@ export default function ResetPasswordForm()
 								type='password'
 								autoComplete='new-password'
 								width={ 250 }
-								hasError={ touched.password_new && errors.password_new }
+								hasError={ !!(touched.password_new && errors.password_new) }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							>
@@ -128,7 +91,7 @@ export default function ResetPasswordForm()
 								type='password'
 								autoComplete='new-password'
 								width={ 250 }
-								hasError={ touched.password_new_confirm && errors.password_new_confirm }
+								hasError={ !!(touched.password_new_confirm && errors.password_new_confirm) }
 								setFieldTouched={ setFieldTouched }
 								handleChange={ handleChange }
 							/>
@@ -144,4 +107,4 @@ export default function ResetPasswordForm()
 			) }
 		</Formik>
 	);
-}
+};

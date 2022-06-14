@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
-import WikiPanel from './WikiPanel';
+import { WikiPanel } from './WikiPanel';
 
-import useStateWithGetter  from 'utils/hooks/useStateWithGetter';
-import useReducerWithGetter  from 'utils/hooks/useReducerWithGetter';
+import useStateWithGetter from 'utils/hooks/useStateWithGetter';
+import useReducerWithGetter from 'utils/hooks/useReducerWithGetter';
+import useStateInitiallyNull, { SetStateActionInitiallyNull } from 'utils/hooks/useStateInitiallyNull';
 
-import { makeApiGetRequest }  from 'utils/api';
+import { ApiGetWikiPage, makeApiGetRequest, WikiPageData }  from 'utils/api';
+import { assertNotEmpty }  from 'utils/types';
+import { getWikiPagePathAndHeading } from 'utils/wiki';
 
+
+type WikiPageDataCacheMap = {
+	[wikipage: string]: WikiPageData;
+};
+
+type WikiPagePositionCacheMap = {
+	[wikipage: string]: string | number;
+};
 
 /**
  * WikiPageLoader deals with the loading of, and setting the content of, a
@@ -41,34 +52,36 @@ import { makeApiGetRequest }  from 'utils/api';
  * Finally, the initial loading of the page does not come with an unload, so we
  * need to set the wikipage hash at the beginning of an onMount useEffect.
  */
-export default function WikiPageLoader()
+export const WikiPageLoader = (): ReactElement =>
 {
 	// == State ==
 
 	// Used for setting the page positions cache when unloading a page, to know
 	// which page to save the position for.
-	const [, getCurrentPage, setCurrentPage] = useStateWithGetter(null);
+	const [, getCurrentPagePath, setCurrentPagePath] = useStateWithGetter<string | null>( null );
 
 	// Stores the wikipage data retrieved from the server.
-	const [wikiPageData, setWikiPageData] = useState({});
+	const [wikiPageData, setWikiPageData] = useStateInitiallyNull<WikiPageData>();
 
-	// Stores the initial location for the current page..
-	const [initialLocation, setInitialLocation] = useState(undefined);
+	// Stores the WikiPage load location for the current page.
+	const [locationAfterPageLoad, setLocationAfterPageLoad] = useState<string | number>(0);
 
 	// A cache of the wikipage data for all wikipages visited in this javascript
 	// session.
-	const [, getPageContent, savePageContent] = useReducerWithGetter((state, content) =>
-	{
-			// Merge position key-value pair into state.
-			return { ...state, ...content };
-	}, {});
+	const [, getPageContent, savePageContent] = useReducerWithGetter(
+		(state: WikiPageDataCacheMap, newContent: WikiPageDataCacheMap): WikiPageDataCacheMap =>
+		{
+				// Merge position key-value pair into state.
+				return { ...state, ...newContent };
+		}, {});
 
 	// A cache of all positions for wikipages visited in this javascript session.
-	const [, getPagePositions, savePagePosition] = useReducerWithGetter((state, position) =>
-	{
-			// Merge position key-value pair into state.
-			return { ...state, ...position };
-	}, {});
+	const [, getPagePositions, savePagePosition] = useReducerWithGetter(
+		(state: WikiPagePositionCacheMap, position: WikiPagePositionCacheMap): WikiPagePositionCacheMap =>
+		{
+				// Merge position key-value pair into state.
+				return { ...state, ...position };
+		}, {});
 
 
 	// == useEffects ==
@@ -77,24 +90,24 @@ export default function WikiPageLoader()
 	useEffect(() =>
 	{
 		// Set the current page hash initially (to be handled by the popstate
-		// listener in the future)
-		const initialHash = window.location.hash.substring(1);
-		setCurrentPage(initialHash);
+		// listener in the future); possibly empty.
+		const [ initialWikiPagePath, _initialHeading ] = getWikiPagePathAndHeading( window.location.hash );
+		setCurrentPagePath( initialWikiPagePath );
 
-		// Define popstate listener function
-		const onPopState = (event) =>
+		// Define popstate listener function.
+		const onPopState = (): void =>
 		{
 			// Set the y-coordinate for the page we're leaving to be the
 			// y-coordinate that we're currently at, as we're unloading it.
-			savePagePosition({ [getCurrentPage()]: window.pageYOffset });
+			savePagePosition({ [getCurrentPagePath() as string]: window.pageYOffset });
 
 			// Check whether we've cached the page; if we have, load it while
 			// we wait for the fetch to ensure we have the most up to date
 			// version.
-			const newHash = event.target.location.hash.substring(1);
-			const [newWikiPage, _newHeading] = newHash.split('#');
+			const [ newWikiPage, _newHeading ] = getWikiPagePathAndHeading( window.location.hash );
+
 			const pageContentCacheLookup = getPageContent()[newWikiPage];
-			if ( pageContentCacheLookup )
+			if ( pageContentCacheLookup !== undefined )
 			{
 				// Got cache hit; set page data from cache
 				setWikiPageData(pageContentCacheLookup);
@@ -105,49 +118,50 @@ export default function WikiPageLoader()
 				// hashchange event fetch to finish before re-rendering and
 				// running our useEffects.
 				const initialLocation = getPagePositions()[newWikiPage];
-				setInitialLocation(initialLocation);
+				assertNotEmpty(initialLocation);
+
+				setLocationAfterPageLoad(initialLocation);
 				changeWindowYCoordinate(initialLocation);
 			}
 		}
 
-		// Define hashchange listener function
-		const onHashChange = ( _event ) =>
+		// Define hashchange listener function.
+		const onHashChange = (): void =>
 		{
+			// Extract new WikiPage path and heading.
 			// We use window.location for the new hash as we're not guaranteed
 			// to have event.newURL set when throwing the event ourselves.
-			const newHash = window.location.hash.substring(1);
-
-			// Extract heading
-			const [newWikiPage, newHeading] = newHash.split('#');
+			const [newWikiPagePath, newHeading] = getWikiPagePathAndHeading(window.location.hash);
 
 			// Set our current page to be the new page we're visiting, so that
 			// this popstate listener knows which page to set the position for
 			// on the next call.
-			setCurrentPage(newWikiPage);
+			setCurrentPagePath( newWikiPagePath );
 
-			if ( newHeading !== undefined )
+			if ( newHeading !== null )
 			{
-				setInitialLocation(newHeading);
+				setLocationAfterPageLoad(newHeading);
 			}
 			else
 			{
 				// We have no heading, so set the initial location to be the
 				// position we were at when we were last on this page last (if
 				// ever).
-				setInitialLocation(getPagePositions()[newWikiPage]);
+				const newPosition = getPagePositions()[ newWikiPagePath ] ?? 0;
+
+				setLocationAfterPageLoad( newPosition );
 			}
 
-			fetchAndUpdatePageContents(newWikiPage, setWikiPageData, savePageContent);
+			fetchAndUpdatePageContents( newWikiPagePath, setWikiPageData, savePageContent );
 		}
 
 		// The popstate event is fired each time when the current history entry
 		// changes.
-		window.addEventListener('popstate', onPopState, false);
-
-		window.addEventListener("hashchange", onHashChange );
+		window.addEventListener( 'popstate', onPopState );
+		window.addEventListener( 'hashchange', onHashChange );
 
 		// Load the content by firing a 'hashchange'.
-		window.dispatchEvent(new HashChangeEvent("hashchange"));
+		window.dispatchEvent( new HashChangeEvent('hashchange') );
 
 		// Return a clean-up function on dismount; this removes our event
 		// listener.
@@ -161,47 +175,49 @@ export default function WikiPageLoader()
 	// location in the page for it (after the render).
 	useEffect( () =>
 	{
-		changeWindowYCoordinate(initialLocation);
+		changeWindowYCoordinate(locationAfterPageLoad);
 	}, [wikiPageData] );
 
 
 	// == Render ==
-	//
-	return (Object.keys(wikiPageData).length === 0)
-		? ( <i> Fetching and loading content...  </i> )
+
+	return (wikiPageData === null)
+		? ( <i> Fetching and loading content... </i> )
 		: ( <WikiPanel {...wikiPageData} /> );
-}
-
-function fetchAndUpdatePageContents( wikiPagePath, setWikiPageData, savePageContent )
-{
-	makeApiGetRequest(
-		'/w/' + wikiPagePath,
-		( _res, data ) => data.wikiPage !== null,
-		( _res, data ) => {
-			// -- Success callback --
-
-			// We know this is non-null by passing success predicate
-			const wikiPageData = data.wikiPage;
-
-			// Set tab title to the title of the wikipage.
-			document.title = wikiPageData.title;
-
-			// Set wikipage data state.
-			setWikiPageData( wikiPageData );
-			savePageContent( { [wikiPagePath]: wikiPageData } );
-		},
-		null,  // No error callback
-		true  // Allow 404
-	);
 };
 
-function changeWindowYCoordinate( initialLocation )
+function fetchAndUpdatePageContents(
+	wikiPagePath: string,
+	setWikiPageData: React.Dispatch<SetStateActionInitiallyNull<WikiPageData>>,
+	savePageContent: React.Dispatch<WikiPageDataCacheMap>
+): void
+{
+	makeApiGetRequest<ApiGetWikiPage>(
+		`/w/${wikiPagePath}`,
+		data =>
+			{
+				// We know this is non-null by passing success predicate
+				const wikiPageData = data.wikiPage;
+
+				// Set tab title to the title of the wikipage.
+				document.title = wikiPageData.title;
+
+				// Set wikipage data state.
+				setWikiPageData( wikiPageData );
+				savePageContent( { [wikiPagePath]: wikiPageData } );
+			},
+		null, // No error callback
+		true  // Allow 404
+	);
+}
+
+function changeWindowYCoordinate( pageLocation: string | number ): void
 {
 	// Move to heading, if there was one.
-	if ( typeof initialLocation === 'string' && initialLocation !== '' )
+	if ( typeof pageLocation === 'string' && pageLocation !== '' )
 	{
 		// Our location is a string, so it's a heading.
-		const heading = initialLocation;
+		const heading = pageLocation;
 
 		const headingElement = document.getElementById(heading);
 
@@ -211,18 +227,15 @@ function changeWindowYCoordinate( initialLocation )
 			headingElement.scrollIntoView();
 		}
 	}
-	else if ( typeof initialLocation === 'number' )
+	else if ( typeof pageLocation === 'number' )
 	{
 		// Our location is a number, so it's a y-coordinate
-		const yCoord = initialLocation;
+		const yCoord = pageLocation;
 
 		window.scrollTo(0, yCoord);
 	}
 	else
 	{
-		// typeof location == 'undefined'
-		window.scrollTo(0, 0);
+		throw new Error('Page location must be string or number.');
 	}
-	// ...else location is undefined, in which case this is a page we
-	// haven't been to yet.
 }

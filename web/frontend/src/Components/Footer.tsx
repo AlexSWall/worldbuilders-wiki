@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-import FooterLink from './Footer/FooterLink';
+import { FooterLink } from './Footer/FooterLink';
 
-export default function Footer()
+export const Footer = (): ReactElement =>
 {
 	return (
 		<footer>
@@ -20,4 +20,4 @@ export default function Footer()
 			</div>
 		</footer>
 	);
-}
+};

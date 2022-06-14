@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function Sidebar()
+interface Props
 {
-	return (
-		<aside className='sidebar'>
-		</aside>
-	);
-}
+	sidebar: 'QuickNavigator' | null
+};
+
+export const Sidebar = ({ sidebar }: Props): ReactElement | null =>
+{
+	switch ( sidebar )
+	{
+		case 'QuickNavigator':
+			return (
+				<aside className='sidebar' />
+			);
+
+		case null:
+			return null;
+	}
+};

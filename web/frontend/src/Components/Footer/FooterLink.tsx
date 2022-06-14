@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export default function FooterLink({ href, text })
+interface Props
+{
+	href: string;
+	text: string;
+};
+
+export const FooterLink = ({ href, text }: Props): ReactElement =>
 {
 	return (
 		<div className="footer-link">
@@ -9,4 +15,4 @@ export default function FooterLink({ href, text })
 			</a>
 		</div>
 	);
-}
+};

@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    // Language and Environment
+    "target": "es2016",
+	 "lib": ["dom", "dom.iterable", "esnext"],
+	 "jsx": "react",
+
+    // Modules
+    "module": "commonjs",
+	 "baseUrl": "src",
+    "paths": {
+		 "Components/*": ["Components/*"],
+		 "Form Components/*": ["Components/Form_Components/*"],
+		 "GlobalState": ["GlobalState.tsx"],
+		 "utils/*": ["utils/*"]
+	 },
+
+    // Interop Constraints
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Type Checking
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    // Completeness
+    "skipLibCheck": true
+  }
+}

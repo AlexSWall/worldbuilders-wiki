@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { getWeakPasswordString } from 'utils/crypto';
 
-export default function WeakPasswordWarning({ password, width })
+interface Props
+{
+	password: string;
+	width: number;
+};
+
+export const WeakPasswordWarning = ({ password, width }: Props): ReactElement | null =>
 {
 	const weakPasswordString = getWeakPasswordString(password);
 
@@ -14,4 +20,4 @@ export default function WeakPasswordWarning({ password, width })
 			{ weakPasswordString }
 		</label>
 	);
-}
+};

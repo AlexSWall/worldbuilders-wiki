@@ -1,33 +1,35 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal from '../Form_Components/FormModal';
-import TextInput from '../Form_Components/TextInput';
+import { FormModal } from '../Form_Components/FormModal';
+import { TextInput } from '../Form_Components/TextInput';
 
 import { makeApiPostRequest } from 'utils/api';
 
-export default function InfoboxDeletionForm({ closeModal })
+interface Props
+{
+	closeModal: () => void;
+};
+
+export const InfoboxDeletionForm = ({ closeModal }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
-
-	const pagePath = window.location.hash.substring(1).split('#')[0];
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
 	const schema = Yup.object().shape({
-		page_path: Yup.string()
+		infobox_name: Yup.string()
 		.required('Required')
-		.matches(/^\/?#?([a-z][a-z-]*)?[a-z]?$/, 'Must be only lowercase, optionally with hyphens within')
-		.matches(new RegExp('^/?#?' + pagePath + '$', "g"), 'Must match \'' + pagePath + '\'')
+		.matches(/^([A-Za-z][A-Za-z -]*)?[A-Za-z]$/, 'Alphabetic characters and interior hyphens and spaces only'),
 	});
 
 	return (
 		<Formik
-			initialValues={ { page_path: '' } }
+			initialValues={ { infobox_name: '' } }
 			validationSchema={ schema }
 			onSubmit={ async (values, { setSubmitting, setErrors }) =>
 				{
@@ -50,19 +52,19 @@ export default function InfoboxDeletionForm({ closeModal })
 		>
 			{ ({ values, touched, errors, setFieldTouched, handleChange }) => (
 				<FormModal
-					title='Delete Wiki Page'
+					title='Delete Infobox'
 					submitButtonText='Change Password'
-					requiredFields={ [ 'page_path' ] }
+					requiredFields={ [ 'infobox_name' ] }
 					values={ values }
 					errors={ errors }
 					submissionError={ submissionError }
 				>
 					<TextInput
-						formId='page_path'
-						labelText={'Enter page hash to confirm'}
+						formId='infobox_name'
+						labelText={'Enter the infobox name to delete'}
 						width={ 250 }
 						autoComplete='off'
-						hasError={ touched.page_path && errors.page_path }
+						hasError={ !!(touched.infobox_name && errors.infobox_name) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -70,4 +72,4 @@ export default function InfoboxDeletionForm({ closeModal })
 			) }
 		</Formik>
 	);
-}
+};

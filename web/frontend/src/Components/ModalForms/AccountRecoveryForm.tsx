@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal from '../Form_Components/FormModal';
-import TextInput from '../Form_Components/TextInput';
+import { FormModal } from '../Form_Components/FormModal';
+import { TextInput } from '../Form_Components/TextInput';
 
 import { makeApiPostRequest } from 'utils/api';
 
@@ -16,11 +16,16 @@ const schema = Yup.object().shape({
 		.email()
 });
 
-export default function AccountRecoveryForm({ closeModal })
+interface Props
+{
+	closeModal: () => void;
+};
+
+export const AccountRecoveryForm = ({ closeModal }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
+	const [submissionError, setSubmissionError] = useState<string | null>( null );
 
 	return (
 		<Formik
@@ -60,7 +65,7 @@ export default function AccountRecoveryForm({ closeModal })
 						formId='email'
 						labelText='Email'
 						width={ 250 }
-						hasError={ touched.email && errors.email }
+						hasError={ !!( touched.email && errors.email ) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -68,4 +73,4 @@ export default function AccountRecoveryForm({ closeModal })
 			) }
 		</Formik>
 	);
-}
+};

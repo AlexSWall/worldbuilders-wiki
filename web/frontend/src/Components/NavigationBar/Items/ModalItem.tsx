@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
-import Item from './Item';
-import ModalWrapper from '../../ModalWrapper';
+import { Item } from './Item';
+import { ModalProps, ModalWrapper } from '../../ModalWrapper';
 
-export default function ModalItem({ text, ModalComponent, type='navbar', children })
+interface Props
+{
+	text: string;
+	ModalComponent: (props: ModalProps) => ReactElement;
+	type?: 'navbar' | 'dropdown';
+	children?: React.ReactNode;
+};
+
+export const ModalItem = ({ text, ModalComponent, type='navbar', children }: Props): ReactElement =>
 {
 	// We need to own the 'modal open' state and pass it to the ModalWrapper as
 	// we need to have access to setModalOpen to be able to initially open it.
-	const [isModalOpen, setModalOpen] = useState(false);
+	const [ isModalOpen, setModalOpen ] = useState(false);
 
 	const modalComponent = (
 		<ModalWrapper
@@ -25,4 +33,4 @@ export default function ModalItem({ text, ModalComponent, type='navbar', childre
 			children={ children }
 		/>
 	);
-}
+};

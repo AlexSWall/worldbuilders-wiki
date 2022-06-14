@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { GlobalStateWrapper } from './GlobalState';
+import { GlobalStateWrapper } from 'GlobalState';
 
-import NavigationBar from './Components/NavigationBar';
-import ResetPasswordForm from './Components/Authentication/ResetPasswordForm';
+import { NavigationBar } from './Components/NavigationBar';
+import { ResetPasswordForm } from './Components/Authentication/ResetPasswordForm';
 
 ReactDOM.render(
 	<GlobalStateWrapper>

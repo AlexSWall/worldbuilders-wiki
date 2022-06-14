@@ -1,13 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { GlobalStateContext } from 'GlobalState';
 
-import FormModal           from '../Form_Components/FormModal';
-import TextInput           from '../Form_Components/TextInput';
-import WeakPasswordWarning from '../Form_Components/WeakPasswordWarning';
+import { FormModal }           from '../Form_Components/FormModal';
+import { TextInput }           from '../Form_Components/TextInput';
+import { WeakPasswordWarning } from '../Form_Components/WeakPasswordWarning';
 
 import { makeApiPostRequest }  from 'utils/api';
 import { computePasswordHash } from 'utils/crypto';
@@ -32,11 +32,16 @@ const schema = Yup.object().shape({
 		.oneOf([Yup.ref('password'), null], "Passwords do not match")
 });
 
-export default function SignUpForm({ closeModal })
+interface Props
+{
+	closeModal: () => void;
+};
+
+export const SignUpForm = ({ closeModal }: Props): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
-	const [submissionError, setSubmissionError] = useState(null);
+	const [ submissionError, setSubmissionError ] = useState<string | null>( null );
 
 	return (
 		<Formik
@@ -64,8 +69,6 @@ export default function SignUpForm({ closeModal })
 						globalState.csrfTokens,
 						() => {
 							closeModal();
-
-							window.location.hash = '#' + values.page_path;
 						},
 						setErrors,
 						setSubmissionError,
@@ -90,7 +93,7 @@ export default function SignUpForm({ closeModal })
 						type='search'
 						autoComplete='off'
 						width={ 250 }
-						hasError={ touched.preferred_name && errors.preferred_name }
+						hasError={ !!(touched.preferred_name && errors.preferred_name) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -101,7 +104,7 @@ export default function SignUpForm({ closeModal })
 						type='search'
 						autoComplete='off'
 						width={ 250 }
-						hasError={ touched.username && errors.username }
+						hasError={ !!(touched.username && errors.username) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -112,7 +115,7 @@ export default function SignUpForm({ closeModal })
 						type='search'
 						autoComplete='off'
 						width={ 250 }
-						hasError={ touched.email && errors.email }
+						hasError={ !!(touched.email && errors.email) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -123,7 +126,7 @@ export default function SignUpForm({ closeModal })
 						type='password'
 						autoComplete='new-password'
 						width={ 250 }
-						hasError={ touched.password && errors.password }
+						hasError={ !!(touched.password && errors.password) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					>
@@ -136,7 +139,7 @@ export default function SignUpForm({ closeModal })
 						type='password'
 						autoComplete='new-password'
 						width={ 250 }
-						hasError={ touched.password_confirm && errors.password_confirm }
+						hasError={ !!(touched.password_confirm && errors.password_confirm) }
 						setFieldTouched={ setFieldTouched }
 						handleChange={ handleChange }
 					/>
@@ -144,4 +147,4 @@ export default function SignUpForm({ closeModal })
 			) }
 		</Formik>
 	);
-}
+};

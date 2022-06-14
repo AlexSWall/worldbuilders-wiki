@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React, { ReactElement, useContext } from 'react';
 
-import { GlobalStateContext } from './GlobalState';
+import { GlobalStateContext } from 'GlobalState';
 
-import NavigationBar from './Components/NavigationBar';
+import { NavigationBar } from './Components/NavigationBar';
 
-export default function AdministrationApp()
+export const AdministrationApp = (): ReactElement =>
 {
 	const globalState = useContext( GlobalStateContext );
 
@@ -28,7 +28,6 @@ export default function AdministrationApp()
 											<dd><b>Preferred Name:</b></dd>
 											<dt style={ { marginLeft: '20px' } }>{ globalState.preferredName }</dt>
 										</dl>
-										{ children }
 									</div>
 								</div>
 							</div>
@@ -38,4 +37,4 @@ export default function AdministrationApp()
 			</main>
 		</div>
 	);
-}
+};

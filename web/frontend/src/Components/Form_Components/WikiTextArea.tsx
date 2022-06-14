@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
+
+import classNames from 'classnames';
 
 import { Field, ErrorMessage } from 'formik';
 
-export default function WikiTextArea({ formId, labelText, size, hasError, setFieldTouched, handleChange, initialValue=undefined, value })
+interface Props
+{
+	formId: string;
+	labelText: string;
+	hasError: boolean;
+	setFieldTouched: ( field: string ) => void;
+	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	initialValue?: string | undefined;
+	value: string;
+};
+
+export const WikiTextArea = ({ formId, labelText, hasError, setFieldTouched, handleChange, initialValue=undefined, value }: Props): ReactElement =>
 {
 	const [ isEmpty, setIsEmpty ] = useState(initialValue === undefined || initialValue === '');
 
@@ -18,7 +31,11 @@ export default function WikiTextArea({ formId, labelText, size, hasError, setFie
 					<Field
 						name={ formId }
 						id={ formId }
-						className={ (hasError ? 'form-input-has-error ' : '') + (! isEmpty ? 'has-content ' : '' ) + 'form-input' }
+						className={ classNames({
+							'form-input': true,
+							'has-content': !isEmpty,
+							'form-input-has-error': hasError
+						}) }
 						style={ {
 							// Using inline-block surrounded by block to avoid
 							//	bizarre resizing width margin problems.
@@ -31,10 +48,10 @@ export default function WikiTextArea({ formId, labelText, size, hasError, setFie
 							lineHeight: 1.5
 						} }
 						as='textarea'
-						onChange={ e => {
-							setIsEmpty(e.target.value === '');
-							setFieldTouched(formId);
-							handleChange(e);
+						onChange={ (e: React.ChangeEvent<HTMLInputElement>) => {
+							setIsEmpty( e.target.value === '' );
+							setFieldTouched( formId );
+							handleChange( e );
 						} }
 					/>
 					<label htmlFor={ formId }>{ labelText }</label>
@@ -43,7 +60,7 @@ export default function WikiTextArea({ formId, labelText, size, hasError, setFie
 					</span>
 				</div>
 			</div>
-			<ErrorMessage name={ formId } component='span' className='form-error' style={ { width: size.width } } />
+			<ErrorMessage name={ formId } component='span' className='form-error' />
 		</div>
 	);
-}
+};

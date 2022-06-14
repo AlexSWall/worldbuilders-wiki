@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-import Item from './Item';
+import { Item } from './Item';
 
-export default function OnClickItem({ text, onClick, type='navbar', children })
+interface Props
+{
+	text: string;
+	onClick: () => void;
+	type?: 'navbar' | 'dropdown';
+	children?: React.ReactNode;
+};
+
+export const OnClickItem = ({ text, onClick, type='navbar', children }: Props): ReactElement =>
 {
 	return (
 		<Item
@@ -12,4 +20,4 @@ export default function OnClickItem({ text, onClick, type='navbar', children })
 			children={ children }
 		/>
 	);
-}
+};
