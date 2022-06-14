@@ -126,23 +126,27 @@ $containerBuilder->addDefinitions(
 			return new \App\Controllers\WikiPageController($container);
 		},
 
+	'db' => function() use ($capsule): \Illuminate\Database\Capsule\Manager
+		{
+			return $capsule;
+		},
+
 	'view' => function(): \Slim\Views\Twig
 		{
 			$view = \Slim\Views\Twig::create( BASE_PATH . '/../frontend/webpages', [
 				'cache' => false,
 			]);
 
-			/* $view->addExtension(new \Slim\Views\TwigExtension( */
-			/* 	$container->router, */
-			/* 	$container->request->getUri() */
-			/* )); */
-
 			return $view;
 		},
 
-	'db' => function() use ($capsule): \Illuminate\Database\Capsule\Manager
+	'mailer-view' => function(): \Slim\Views\Twig
 		{
-			return $capsule;
+			$mailerView = \Slim\Views\Twig::create( BASE_PATH . '/../frontend/email', [
+				'cache' => false,
+			]);
+
+			return $mailerView;
 		},
 
 	'mailer' => function( DI\Container $container ): \App\Mail\Mailer
@@ -163,22 +167,7 @@ $containerBuilder->addDefinitions(
 
 			$mailer->isHTML($mailerSettings['html']);
 
-
-			$container->set('mailerView', function(): \Slim\Views\Twig
-			{
-				$mailerView = \Slim\Views\Twig::create( BASE_PATH . '/../frontend/email', [
-					'cache' => false,
-				]);
-
-				/* $mailerView->addExtension(new \Slim\Views\TwigExtension( */
-				/* 	$container->router, */
-				/* 	$container->request->getUri() */
-				/* )); */
-
-				return $mailerView;
-			});
-
-			return new \App\Mail\Mailer($mailer, $container->get('mailerView'));
+			return new \App\Mail\Mailer($mailer, $container->get('mailer-view'));
 		}
 ]);
 
@@ -188,6 +177,7 @@ $containerBuilder->addDefinitions(
 $container = $containerBuilder->build();
 
 Slim\Factory\AppFactory::setContainer($container);
+
 $app = Slim\Factory\AppFactory::create();
 
 $app->setBasePath('');
@@ -196,6 +186,12 @@ $app->setBasePath('');
 /* == Middleware == */
 
 $logger->info('Adding middleware.');
+
+// Add Twig-View Middleware
+{
+	$app->add(Slim\Views\TwigMiddleware::createFromContainer($app, 'view'));
+	$app->add(Slim\Views\TwigMiddleware::createFromContainer($app, 'mailer-view'));
+}
 
 // Log user in if they have a Remember Me cookie
 {
