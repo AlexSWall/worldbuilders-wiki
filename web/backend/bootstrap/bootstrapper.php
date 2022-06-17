@@ -151,21 +151,38 @@ $containerBuilder->addDefinitions(
 
 	'mailer' => function( DI\Container $container ): \App\Mail\Mailer
 		{
-			$mailer = new PHPMailer\PHPMailer\PHPMailer;
-
 			$mailerSettings = $container->get('settings')['mail'];
 
-			$mailer->isSMTP();
-			$mailer->Host = $mailerSettings['host'];
-			$mailer->SMTPAuth = $mailerSettings['smtp_auth'];
-			$mailer->SMTPSecure = $mailerSettings['smtp_secure'];
-			$mailer->Port = $mailerSettings['port'];
-			$mailer->Username = $mailerSettings['username'];
-			$mailer->Password = $mailerSettings['password'];
+			$mailer = new PHPMailer\PHPMailer\PHPMailer( $mailerSettings['throw_exceptions'] );
 
-			$mailer->setFrom($mailerSettings['from_email'], $mailerSettings['from_name']);
+			$mailer->Host = $mailerSettings['host'];
+			$mailer->Port = $mailerSettings['port'];
+
+			$mailer->isSMTP();
+			$mailer->SMTPAuth = true;
+			$mailer->SMTPSecure = $mailerSettings['smtp_secure'];
+			$mailer->AuthType = 'XOAUTH2';
+
+			$mailer->Username = $mailerSettings['email'];
+
+			$mailer->setOAuth(
+				new PHPMailer\PHPMailer\OAuth(
+					[
+						'provider' => new League\OAuth2\Client\Provider\Google(
+							[
+								'clientId' => $mailerSettings['oauth_client_id'],
+								'clientSecret' => $mailerSettings['oauth_client_secret'],
+							]),
+						'clientId' => $mailerSettings['oauth_client_id'],
+						'clientSecret' => $mailerSettings['oauth_client_secret'],
+						'refreshToken' => $mailerSettings['oauth_refresh_token'],
+						'userName' => $mailerSettings['email'],
+					]
+				)
+			);
 
 			$mailer->isHTML($mailerSettings['html']);
+			$mailer->setFrom($mailerSettings['email'], $mailerSettings['from_name']);
 
 			return new \App\Mail\Mailer($mailer, $container->get('mailer-view'));
 		}

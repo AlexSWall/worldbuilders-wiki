@@ -1,12 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
+/* == Database == */
 $baseUrl = '';
-$db_name = '';
-$db_username = '';
-$db_password = '';
+$databaseName = '';
+$databaseUsername = '';
+$databasePassword = '';
+
+/* == Email == */
 $email = '';
-$email_password = '';
 $name = '';
+
+$oauthClientId = '';
+$oauthClientSecret = '';
+$oauthRefreshToken = '';
+
 
 return [
 	'displayErrorDetails' => true,
@@ -63,9 +72,9 @@ return [
 	'db' => [
 		'driver' => 'mysql',
 		'host' => 'mysql',
-		'database' => $db_name,
-		'username' => $db_username,
-		'password' => $db_password,
+		'database' => $databaseName,
+		'username' => $databaseUsername,
+		'password' => $databasePassword,
 		'charset' => 'utf8',
 		'collation' => 'utf8_unicode_ci',
 		'prefix' => ''
@@ -76,14 +85,15 @@ return [
 	],
 	'mail' => [
 		'host' => 'smtp.gmail.com',
-		'smtp_auth' => true,
-		'smtp_secure' => 'tls',
 		'port' => 587,
-		'username' => $email,
-		'password' => $email_password,
+		'smtp_secure' => 'tls',
+		'email' => $email,
+		'oauth_client_id' => $oauthClientId,
+		'oauth_client_secret' => $oauthClientSecret,
+		'oauth_refresh_token' => $oauthRefreshToken,
 		'html' => true,
-		'from_email' => $email,
-		'from_name' => $name
+		'from_name' => $name,
+		'throw_exceptions' => true
 	],
 	'twig' => [
 		'debug' => true
