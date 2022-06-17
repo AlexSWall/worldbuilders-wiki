@@ -135,7 +135,7 @@ class User extends DatabaseEncapsulator
 		return (bool) $this->get( 'Active' );
 	}
 
-	public function getActiveHash(): string
+	public function getActiveHash(): ?string
 	{
 		return $this->get( 'ActiveHash' );
 	}
@@ -148,7 +148,7 @@ class User extends DatabaseEncapsulator
 		] );
 	}
 
-	public function getPasswordRecoveryHash(): string
+	public function getPasswordRecoveryHash(): ?string
 	{
 		return $this->get( 'RecoveryHash' );
 	}
@@ -158,12 +158,12 @@ class User extends DatabaseEncapsulator
 		$this->set( 'RecoveryHash', $recoveryHash );
 	}
 
-	public function getRememberMeIdentifier(): string
+	public function getRememberMeIdentifier(): ?string
 	{
 		return $this->get( 'RememberMeIdentifier' );
 	}
 
-	public function getRememberMeToken(): string
+	public function getRememberMeToken(): ?string
 	{
 		return $this->get( 'RememberMeToken' );
 	}
