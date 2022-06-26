@@ -1,3 +1,4 @@
+import { QuickNavigatorEntries } from "Components/Sidebars/QuickNavigator/QuickNavigatorTypes";
 import { FormikErrors } from "formik";
 
 import { CsrfTokens } from "GlobalState";
@@ -45,11 +46,20 @@ export type ApiGetInfobox = {
 	};
 };
 
+export type ApiGetQuickNavigator = {
+	path: `/u/quick-navigator`;
+	data: {
+		json_data: QuickNavigatorEntries;
+		error?: string;
+	};
+};
+
 export type ApiGetType =
 	| ApiGetWikiPage
 	| ApiGetWikiText
 	| ApiGetInfoboxNames
-	| ApiGetInfobox;
+	| ApiGetInfobox
+	| ApiGetQuickNavigator;
 
 export async function makeApiGetRequest<T extends ApiGetType>(
 	path: T['path'],
@@ -220,7 +230,16 @@ type ApiInfoboxPostType =
 		};
 	};
 
-type ApiPostType = ApiAuthPostType | ApiWikiPostType | ApiInfoboxPostType;
+type ApiQuickNavigatorPostType =
+	{
+		path: '/u/quick-navigator';
+		action: 'set';
+		data: {
+			jsonData: QuickNavigatorEntries;
+		};
+	};
+
+type ApiPostType = ApiAuthPostType | ApiWikiPostType | ApiInfoboxPostType | ApiQuickNavigatorPostType;
 
 export async function makeApiPostRequest<T extends ApiPostType>(
 	path: T['path'],
