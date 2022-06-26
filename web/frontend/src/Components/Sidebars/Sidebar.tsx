@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import QuickNavigatorController from './QuickNavigator/QuickNavigatorController';
 
 interface Props
 {
@@ -11,7 +12,9 @@ export const Sidebar = ({ sidebar }: Props): ReactElement | null =>
 	{
 		case 'QuickNavigator':
 			return (
-				<aside className='sidebar' />
+				<aside className='sidebar'>
+					<QuickNavigatorController />
+				</aside>
 			);
 
 		case null:
