@@ -19,3 +19,13 @@ export function assertNotEmpty<T>( value: T | null | undefined ): asserts value 
 			throw new Error('Assertion that the provided value is not undefined failed.');
 	}
 }
+
+/**
+ * Returns the value when it's neither null nor undefined, and throws if it is
+ * null or undefined.
+ */
+export function returnNotEmpty<T>( value: T | null | undefined ): T
+{
+	assertNotEmpty(value);
+	return value;
+}
