@@ -246,17 +246,18 @@ export async function makeApiPostRequest<T extends ApiPostType>(
 	action: T['action'],
 	data: T['data'],
 	csrfTokens: CsrfTokens,
-	successCallback?: ( result: Response ) => void,
-	validationFailureCallback?: ( validationErrors: FormikErrors<{[field: string]: string}> ) => void,
-	setGenericError?: ( error: string | null ) => void,
-	setSubmitting?: ( isSubmitting: boolean ) => void,
+	successCallback: | ( ( result: Response ) => void ) | null = null,
+	validationFailureCallback: | ( ( validationErrors: FormikErrors<{[field: string]: string}> ) => void ) | null = null,
+	setGenericError: | ( ( error: string | null ) => void ) | null = null,
+	setSubmitting: | ( ( isSubmitting: boolean ) => void ) | null = null,
 ): Promise<void>
 {
 	console.log('Making POST Request to API...')
 
 	// Clear any generic errors for the form; in practice, this will be a call to
 	// setSubmissionError.
-	setGenericError && setGenericError( null );
+	if ( setGenericError !== null )
+		setGenericError( null );
 
 	let boundSuccessCallback = null;
 
@@ -274,11 +275,12 @@ export async function makeApiPostRequest<T extends ApiPostType>(
 			}, csrfTokens))
 		});
 
-		if (res.ok)
+		if ( res.ok )
 		{
 			// Bind result to success callback to be called at end
 			boundSuccessCallback = () => {
-				successCallback && successCallback(res);
+				if ( successCallback !== null )
+					successCallback( res );
 			}
 		}
 		else
@@ -295,13 +297,15 @@ export async function makeApiPostRequest<T extends ApiPostType>(
 				{
 					console.log( 'Validation failure' );
 
-					validationFailureCallback && validationFailureCallback( data.validation_errors );
+					if ( validationFailureCallback !== null )
+						validationFailureCallback( data.validation_errors );
 				}
 				else
 				{
 					console.log( 'Error: ' + data.error );
 
-					setGenericError && setGenericError( data.error );
+					if ( setGenericError !== null )
+						setGenericError( data.error );
 				}
 			}
 			else
@@ -310,7 +314,8 @@ export async function makeApiPostRequest<T extends ApiPostType>(
 
 				console.log('Error (text): ' + text);
 
-				setGenericError && setGenericError( text );
+				if ( setGenericError !== null )
+					setGenericError( text );
 			}
 		}
 	}
@@ -323,7 +328,8 @@ export async function makeApiPostRequest<T extends ApiPostType>(
 	{
 		console.log('Finished submission');
 
-		setSubmitting && setSubmitting(false);
+		if ( setSubmitting !== null )
+			setSubmitting( false );
 
 		if ( boundSuccessCallback !== null )
 		{
