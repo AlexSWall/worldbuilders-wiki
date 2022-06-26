@@ -56,7 +56,6 @@ class QuickNavigationSetValidation
 
 		foreach ( $data as $key => $value )
 		{
-			
 			if ( ! DataUtilities::isNonEmptyString( $key ) )
 				return false;
 
