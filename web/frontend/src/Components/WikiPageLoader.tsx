@@ -181,7 +181,7 @@ export const WikiPageLoader = (): ReactElement =>
 
 	// == Render ==
 
-	return (wikiPageData === null)
+	return ( wikiPageData === null )
 		? ( <i> Fetching and loading content... </i> )
 		: ( <WikiPanel {...wikiPageData} /> );
 };
