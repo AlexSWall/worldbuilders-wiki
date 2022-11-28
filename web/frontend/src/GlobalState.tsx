@@ -29,7 +29,7 @@ const InitialGlobalState: GlobalState =
 	preferredName: globalsData.preferredName,
 	csrfTokens: globalsData.csrfTokens,
 
-	// Frontnend globals.
+	// Frontend globals.
 	leftSidebar: null,
 	rightSidebar: null
 };
