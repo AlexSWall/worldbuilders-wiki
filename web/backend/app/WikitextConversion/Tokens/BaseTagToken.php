@@ -45,7 +45,7 @@ abstract class BaseTagToken extends BaseToken
 			{
 				$strValue = strval( $value );
 			}
-				$pairString .= $safeKey . '=\'' . $this->removeSpecialHtmlTagCharacters( $strValue ) . '\'';
+			$pairString .= $safeKey . '=\'' . $this->removeSpecialHtmlTagCharacters( $strValue ) . '\'';
 
 			if ( $pairString !== '' )
 			{
