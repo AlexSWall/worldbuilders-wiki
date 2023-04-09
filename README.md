@@ -4,6 +4,15 @@ This is a personal project for creating a lightning-fast and user-friendly wiki,
 
 This project is still under development. The core functionality is complete and functioning, and I use it myself, however some functionality is yet to be developed, listed below.
 
+## Quick Links
+
+ - [The backend's code.](https://github.com/AlexSWall/worldbuilders-wiki/tree/main/web/backend)
+ - [The backend's configuration directory.](https://github.com/AlexSWall/worldbuilders-wiki/tree/main/config)
+ - [The general wikitext grammar.](https://github.com/AlexSWall/worldbuilders-wiki/blob/main/web/backend/app/WikitextConversion/Grammar.pegphp)
+ - [The infobox wikitext grammar.](https://github.com/AlexSWall/worldbuilders-wiki/blob/main/web/backend/app/Infoboxes/Grammar.pegphp)
+ - [The frontend's code.](https://github.com/AlexSWall/worldbuilders-wiki/tree/main/web/frontend)
+ - [The public directory.](https://github.com/AlexSWall/worldbuilders-wiki/tree/main/web/public)
+
 ## Table of contents
 
 <!--ts-->
