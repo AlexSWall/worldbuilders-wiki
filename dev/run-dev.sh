@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-cd /app/web/frontend
+cd /app/web/frontend || exit 1
 
-# npm install
+npm install
 
-# npm run build > /dev/null || echo 'Finished `npm run build` with non-zero exit code'
+npm run build > /dev/null || echo 'Finished `npm run build` with non-zero exit code'
 
 /app/dev/watch.sh

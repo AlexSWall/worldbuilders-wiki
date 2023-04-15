@@ -46,8 +46,8 @@ setup: | ${LOGS_DIR} ${MYSQL_DUMPS_DIR}
 .PHONY: setup-database
 setup-database:
 	@docker-compose up -d mysqldb
-	@echo "Sleeping to allow MySQL container to spin up."
-	@sleep 10
+	@echo "Sleeping for 15 seconds to allow MySQL container to spin up..."
+	@sleep 15
 	@docker exec -i mysql mysql -u"root" -p"$(MYSQL_ROOT_PASSWORD)" website < ${SETUP_DIR}/db.sql
 	@docker-compose down
 
