@@ -20,8 +20,8 @@ help:
 	@echo '  start               Starts the docker-compose containers as a daemon. (Just aliases `docker-compose up -d`.)'
 	@echo '  stop                Stops the running docker-compose daemon. (Just aliases `docker-compose down`.)'
 	@echo ""
-	@echo "  db-dump             Create a backup of all databases."
-	@echo "  db-restore          Restore all databases from a backup."
+	@echo "  db-dump             Create a backup of all databases to './data/db/dumps/db.sql'."
+	@echo "  db-restore          Restore all databases from a backup stored at './data/db/dumps/db.sql'."
 	@echo ""
 	@echo "  test                Run the backend tests."
 	@echo ""
@@ -55,10 +55,12 @@ setup-database:
 db-dump:
 	@mkdir -p $(MYSQL_DUMPS_DIR)
 	@docker exec $(shell docker-compose ps -q mysqldb) mysqldump --all-databases -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" > $(MYSQL_DUMPS_DIR)/db.sql 2>/dev/null
-	@make resetOwner
+	@chown -Rf $(USER):$(shell id -g -n $(USER)) $(MYSQL_DUMPS_DIR)
+	@echo "Database dumped to '$(MYSQL_DUMPS_DIR)/db.sql'."
 
 .PHONY: db-restore
 db-restore:
+	@echo "Restoring database from '$(MYSQL_DUMPS_DIR)/db.sql'."
 	@docker exec -i $(shell docker-compose ps -q mysqldb) mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" website < $(MYSQL_DUMPS_DIR)/db.sql
 
 .PHONY: test
